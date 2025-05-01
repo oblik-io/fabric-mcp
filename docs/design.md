@@ -8,7 +8,8 @@ This integration brings Fabric's prompt engineering strengths directly into LLM 
 
 ### 1.1. Key Design Decisions & Open Questions
 
-* **MCP Server Language/Library:** Choose a language (e.g., Go, Python) and library for the standalone MCP server.
+* **MCP Server Language/Library:** Choose a language (e.g., Go, Python) and library for the standalone MCP server. [DONE]
+
 * **MCP Transport Layer:** Decide on initial transport mechanisms (e.g., stdio, WebSockets).
 * **Streaming:** Detail how to proxy streaming responses from Fabric's REST API via the MCP server.
 * **Variable/Attachment Handling:** Finalize passing complex inputs (variables, attachments) via MCP tool parameters.

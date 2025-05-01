@@ -42,7 +42,45 @@ This project is currently in the **design phase**. The core architecture and pro
 
 ## Getting Started
 
-(Instructions will be added here once the server is implemented.)
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+* Python >= 3.10
+* [uv](https://github.com/astral-sh/uv) (Python package and environment manager)
+
+### Installation
+
+1. **Clone the repository:**
+
+   ```bash
+   git clone https://github.com/ksylvan/fabric-mcp.git
+   cd fabric-mcp
+   ```
+
+2. **Install dependencies using uv sync:**
+
+   ```bash
+   uv sync --dev
+   ```
+
+   This command ensures your virtual environment matches the dependencies in `pyproject.toml` and `uv.lock`, creating the environment on the first run if necessary.
+
+3. **Activate the virtual environment (uv will create it if needed):**
+
+   * On macOS/Linux:
+
+     ```bash
+     source .venv/bin/activate
+     ```
+
+   * On Windows:
+
+     ```bash
+     .venv\Scripts\activate
+     ```
+
+Now you have the development environment set up!
 
 ## Contributing
 
