@@ -1,11 +1,15 @@
 {
     "words": [
         "danielmiessler",
+        "dotenv",
+        "fastmcp",
+        "httpx",
         "listmodels",
         "listpatterns",
         "liststrategies",
         "Miessler",
         "multimodal",
-        "restapi"
+        "restapi",
+        "uvicorn"
     ]
 }
