@@ -30,7 +30,7 @@ jobs:
       - name: Run tests # Ensure tests pass before publishing
         run: uv run pytest
       - name: Build package
-        run: uv build --sdist --wheel -o dist/ .
+        run: uv --help && uv build --sdist --wheel -o dist/ .
 
       # Publish to TestPyPI for 'develop' branch
       - name: Publish package to TestPyPI
