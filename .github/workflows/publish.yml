@@ -36,7 +36,7 @@ jobs:
       - name: Publish package to TestPyPI
         if: github.ref == 'refs/heads/develop'
         run: >
-          uv publish --repository-url https://test.pypi.org/legacy/
+          uv publish --publish-url https://test.pypi.org/legacy/
           -u __token__ -p ${{ secrets.TEST_PYPI_API_TOKEN }} dist/*
 
       # Publish to PyPI for 'master' branch
