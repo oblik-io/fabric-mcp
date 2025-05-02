@@ -19,6 +19,7 @@
 		"pyproject.toml",
 		"cspell.json",
 		".gitignore",
-		".github/workflows/*.yml"
+		".github/workflows/*.yml",
+		".ruff.toml"
 	]
 }

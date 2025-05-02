@@ -26,7 +26,7 @@ jobs:
         with:
           version: latest # Ensure a version with 'uv build' is installed
       - name: Install dependencies
-        run: uv sync --dev --all-extras # Need dev tools for building and publishing
+        run: uv sync --dev
       - name: Run tests # Ensure tests pass before publishing
         run: uv run pytest
       - name: Build package
