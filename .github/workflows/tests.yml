@@ -24,8 +24,7 @@ jobs:
         run: uv sync --dev --all-extras # Need dev tools for linters and tests
       - name: Run linters and formatters
         run: |
-          uv run black --check .
-          uv run isort --check .
-          uv run flake8
+          uv run ruff format --check .
+          uv run ruff check .
       - name: Run tests
         run: uv run pytest
