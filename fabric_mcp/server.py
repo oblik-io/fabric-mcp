@@ -1,5 +1,6 @@
 """Core MCP server logic for Fabric integration."""
 
+import asyncio
 import json
 import logging
 import sys
@@ -99,8 +100,11 @@ async def dispatch_request(request_data: Dict[str, Any]) -> Dict[str, Any]:
 async def run_server_stdio():
     """Runs the MCP server, reading from stdin and writing to stdout."""
     logging.info("MCP Server starting (stdio transport)")
+    reader = asyncio.StreamReader()
+    protocol = asyncio.StreamReaderProtocol(reader)
+    await asyncio.get_event_loop().connect_read_pipe(lambda: protocol, sys.stdin)
     while True:
-        line = sys.stdin.readline()
+        line = await reader.readline()
         if not line:
             logging.info("EOF received, shutting down.")
             break
