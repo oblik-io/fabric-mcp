@@ -1,3 +1,1 @@
-"Connect Fabric AI framework to any Model Context Protocol (MCP) compatible application."
-
-__version__ = "0.1.0"
+"Connect Fabric AI framework to Model Context Protocol (MCP) compatible applications."
