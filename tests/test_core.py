@@ -2,6 +2,7 @@
 
 import subprocess
 import sys
+
 from fabric_mcp.__about__ import __version__
 
 # Tests for core functionality
