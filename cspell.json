@@ -18,6 +18,7 @@
 		"uv.lock",
 		"pyproject.toml",
 		"cspell.json",
-		".gitignore"
+		".gitignore",
+		".github/workflows/*.yml"
 	]
 }
