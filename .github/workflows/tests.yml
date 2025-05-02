@@ -19,7 +19,7 @@ jobs:
       - name: Set up uv
         uses: astral-sh/setup-uv@v1
       - name: Install dependencies
-        run: uv sync --dev
+        run: uv sync --dev --all-extras # Need dev tools for linters and tests
       - name: Run linters and formatters
         run: |
           uv run black --check .

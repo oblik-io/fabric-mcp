@@ -23,9 +23,19 @@ dependencies = ["requests>=2.28.0", "modelcontextprotocol>=0.1.0"]
 "Bug Tracker" = "https://github.com/ksylvan/fabric-mcp/issues"
 "Documentation" = "https://github.com/ksylvan/fabric-mcp#readme"
 
-
 [project.scripts]
 fabric-mcp = "fabric_mcp.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "black>=25.1.0",
+    "flake8>=7.2.0",
+    "hatch>=1.14.1",
+    "hatchling>=1.27.0",
+    "isort>=6.0.1",
+    "pytest>=8.3.5",
+    "uv>=0.7.2",
+]
 
 [tool.black]
 line-length = 88
@@ -42,16 +52,5 @@ python_files = "test_*.py"
 # Tell hatchling where to find the version variable
 [tool.hatch.version]
 path = "fabric_mcp/__about__.py"
-
-[dependency-groups]
-dev = [
-    "black>=25.1.0",
-    "flake8>=7.2.0",
-    "hatch>=1.14.1",
-    "hatchling>=1.27.0",
-    "isort>=6.0.1",
-    "pytest>=8.3.5",
-    "uv>=0.7.2",
-]
 
 # Flake8 config will be in .flake8 file

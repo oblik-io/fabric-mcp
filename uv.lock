@@ -553,14 +553,13 @@ wheels = [
 
 [[package]]
 name = "fabric-mcp"
-version = "0.1.1"
 source = { editable = "." }
 dependencies = [
     { name = "modelcontextprotocol" },
     { name = "requests" },
 ]
 
-[package.dev-dependencies]
+[package.optional-dependencies]
 dev = [
     { name = "black" },
     { name = "flake8" },
@@ -573,20 +572,17 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "black", marker = "extra == 'dev'", specifier = ">=25.1.0" },
+    { name = "flake8", marker = "extra == 'dev'", specifier = ">=7.2.0" },
+    { name = "hatch", marker = "extra == 'dev'", specifier = ">=1.14.1" },
+    { name = "hatchling", marker = "extra == 'dev'", specifier = ">=1.27.0" },
+    { name = "isort", marker = "extra == 'dev'", specifier = ">=6.0.1" },
     { name = "modelcontextprotocol", specifier = ">=0.1.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3.5" },
     { name = "requests", specifier = ">=2.28.0" },
+    { name = "uv", marker = "extra == 'dev'", specifier = ">=0.7.2" },
 ]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "black", specifier = ">=25.1.0" },
-    { name = "flake8", specifier = ">=7.2.0" },
-    { name = "hatch", specifier = ">=1.14.1" },
-    { name = "hatchling", specifier = ">=1.27.0" },
-    { name = "isort", specifier = ">=6.0.1" },
-    { name = "pytest", specifier = ">=8.3.5" },
-    { name = "uv", specifier = ">=0.7.2" },
-]
+provides-extras = ["dev"]
 
 [[package]]
 name = "filelock"
@@ -1180,7 +1176,7 @@ name = "importlib-metadata"
 version = "8.7.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "zipp", marker = "python_full_version < '3.12'" },
+    { name = "zipp" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/76/66/650a33bd90f786193e4de4b3ad86ea60b53c89b669a5c7be931fac31cdb0/importlib_metadata-8.7.0.tar.gz", hash = "sha256:d13b81ad223b890aa16c5471f2ac3056cf76c5f10f82d6f9292f0b415f389000", size = 56641, upload-time = "2025-04-27T15:29:01.736Z" }
 wheels = [
@@ -2264,16 +2260,16 @@ wheels = [
 
 [[package]]
 name = "rich"
-version = "13.9.4"
+version = "14.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "markdown-it-py" },
     { name = "pygments" },
     { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/ab/3a/0316b28d0761c6734d6bc14e770d85506c986c85ffb239e688eeaab2c2bc/rich-13.9.4.tar.gz", hash = "sha256:439594978a49a09530cff7ebc4b5c7103ef57baf48d5ea3184f21d9a2befa098", size = 223149, upload-time = "2024-11-01T16:43:57.873Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a1/53/830aa4c3066a8ab0ae9a9955976fb770fe9c6102117c8ec4ab3ea62d89e8/rich-14.0.0.tar.gz", hash = "sha256:82f1bc23a6a21ebca4ae0c45af9bdbc492ed20231dcb63f297d6d1021a9d5725", size = 224078, upload-time = "2025-03-30T14:15:14.23Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/19/71/39c7c0d87f8d4e6c020a393182060eaefeeae6c01dab6a84ec346f2567df/rich-13.9.4-py3-none-any.whl", hash = "sha256:6049d5e6ec054bf2779ab3358186963bac2ea89175919d699e378b99738c2a90", size = 242424, upload-time = "2024-11-01T16:43:55.817Z" },
+    { url = "https://files.pythonhosted.org/packages/0d/9b/63f4c7ebc259242c89b3acafdb37b41d1185c07ff0011164674e9076b491/rich-14.0.0-py3-none-any.whl", hash = "sha256:1c9491e1951aac09caffd42f448ee3d04e58923ffe14993f6e83068dc395d7e0", size = 243229, upload-time = "2025-03-30T14:15:12.283Z" },
 ]
 
 [[package]]
@@ -2351,7 +2347,7 @@ wheels = [
 
 [[package]]
 name = "together"
-version = "1.5.5"
+version = "1.5.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -2368,9 +2364,9 @@ dependencies = [
     { name = "tqdm" },
     { name = "typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b0/01/d3de35142bb739052121c8d1efed92fe4d5b81f4dfbf3d257075abd4644a/together-1.5.5.tar.gz", hash = "sha256:f13069b531bc660578d78432f1b2c79349acdcc8b676379f74a338692b1efe9c", size = 64304, upload-time = "2025-04-03T23:07:16.231Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/2e/6f/277d44298f970a8831539a8baa78b6a8a775816ca98ebd273d9705920ab2/together-1.5.6.tar.gz", hash = "sha256:2fdcd7c35d279c9996d59b02574ee03d897abf2ec7e47db5d3703c47955a5a5c", size = 65492, upload-time = "2025-05-01T22:36:02.047Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ed/79/168dedc467da5cdbecbf2653fd310ae45abb734269953c822750eeaa106c/together-1.5.5-py3-none-any.whl", hash = "sha256:b7723bbba700e5a0cfde003e175577b0823afa55a7043efd2044aa66c9b82d6e", size = 87865, upload-time = "2025-04-03T23:07:14.669Z" },
+    { url = "https://files.pythonhosted.org/packages/6b/86/c5638b5eeffb077ee40d4cc5eb3cf24e18ffc5a8908a90978565a384ceb8/together-1.5.6-py3-none-any.whl", hash = "sha256:f18cbe99ce6b5db108b19a5eb9a71de9db465e55537a21c754db94cf3b5ea3eb", size = 88729, upload-time = "2025-05-01T22:36:00.634Z" },
 ]
 
 [[package]]
