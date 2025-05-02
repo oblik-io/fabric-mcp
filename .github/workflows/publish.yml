@@ -36,11 +36,12 @@ jobs:
       - name: Publish package to TestPyPI
         if: github.ref == 'refs/heads/develop'
         run: >
-          uv publish --publish-url https://test.pypi.org/legacy/
+          uv publish --index testpypi
           -u __token__ -p ${{ secrets.TEST_PYPI_API_TOKEN }} dist/*
 
       # Publish to PyPI for 'master' branch
       - name: Publish package to PyPI
         if: github.ref == 'refs/heads/master'
         run: >
-          uv publish -u __token__ -p ${{ secrets.PYPI_API_TOKEN }} dist/*
+          uv publish  --index pypi
+          -u __token__ -p ${{ secrets.PYPI_API_TOKEN }} dist/*
