@@ -101,8 +101,9 @@ async def run_server_stdio():
     """Runs the MCP server, reading from stdin and writing to stdout."""
     logging.info("MCP Server starting (stdio transport)")
     reader = asyncio.StreamReader()
-    protocol = asyncio.StreamReaderProtocol(reader)
-    await asyncio.get_event_loop().connect_read_pipe(lambda: protocol, sys.stdin)
+    await asyncio.start_unix_server(
+        lambda: asyncio.StreamReaderProtocol(reader), sys.stdin.fileno()
+    )
     while True:
         line = await reader.readline()
         if not line:
