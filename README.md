@@ -6,6 +6,23 @@ This project implements a standalone server that bridges the gap between [Daniel
 
 Imagine seamlessly using Fabric's specialized prompts for code explanation, refactoring, or creative writing right inside your favorite tools!
 
+## Table of Contents
+
+- [Fabric MCP Server](#fabric-mcp-server)
+  - [Table of Contents](#table-of-contents)
+  - [What is this?](#what-is-this)
+  - [Key Goals \& Features (Based on Design)](#key-goals--features-based-on-design)
+  - [How it Works](#how-it-works)
+  - [Project Status](#project-status)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+      - [From Source (for Development)](#from-source-for-development)
+      - [From PyPI (for Users)](#from-pypi-for-users)
+  - [Contributing](#contributing)
+  - [License](#license)
+
+
 ## What is this?
 
 * **Fabric:** An open-source framework for augmenting human capabilities using AI, focusing on prompt engineering and modular AI workflows.
@@ -51,6 +68,8 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Installation
 
+#### From Source (for Development)
+
 1. **Clone the repository:**
 
    ```bash
@@ -81,6 +100,20 @@ These instructions will get you a copy of the project up and running on your loc
      ```
 
 Now you have the development environment set up!
+
+#### From PyPI (for Users)
+
+If you just want to use the `fabric-mcp` server without developing it, you can install it directly from PyPI:
+
+```bash
+# Using pip
+pip install fabric-mcp
+
+# Or using uv
+uv pip install fabric-mcp
+```
+
+This will install the package and its dependencies. You can then run the server using the `fabric-mcp` command.
 
 ## Contributing
 
