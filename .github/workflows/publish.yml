@@ -22,15 +22,15 @@ jobs:
         with:
           python-version: "3.12" # Use a specific version for consistency
       - name: Set up uv
-        uses: astral-sh/setup-uv@v1
-      # - name: Install uv # Removed manual installation
-      #   run: curl -LsSf https://astral.sh/uv/install.sh | sh
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: latest # Ensure a version with 'uv build' is installed
       - name: Install dependencies
         run: uv sync --dev --all-extras # Need dev tools for building and publishing
       - name: Run tests # Ensure tests pass before publishing
         run: uv run pytest
       - name: Build package
-        run: uv --help && uv build --sdist --wheel -o dist/ .
+        run: uv build --sdist --wheel -o dist/ . # Removed uv --help &&
 
       # Publish to TestPyPI for 'develop' branch
       - name: Publish package to TestPyPI
