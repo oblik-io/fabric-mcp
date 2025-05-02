@@ -20,6 +20,7 @@
 		"cspell.json",
 		".gitignore",
 		".github/workflows/*.yml",
-		".ruff.toml"
+		".ruff.toml",
+		".pylintrc"
 	]
 }
