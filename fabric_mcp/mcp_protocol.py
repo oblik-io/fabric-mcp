@@ -40,11 +40,21 @@ class MCPError(BaseModel):
     data: Optional[MCPErrorData] = None
 
 
+# --- Generic Response Result Field ---
+# Use Union for type hinting the 'result' field in MCPResponse
+# Add new result types to this Union as they are defined
+ResultType = Union[
+    "MCPListToolsResponse",
+    "FabricRunPatternResult",
+    # Add other result types here
+]
+
+
 class MCPResponse(BaseModel):
     """Base model for an MCP response."""
 
     jsonrpc: Literal["2.0"] = "2.0"
-    result: Optional[MCPResponseResult] = None
+    result: Optional[ResultType] = None
     error: Optional[MCPError] = None
     id: Union[str, int, None]  # Must match the request ID
 
@@ -78,5 +88,23 @@ class MCPListToolsResponse(MCPResponseResult):
     tools: List[MCPToolDefinition]
 
 
-# TODO: Add structures for other methods as they are implemented
+# fabric_run_pattern (Example - adjust based on actual Fabric output)
+class FabricRunPatternParams(BaseModel):
+    pattern_name: str = Field(..., description="The name of the pattern to run.")
+    input_text: str = Field(..., description="The primary text input for the pattern.")
+    variables: Optional[Dict[str, Any]] = Field(
+        None, description="Key-value pairs for pattern variables."
+    )
+    attachments: Optional[List[Any]] = Field(
+        None, description="List of attachments for the pattern."
+    )
+    stream: Optional[bool] = Field(False, description="Whether to stream the response.")
+
+
+class FabricRunPatternResult(BaseModel):
+    output: str  # Example: Assuming the pattern returns a single string output
+    # Add other fields as needed, e.g., cost, tokens, etc.
+
+
+# FIXME: Add structures for other methods as they are implemented
 # e.g., fabric_run_pattern, fabric_list_patterns etc.

@@ -9,18 +9,14 @@ from typing import Any, Dict, Optional, Union
 from pydantic import ValidationError
 
 from .mcp_protocol import (
+    FabricRunPatternParams,
+    FabricRunPatternResult,
     MCPError,
     MCPListToolsResponse,
     MCPRequest,
     MCPResponse,
-    # Import other response types as needed
 )
 from .tools import get_tools
-
-# Configure basic logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
-)
 
 # --- Error Codes (Example) ---
 # Follow JSON-RPC 2.0 spec: https://www.jsonrpc.org/specification#error_object
@@ -48,6 +44,45 @@ async def handle_list_tools(request: MCPRequest) -> MCPResponse:
         return MCPResponse(error=error, id=request.id)
 
 
+async def handle_fabric_run_pattern(request: MCPRequest) -> MCPResponse:
+    """Handles the fabric_run_pattern request."""
+    logging.info("Handling fabric_run_pattern request")
+    if request.params is None:
+        error = MCPError(
+            code=INVALID_PARAMS, message="Missing parameters for fabric_run_pattern"
+        )
+        return MCPResponse(error=error, id=request.id)
+
+    try:
+        params = FabricRunPatternParams.model_validate(request.params)
+        logging.debug("Validated params: %s", params)
+
+        # --- Placeholder for actual Fabric logic ---
+        logging.info("Simulating run of pattern: %s", params.pattern_name)
+        await asyncio.sleep(0.1)  # Simulate some work
+        # Shorten the input string preview logic
+        input_preview = params.input_text
+        if len(params.input_text) > 20:
+            input_preview = f"{params.input_text[:20]}..."
+
+        output_text = (
+            f"Ran pattern '{params.pattern_name}' with input: '{input_preview}'"
+        )
+        # --- End Placeholder ---
+
+        result = FabricRunPatternResult(output=output_text)
+        return MCPResponse(result=result, id=request.id)
+
+    except ValidationError as e:
+        logging.error("Invalid parameters for fabric_run_pattern: %s", e)
+        error = MCPError(code=INVALID_PARAMS, message=f"Invalid parameters: {e}")
+        return MCPResponse(error=error, id=request.id)
+    except Exception as e:
+        logging.exception("Error handling fabric_run_pattern")
+        error = MCPError(code=INTERNAL_ERROR, message=f"Internal server error: {e}")
+        return MCPResponse(error=error, id=request.id)
+
+
 # --- Add handlers for other methods here ---
 # async def handle_fabric_run_pattern(request: MCPRequest) -> MCPResponse:
 #     pass # Implement later
@@ -56,8 +91,7 @@ async def handle_list_tools(request: MCPRequest) -> MCPResponse:
 
 METHOD_HANDLERS = {
     "list_tools": handle_list_tools,
-    # "fabric_run_pattern": handle_fabric_run_pattern, # Add later
-    # ... other methods
+    "fabric_run_pattern": handle_fabric_run_pattern,
 }
 
 
@@ -107,16 +141,6 @@ async def run_server_stdio():
 
     while True:
         line = await loop.run_in_executor(None, read_stdin)
-        if not line:
-            logging.info("EOF received, shutting down.")
-            break
-
-    reader = asyncio.StreamReader()
-    await asyncio.start_unix_server(
-        lambda: asyncio.StreamReaderProtocol(reader), sys.stdin.fileno()
-    )
-    while True:
-        line = await reader.readline()
         if not line:
             logging.info("EOF received, shutting down.")
             break
