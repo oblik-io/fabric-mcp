@@ -1,9 +1,9 @@
-"Test core functionality of fabric-mcp"
+"""Test core functionality of fabric-mcp"""
 
 import subprocess
 import sys
 
-from fabric_mcp.__about__ import __version__
+from fabric_mcp import __version__
 
 # Tests for core functionality
 

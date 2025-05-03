@@ -1,12 +1,12 @@
-"CLI entry point for fabric-mcp."
+"""CLI entry point for fabric-mcp."""
 
 import argparse
-import asyncio
-import logging  # Import logging
+import logging
 import sys
 
-from .__about__ import __version__
-from .server import run_server_stdio
+from fabric_mcp import __version__
+
+from .core import FabricMCPServer
 
 
 def main():
@@ -29,8 +29,8 @@ def main():
     parser.add_argument(
         "-l",
         "--log-level",
-        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
-        default="INFO",
+        choices=["debug", "info", "warning", "error", "critical"],
+        default="info",
         help="Set the logging level (default: INFO)",
     )
     # Add other arguments and subcommands here in the future
@@ -43,7 +43,8 @@ def main():
         print(f"Invalid log level: {args.log_level}", file=sys.stderr)
         sys.exit(1)
     logging.basicConfig(
-        level=numeric_level, format="%(asctime)s - %(levelname)s - %(message)s"
+        level=numeric_level,
+        format="%(asctime)s - %(module)s - %(levelname)s - %(message)s",
     )
 
     # If --stdio is not provided, and it's not just --version or --help, show help.
@@ -57,19 +58,14 @@ def main():
             parser.print_help(sys.stderr)
             sys.exit(1)
 
+    logger = logging.getLogger(__name__)
+
     # Add main logic based on args here
     if args.stdio:
-        logging.info("Starting server with log level %s", args.log_level)  # Log level
-        try:
-            # Logging is now configured above
-            asyncio.run(run_server_stdio())
-        except KeyboardInterrupt:
-            logging.info("Server stopped by user.")
-            sys.exit(0)
-        except Exception:
-            # Log the full traceback for unexpected errors
-            logging.exception("An unexpected error occurred during server execution.")
-            sys.exit(1)
+        logger.info("Starting server with log level %s", args.log_level)
+        fabric_mcp = FabricMCPServer(log_level=args.log_level.upper())
+        fabric_mcp.stdio()
+        logger.info("Server stopped.")
 
 
 if __name__ == "__main__":
