@@ -117,7 +117,9 @@ This will install the package and its dependencies. You can then run the server 
 
 ## Contributing
 
-Feedback on the [design document](./docs/design.md) is highly welcome! Please open an issue to share your thoughts or suggestions. Contribution guidelines will be added as the project progresses.
+Feedback on the [design document](./docs/design.md) is highly welcome! Please open an issue to share your thoughts or suggestions.
+
+Read the [contribution document here](./docs/contributing.md) and please follow the guidelines for this repository.
 
 ## License
 
