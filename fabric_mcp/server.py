@@ -100,6 +100,17 @@ async def dispatch_request(request_data: Dict[str, Any]) -> Dict[str, Any]:
 async def run_server_stdio():
     """Runs the MCP server, reading from stdin and writing to stdout."""
     logging.info("MCP Server starting (stdio transport)")
+    loop = asyncio.get_running_loop()
+
+    def read_stdin():
+        return sys.stdin.readline()
+
+    while True:
+        line = await loop.run_in_executor(None, read_stdin)
+        if not line:
+            logging.info("EOF received, shutting down.")
+            break
+
     reader = asyncio.StreamReader()
     await asyncio.start_unix_server(
         lambda: asyncio.StreamReaderProtocol(reader), sys.stdin.fileno()
