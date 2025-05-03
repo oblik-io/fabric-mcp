@@ -4,7 +4,7 @@ name: Build and Publish
 on:
   push:
     branches:
-      - master
+      - main
       - develop
 
 jobs:
@@ -39,9 +39,9 @@ jobs:
           uv publish --index testpypi
           -u __token__ -p ${{ secrets.TEST_PYPI_API_TOKEN }} dist/*
 
-      # Publish to PyPI for 'master' branch
+      # Publish to PyPI for 'main' branch
       - name: Publish package to PyPI
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/main'
         run: >
           uv publish  --index pypi
           -u __token__ -p ${{ secrets.PYPI_API_TOKEN }} dist/*

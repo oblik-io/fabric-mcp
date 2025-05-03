@@ -4,13 +4,12 @@ name: Run Tests
 on:
   push:
     branches:
-      - master # Or your main branch name
-      - develop # Add other branches if needed
+      - main
+      - develop
   pull_request:
     branches:
-      - master # Or your main branch name
-      - develop # Add other branches if needed
-
+      - main
+      - develop
 jobs:
   tests:
     runs-on: ubuntu-latest
