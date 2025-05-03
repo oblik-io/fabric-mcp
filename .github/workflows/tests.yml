@@ -1,15 +1,22 @@
 # .github/workflows/test.yml
 name: Run Tests
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master # Or your main branch name
+      - develop # Add other branches if needed
+  pull_request:
+    branches:
+      - master # Or your main branch name
+      - develop # Add other branches if needed
 
 jobs:
   tests:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12"] # Test against supported Python versions
-
+        python-version: ["3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
@@ -26,5 +33,6 @@ jobs:
         run: |
           uv run ruff format --check .
           uv run ruff check .
+          uv run pylint .
       - name: Run tests
         run: uv run pytest

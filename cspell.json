@@ -2,6 +2,7 @@
 	"words": [
 		"danielmiessler",
 		"isort",
+		"levelname",
 		"listmodels",
 		"listpatterns",
 		"liststrategies",
@@ -20,6 +21,7 @@
 		"cspell.json",
 		".gitignore",
 		".github/workflows/*.yml",
-		".ruff.toml"
+		".ruff.toml",
+		".pylintrc"
 	]
 }

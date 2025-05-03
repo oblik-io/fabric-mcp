@@ -6,19 +6,36 @@ This project implements a standalone server that bridges the gap between [Daniel
 
 Imagine seamlessly using Fabric's specialized prompts for code explanation, refactoring, or creative writing right inside your favorite tools!
 
+## Table of Contents
+
+- [Fabric MCP Server](#fabric-mcp-server)
+  - [Table of Contents](#table-of-contents)
+  - [What is this?](#what-is-this)
+  - [Key Goals \& Features (Based on Design)](#key-goals--features-based-on-design)
+  - [How it Works](#how-it-works)
+  - [Project Status](#project-status)
+  - [Getting Started](#getting-started)
+    - [Prerequisites](#prerequisites)
+    - [Installation](#installation)
+      - [From Source (for Development)](#from-source-for-development)
+      - [From PyPI (for Users)](#from-pypi-for-users)
+  - [Contributing](#contributing)
+  - [License](#license)
+
+
 ## What is this?
 
-* **Fabric:** An open-source framework for augmenting human capabilities using AI, focusing on prompt engineering and modular AI workflows.
-* **MCP:** An open standard protocol enabling AI applications (like IDEs) to securely interact with external tools and data sources (like this server).
-* **Fabric MCP Server:** This project acts as an MCP server, translating MCP requests into calls to a running Fabric instance's REST API (`fabric --serve`).
+- **Fabric:** An open-source framework for augmenting human capabilities using AI, focusing on prompt engineering and modular AI workflows.
+- **MCP:** An open standard protocol enabling AI applications (like IDEs) to securely interact with external tools and data sources (like this server).
+- **Fabric MCP Server:** This project acts as an MCP server, translating MCP requests into calls to a running Fabric instance's REST API (`fabric --serve`).
 
 ## Key Goals & Features (Based on Design)
 
-* **Seamless Integration:** Use Fabric patterns and capabilities directly within MCP clients without switching context.
-* **Enhanced Workflows:** Empower LLMs within IDEs or other tools to leverage Fabric's specialized prompts and user configurations.
-* **Standardization:** Adhere to the open MCP standard for AI tool integration.
-* **Leverage Fabric Core:** Build upon the existing Fabric CLI and REST API without modifying the core Fabric codebase.
-* **Expose Fabric Functionality:** Provide MCP tools to list patterns, get pattern details, run patterns, list models/strategies, and retrieve configuration.
+- **Seamless Integration:** Use Fabric patterns and capabilities directly within MCP clients without switching context.
+- **Enhanced Workflows:** Empower LLMs within IDEs or other tools to leverage Fabric's specialized prompts and user configurations.
+- **Standardization:** Adhere to the open MCP standard for AI tool integration.
+- **Leverage Fabric Core:** Build upon the existing Fabric CLI and REST API without modifying the core Fabric codebase.
+- **Expose Fabric Functionality:** Provide MCP tools to list patterns, get pattern details, run patterns, list models/strategies, and retrieve configuration.
 
 ## How it Works
 
@@ -35,10 +52,10 @@ This project is currently in the **design phase**. The core architecture and pro
 
 **Next Steps:**
 
-* Select implementation language (Go/Python) and MCP library.
-* Implement the standalone MCP server.
-* Define detailed handling for streaming, variables, attachments, and errors.
-* Gather community feedback.
+- Select implementation language (Go/Python) and MCP library.
+- Implement the standalone MCP server.
+- Define detailed handling for streaming, variables, attachments, and errors.
+- Gather community feedback.
 
 ## Getting Started
 
@@ -46,10 +63,12 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-* Python >= 3.10
-* [uv](https://github.com/astral-sh/uv) (Python package and environment manager)
+- Python >= 3.10
+- [uv](https://github.com/astral-sh/uv) (Python package and environment manager)
 
 ### Installation
+
+#### From Source (for Development)
 
 1. **Clone the repository:**
 
@@ -68,19 +87,33 @@ These instructions will get you a copy of the project up and running on your loc
 
 3. **Activate the virtual environment (uv will create it if needed):**
 
-   * On macOS/Linux:
+   - On macOS/Linux:
 
      ```bash
      source .venv/bin/activate
      ```
 
-   * On Windows:
+   - On Windows:
 
      ```bash
      .venv\Scripts\activate
      ```
 
 Now you have the development environment set up!
+
+#### From PyPI (for Users)
+
+If you just want to use the `fabric-mcp` server without developing it, you can install it directly from PyPI:
+
+```bash
+# Using pip
+pip install fabric-mcp
+
+# Or using uv
+uv pip install fabric-mcp
+```
+
+This will install the package and its dependencies. You can then run the server using the `fabric-mcp` command.
 
 ## Contributing
 
