@@ -49,19 +49,11 @@ def main():
     # If --stdio is not provided, and it's not just --version or --help, show help.
     # Allow running with just --log-level if --stdio is also present.
     if not args.stdio:
-        # Check if any arguments other than known flags were passed
-        other_args = [
-            arg
+        # Show help if no arguments or only unrelated flags are provided
+        if len(sys.argv) == 1 or all(
+            arg in ["--version", "-h", "--help"] or arg.startswith("--log-level")
             for arg in sys.argv[1:]
-            if arg not in ["--version", "-h", "--help"]
-            and not arg.startswith("--log-level")
-        ]
-        if len(sys.argv) == 1 or other_args:
-            parser.print_help(sys.stderr)
-            sys.exit(1)
-        # If only --log-level (or --version/--help) was passed without --stdio,
-        # show help
-        elif not other_args and "--stdio" not in sys.argv:
+        ):
             parser.print_help(sys.stderr)
             sys.exit(1)
 
