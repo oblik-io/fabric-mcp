@@ -43,5 +43,5 @@ jobs:
       - name: Publish package to PyPI
         if: github.ref == 'refs/heads/main'
         run: >
-          uv publish  --index pypi
+          uv publish --index pypi
           -u __token__ -p ${{ secrets.PYPI_API_TOKEN }} dist/*
