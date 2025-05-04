@@ -1,3 +1,5 @@
+"""Unit tests for the server_stdio module in fabric_mcp."""
+
 import importlib
 import logging
 
@@ -22,22 +24,12 @@ def test_log_instance_creation():
 def test_logger_instance_creation():
     """Test if the logger instance is created and configured."""
     assert isinstance(server_stdio_module.logger, logging.Logger)
-    # Check if the logger level is set (might be influenced by root logger config)
-    # This check depends on how Log configures logging
-    # assert server_stdio_module.logger.level == server_stdio_module.log.level
-    # Check if the initial info message was logged (requires capturing logs)
+    assert server_stdio_module.logger.name == "FabricMCP"
 
 
 def test_fabric_mcp_server_instance_creation():
     """Test if the FabricMCPServer instance is created correctly."""
     assert isinstance(server_stdio_module.fabric_mcp, FabricMCP)
-    # Check if the log level was passed correctly during initialization
-    # Accessing the internal mcp logger level might be needed if FabricMCPServer
-    # doesn't expose its own log level directly after init.
-    # assert (
-    #     server_stdio_module.fabric_mcp.mcp.logger.level
-    #     == server_stdio_module.log.level
-    # )
 
 
 def test_mcp_instance_creation():

@@ -18,6 +18,7 @@
 		"pytest",
 		"restapi",
 		"toupper",
+		"usefixtures",
 		"venv"
 	],
 	"ignorePaths": [
