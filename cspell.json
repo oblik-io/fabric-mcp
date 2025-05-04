@@ -10,6 +10,7 @@
 		"Miessler",
 		"Miessler's",
 		"modelcontextprotocol",
+		"pylint",
 		"pyproject",
 		"pytest",
 		"restapi",
