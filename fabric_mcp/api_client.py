@@ -1,5 +1,6 @@
 """Fabric API Client for Python"""
 
+import json
 import os
 from typing import Any, Dict, Optional
 
@@ -189,7 +190,7 @@ if __name__ == "__main__":
             # This specific call might raise JSONDecodeError
             print(api_response.json())
         # Catch JSON decoding errors specifically first
-        except requests.exceptions.JSONDecodeError as e:
+        except (requests.exceptions.JSONDecodeError, json.JSONDecodeError) as e:
             print(f"Failed to decode JSON response: {e}")
             # Optionally print the raw text if decoding fails
             if api_response is not None:
