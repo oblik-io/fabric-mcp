@@ -58,7 +58,12 @@ We welcome contributions to this project! Please follow these guidelines:
     git push origin my-fix-branch
     ```
 
-10. **Submit a pull request:** Open a pull request from your fork's branch to the `develop` branch of the main project repository. Ensure the pull request description clearly explains the changes and references any relevant issues.
+10. **Submit a pull request:**
+
+    Open a pull request from your fork's branch to the `develop` branch of the main project repository. Ensure the pull request description clearly explains the changes and references any relevant issues.
+
+    > NOTE: The PR *must* be based off `develop`. The `main` branch is our stable branch and
+    `develop` is fixes and new features.
 
 ## Code Style
 
