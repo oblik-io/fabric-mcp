@@ -2,6 +2,9 @@
 
 import logging
 
+from rich.console import Console
+from rich.logging import RichHandler
+
 
 class Log:
     """Custom class to handle logging set up and log levels."""
@@ -10,11 +13,25 @@ class Log:
         """Initialize the Log class with a specific log level."""
         self._level_name = level.upper()
         self._level = Log.log_level(self._level_name)
-        self._logger = logging.getLogger(__name__)
-        logging.basicConfig(
-            level=self.level,
-            format="%(asctime)s - %(module)s - %(levelname)s - %(message)s",
+
+        handler = RichHandler(
+            console=Console(stderr=True),
+            rich_tracebacks=True,
         )
+        formatter = logging.Formatter(
+            "%(asctime)s - %(module)s  - %(levelname)s - %(message)s"
+        )
+        handler.setFormatter(formatter)
+
+        self._logger = logging.getLogger("FabricMCP")
+        self._logger.setLevel(self.level_name)
+
+        self.logger.setLevel(self.level_name.upper())
+
+        # Remove any existing handlers to avoid duplicates on reconfiguration
+        for handler in self.logger.handlers[:]:
+            self.logger.removeHandler(handler)
+        self._logger.addHandler(handler)
 
     @property
     def level_name(self) -> str:
@@ -41,8 +58,10 @@ class Log:
             "ERROR": logging.ERROR,
             "CRITICAL": logging.CRITICAL,
         }
-        if level not in levels:
+        # Ensure level is uppercase for dictionary lookup
+        level_upper = level.upper()
+        if level_upper not in levels:
             raise ValueError(
                 f"Invalid log level: {level}. Choose from {list(levels.keys())}."
             )
-        return levels.get(level.lower(), logging.INFO)
+        return levels.get(level_upper)

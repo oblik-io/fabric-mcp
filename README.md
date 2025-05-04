@@ -22,7 +22,6 @@ Imagine seamlessly using Fabric's specialized prompts for code explanation, refa
   - [Contributing](#contributing)
   - [License](#license)
 
-
 ## What is this?
 
 - **Fabric:** An open-source framework for augmenting human capabilities using AI, focusing on prompt engineering and modular AI workflows.

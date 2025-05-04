@@ -9,14 +9,15 @@ from fastmcp import FastMCP
 from . import __version__
 
 
-class FabricMCPServer:
+class FabricMCP(FastMCP):
     """Base class for the Model Context Protocol server."""
 
     def __init__(self, log_level: str = "INFO"):
         """Initialize the MCP server with a model."""
-        mcp = FastMCP(f"Fabric MCP v{__version__}", log_level=log_level)
-        self.mcp = mcp
+        super().__init__(f"Fabric MCP v{__version__}", log_level=log_level)
+        self.mcp = self
         self.logger = logging.getLogger(__name__)
+        mcp = self
 
         @mcp.tool()
         def fabric_list_patterns() -> list[str]:

@@ -5,7 +5,7 @@ import sys
 
 from fabric_mcp import __version__
 
-from .core import FabricMCPServer
+from .core import FabricMCP
 from .utils import Log
 
 
@@ -33,7 +33,7 @@ def main():
         default="info",
         help="Set the logging level (default: INFO)",
     )
-    # Add other arguments and subcommands here in the future
+
     args = parser.parse_args()
 
     log = Log(args.log_level)
@@ -44,7 +44,9 @@ def main():
     if not args.stdio:
         # Show help if no arguments or only unrelated flags are provided
         if len(sys.argv) == 1 or all(
-            arg in ["--version", "-h", "--help"] or arg.startswith("--log-level")
+            arg in ["--version", "-h", "--help"]
+            or arg.startswith("--log-level")
+            or arg.startswith("-l=")
             for arg in sys.argv[1:]
         ):
             parser.print_help(sys.stderr)
@@ -53,7 +55,7 @@ def main():
     # Add main logic based on args here
     if args.stdio:
         logger.info("Starting server with log level %s", args.log_level)
-        fabric_mcp = FabricMCPServer(log_level=log.level_name)
+        fabric_mcp = FabricMCP(log_level=log.level_name)
         fabric_mcp.stdio()
         logger.info("Server stopped.")
 

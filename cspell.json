@@ -1,6 +1,9 @@
 {
 	"words": [
+		"autouse",
+		"caplog",
 		"danielmiessler",
+		"excinfo",
 		"fastmcp",
 		"isort",
 		"levelname",
