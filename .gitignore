@@ -192,7 +192,6 @@ node_modules/
 *.sw?
 # OS specific
 .DS_Store
-tasks/
 
 # Keep cusror and windsurf rules local
 .windsurfrules

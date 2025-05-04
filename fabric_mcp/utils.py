@@ -26,7 +26,7 @@ class Log:
         self._logger = logging.getLogger("FabricMCP")
         self._logger.setLevel(self.level_name)
 
-        self.logger.setLevel(self.level_name.upper())
+        self.logger.setLevel(self.level_name)
 
         # Remove any existing handlers to avoid duplicates on reconfiguration
         for handler in self.logger.handlers[:]:
