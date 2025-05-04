@@ -43,8 +43,8 @@ class FabricApiClient:
         self.timeout = timeout
 
         if not self.api_key:
-            # Consider raising an error or allowing unauthenticated requests
-            logger.warning("Fabric API key not provided. Authentication will fail.")
+            logger.warning("Fabric API key not provided.")
+            logger.warning("If necessary, set the FABRIC_API_KEY environment variable.")
 
         self.session = requests.Session()
         # Basic user agent
@@ -58,7 +58,6 @@ class FabricApiClient:
             total=3,
             backoff_factor=0.3,
             status_forcelist=[500, 502, 503, 504],  # Retry on server errors
-            # Break long list onto multiple lines
             allowed_methods=[
                 "HEAD",
                 "GET",
