@@ -43,8 +43,9 @@ class FabricApiClient:
         self.timeout = timeout
 
         if not self.api_key:
-            logger.warning("Fabric API key not provided.")
-            logger.warning("If necessary, set the FABRIC_API_KEY environment variable.")
+            logger.warning(
+                "Fabric API key not provided. If needed, set FABRIC_API_KEY variable."
+            )
 
         self.session = requests.Session()
         # Basic user agent
