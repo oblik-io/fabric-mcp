@@ -9,7 +9,7 @@ from rich.logging import RichHandler
 class Log:
     """Custom class to handle logging set up and log levels."""
 
-    def __init__(self, level: str):
+    def __init__(self, level: str = "info"):
         """Initialize the Log class with a specific log level."""
         self._level_name = level.upper()
         self._level = Log.log_level(self._level_name)
