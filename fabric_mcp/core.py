@@ -19,19 +19,19 @@ class FabricMCPServer:
         self.logger = logging.getLogger(__name__)
 
         @mcp.tool()
-        def list_patterns() -> list[str]:
+        def fabric_list_patterns() -> list[str]:
             """Return a list of available fabric patterns."""
             # This is a placeholder for the actual implementation
             return ["pattern1", "pattern2", "pattern3"]
 
         @mcp.tool()
-        def get_pattern(pattern_name: str) -> dict:
+        def fabric_pattern_details(pattern_name: str) -> dict:
             """Return the details of a specific fabric pattern."""
             # This is a placeholder for the actual implementation
             return {"name": pattern_name, "details": "Pattern details here"}
 
         @mcp.tool()
-        def run_pattern(pattern_name: str, *args, **kwargs) -> dict:
+        def fabric_run_pattern(pattern_name: str, *args, **kwargs) -> dict:
             """Run a specific fabric pattern with the given arguments."""
             # This is a placeholder for the actual implementation
             return {

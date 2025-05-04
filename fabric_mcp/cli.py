@@ -1,12 +1,12 @@
 """CLI entry point for fabric-mcp."""
 
 import argparse
-import logging
 import sys
 
 from fabric_mcp import __version__
 
 from .core import FabricMCPServer
+from .utils import Log
 
 
 def main():
@@ -36,16 +36,8 @@ def main():
     # Add other arguments and subcommands here in the future
     args = parser.parse_args()
 
-    # Configure logging
-    numeric_level = getattr(logging, args.log_level.upper(), None)
-    if not isinstance(numeric_level, int):
-        # This should not happen with choices, but good practice
-        print(f"Invalid log level: {args.log_level}", file=sys.stderr)
-        sys.exit(1)
-    logging.basicConfig(
-        level=numeric_level,
-        format="%(asctime)s - %(module)s - %(levelname)s - %(message)s",
-    )
+    log = Log(args.log_level)
+    logger = log.logger
 
     # If --stdio is not provided, and it's not just --version or --help, show help.
     # Allow running with just --log-level if --stdio is also present.
@@ -58,12 +50,10 @@ def main():
             parser.print_help(sys.stderr)
             sys.exit(1)
 
-    logger = logging.getLogger(__name__)
-
     # Add main logic based on args here
     if args.stdio:
         logger.info("Starting server with log level %s", args.log_level)
-        fabric_mcp = FabricMCPServer(log_level=args.log_level.upper())
+        fabric_mcp = FabricMCPServer(log_level=log.level_name)
         fabric_mcp.stdio()
         logger.info("Server stopped.")
 

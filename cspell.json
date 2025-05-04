@@ -13,6 +13,7 @@
 		"pyproject",
 		"pytest",
 		"restapi",
+		"toupper",
 		"venv"
 	],
 	"ignorePaths": [
