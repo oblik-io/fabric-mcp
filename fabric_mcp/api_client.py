@@ -178,9 +178,9 @@ if __name__ == "__main__":
         client = FabricApiClient()
         api_response = None
         try:
-            # Example: Try to get models (adjust endpoint if needed)
+            # Example: Try to get list of strategies
             print("Attempting to connect to Fabric API...")
-            api_response = client.get("/models/names")  # Use renamed variable
+            api_response = client.get("/strategies")
             print("Successfully connected and received response:")
             # This specific call might raise JSONDecodeError
             print(api_response.json())
