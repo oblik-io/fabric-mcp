@@ -1,6 +1,9 @@
 {
 	"words": [
+		"autouse",
+		"caplog",
 		"danielmiessler",
+		"excinfo",
 		"fastmcp",
 		"isort",
 		"levelname",
@@ -10,9 +13,12 @@
 		"Miessler",
 		"Miessler's",
 		"modelcontextprotocol",
+		"pylint",
 		"pyproject",
 		"pytest",
 		"restapi",
+		"toupper",
+		"usefixtures",
 		"venv"
 	],
 	"ignorePaths": [
