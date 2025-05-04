@@ -34,4 +34,19 @@ jobs:
           uv run ruff check .
           uv run pylint .
       - name: Run tests
-        run: uv run pytest
+        run: uv run pytest -v
+
+  check_pr_source:
+    name: Check PR Source Branch
+    runs-on: ubuntu-latest
+    # Only run this check for pull requests targeting the main branch
+    if: github.base_ref == 'main' && github.event_name == 'pull_request'
+    steps:
+      - name: Verify source branch is develop
+        run: |
+          if [[ "${{ github.head_ref }}" != "develop" ]]; then
+            echo "Error: Pull requests targeting 'main' must originate from the 'develop' branch."
+            exit 1
+          else
+            echo "Source branch is 'develop'. Check passed."
+          fi
