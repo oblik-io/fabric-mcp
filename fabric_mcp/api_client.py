@@ -35,7 +35,7 @@ class FabricApiClient:
             base_url: The base URL for the Fabric API. Defaults to env
                       FABRIC_BASE_URL or DEFAULT_BASE_URL.
             api_key: The API key for authentication. Defaults to env FABRIC_API_KEY.
-            region: The region for the Fabric service (placeholder).
+
             timeout: Request timeout in seconds.
         """
         self.base_url = base_url or os.environ.get("FABRIC_BASE_URL", DEFAULT_BASE_URL)
