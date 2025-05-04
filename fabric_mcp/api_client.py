@@ -18,6 +18,9 @@ DEFAULT_TIMEOUT = 30  # seconds
 class FabricApiClient:
     """Client for interacting with the Fabric REST API."""
 
+    FABRIC_API_HEADER = "X-API-Key"
+    REDACTED_HEADERS = ["Authorization", FABRIC_API_HEADER]
+
     def __init__(
         self,
         base_url: Optional[str] = None,
@@ -47,7 +50,7 @@ class FabricApiClient:
         self.session.headers.update({"User-Agent": "FabricMCPClient/0.1"})
         if self.api_key:
             # Add Auth header
-            self.session.headers.update({"X-API-Key": f"{self.api_key}"})
+            self.session.headers.update({self.FABRIC_API_HEADER: f"{self.api_key}"})
 
         # Configure retry strategy
         retry_strategy = Retry(
@@ -103,8 +106,9 @@ class FabricApiClient:
 
         # Mask API key in logs
         log_headers = request_headers.copy()
-        if "Authorization" in log_headers:
-            log_headers["Authorization"] = "Bearer ***REDACTED***"
+        for header in self.REDACTED_HEADERS:
+            if header in log_headers:
+                log_headers[header] = "***REDACTED***"
 
         logger.debug("Request: %s %s", method, url)
         logger.debug("Headers: %s", log_headers)
