@@ -63,32 +63,26 @@ Create unit tests with mock responses for each Fabric API endpoint. Test error h
 10. Write integration tests that verify error handling with actual API responses
 11. Document all error scenarios and resolution steps
 
-## 4. Set up API Authentication [pending]
+## 4. Implement Core API Client [pending]
 ### Dependencies: None
-### Description: Implement authentication mechanism using Fabric API keys
-### Details:
-Create a module to handle API key management, implement token acquisition using MSAL.Net library for Microsoft Fabric or appropriate authentication for Fabric API, and store credentials securely. Include functionality to refresh tokens when needed.
-
-## 5. Implement Core API Client [pending]
-### Dependencies: 3.4
 ### Description: Create the base API client with connection handling
 ### Details:
 Develop a core client class that establishes connection to the Fabric REST API endpoint, handles HTTP requests/responses using HttpClient or similar, and implements proper connection pooling and timeout handling.
 
-## 6. Develop Endpoint-Specific Methods [pending]
-### Dependencies: 3.5
+## 5. Develop Endpoint-Specific Methods [pending]
+### Dependencies: 3.4
 ### Description: Implement methods for all required API endpoints
 ### Details:
 Create dedicated methods for each required endpoint (/patterns, /chat, /models/names, /strategies, /config) with appropriate request parameters and response parsing. Ensure proper data serialization/deserialization.
 
-## 7. Implement Error Handling [pending]
-### Dependencies: 3.5, 3.6
+## 6. Implement Error Handling [pending]
+### Dependencies: 3.4, 3.5
 ### Description: Create comprehensive error handling for API interactions
 ### Details:
 Develop error handling mechanisms for API connection issues, authentication failures, invalid responses, rate limiting, and unexpected server errors. Implement appropriate retry logic and meaningful error messages.
 
-## 8. Create Configuration and Logging System [pending]
-### Dependencies: 3.5
+## 7. Create Configuration and Logging System [pending]
+### Dependencies: 3.4
 ### Description: Implement configuration management and request/response logging
 ### Details:
 Develop a configuration system for specifying API endpoints, credentials, and client behavior options. Implement comprehensive logging for all API requests and responses to facilitate debugging, with appropriate log levels and sensitive data masking.
