@@ -16,7 +16,7 @@
 Create unit tests with mock responses for each Fabric API endpoint. Test error handling by simulating various failure scenarios.
 
 # Subtasks:
-## 1. Implement Core API Client Infrastructure [pending]
+## 1. Implement Core API Client Infrastructure [in-progress]
 ### Dependencies: None
 ### Description: Create the foundational API client class with configuration management, authentication, and base HTTP methods
 ### Details:

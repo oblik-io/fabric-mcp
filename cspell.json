@@ -5,6 +5,7 @@
 		"danielmiessler",
 		"excinfo",
 		"fastmcp",
+		"forcelist",
 		"isort",
 		"levelname",
 		"listmodels",

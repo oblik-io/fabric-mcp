@@ -19,6 +19,7 @@ Imagine seamlessly using Fabric's specialized prompts for code explanation, refa
     - [Installation](#installation)
       - [From Source (for Development)](#from-source-for-development)
       - [From PyPI (for Users)](#from-pypi-for-users)
+  - [Configuration (Environment Variables)](#configuration-environment-variables)
   - [Contributing](#contributing)
   - [License](#license)
 
@@ -42,19 +43,16 @@ Imagine seamlessly using Fabric's specialized prompts for code explanation, refa
 2. The Host discovers available tools (like `fabric_run_pattern`) via MCP's `list_tools()` mechanism.
 3. When the user invokes a tool (e.g., asking the IDE's AI assistant to refactor code using a Fabric pattern), the Host sends an MCP request to this server.
 4. The **Fabric MCP Server** translates the MCP request into a corresponding REST API call to a running `fabric --serve` instance.
-5. The `fabric --serve` instance processes the request (e.g., executes the pattern).
+5. The `fabric --serve` instance executes the pattern.
 6. The **Fabric MCP Server** receives the response (potentially streaming) from Fabric and translates it back into an MCP response for the Host.
 
 ## Project Status
 
-This project is currently in the **design phase**. The core architecture and proposed tools are outlined in the [High-Level Design Document](./docs/design.md).
+This project is currently in the **implementation** phase.
 
-**Next Steps:**
+The core architecture and proposed tools are outlined in the [High-Level Design Document][tasks_list].
 
-- Select implementation language (Go/Python) and MCP library.
-- Implement the standalone MCP server.
-- Define detailed handling for streaming, variables, attachments, and errors.
-- Gather community feedback.
+The current task list is in the [tasks directory][tasks_directory] and is managed by the excellent [Task Master][taskmaster] tool.
 
 ## Getting Started
 
@@ -114,9 +112,32 @@ uv pip install fabric-mcp
 
 This will install the package and its dependencies. You can then run the server using the `fabric-mcp` command.
 
+## Configuration (Environment Variables)
+
+The `fabric-mcp` server can be configured using the following environment variables:
+
+- **`FABRIC_BASE_URL`**: The base URL of the running Fabric REST API server (`fabric --serve`).
+  - *Default*: `http://127.0.0.1:8080`
+- **`FABRIC_API_KEY`**: The API key required to authenticate with the Fabric REST API server, if it's configured to require one.
+  - *Default*: None (Authentication is not attempted if not set).
+- **`FABRIC_MCP_LOG_LEVEL`**: Sets the logging verbosity for the `fabric-mcp` server itself.
+  - *Options*: `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL` (case-insensitive).
+  - *Default*: `INFO`
+
+You can set these variables in your shell environment (or put them into a `.env` file in the working directory) before running `fabric-mcp`:
+
+```bash
+export FABRIC_BASE_URL="http://your-fabric-host:port"
+# This must match the key used by fabric --serve
+export FABRIC_API_KEY="your_secret_api_key"
+export FABRIC_MCP_LOG_LEVEL="DEBUG"
+
+fabric-mcp --stdio
+```
+
 ## Contributing
 
-Feedback on the [design document](./docs/design.md) is highly welcome! Please open an issue to share your thoughts or suggestions.
+Feedback on the [design document][tasks_list] is highly welcome! Please open an issue to share your thoughts or suggestions.
 
 Read the [contribution document here](./docs/contributing.md) and please follow the guidelines for this repository.
 
@@ -126,3 +147,6 @@ Copyright (c) 2025, [Kayvan Sylvan](kayvan@sylvan.com) Licensed under the [MIT L
 
 [fabricGithubLink]: https://github.com/danielmiessler/fabric
 [MCP]: https://modelcontextprotocol.io/
+[taskmaster]: https://github.com/eyaltoledano/claude-task-master
+[tasks_list]: ./docs/design.md
+[tasks_directory]: ./tasks

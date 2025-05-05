@@ -1,16 +1,25 @@
 """Utility functions for the fabric_mcp module."""
 
 import logging
+import os
 
 from rich.console import Console
 from rich.logging import RichHandler
 
 
 class Log:
-    """Custom class to handle logging set up and log levels."""
+    """
+    Custom class to handle logging setup and log levels.
 
-    def __init__(self, level: str):
+    This class initializes a logger with a specified log level. If no log level is
+    provided during initialization, the class attempts to use the `FABRIC_MCP_LOG_LEVEL`
+    environment variable as a fallback. If the environment variable is not set, the
+    default log level is `INFO`.
+    """
+
+    def __init__(self, level: str = ""):
         """Initialize the Log class with a specific log level."""
+        level = os.environ.get("FABRIC_MCP_LOG_LEVEL", level) or "INFO"
         self._level_name = level.upper()
         self._level = Log.log_level(self._level_name)
 
