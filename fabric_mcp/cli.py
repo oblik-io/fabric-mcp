@@ -54,7 +54,7 @@ def main():
 
     # Add main logic based on args here
     if args.stdio:
-        logger.info("Starting server with log level %s", args.log_level)
+        logger.info("Starting server with log level %s", log.level_name)
         fabric_mcp = FabricMCP(log_level=log.level_name)
         fabric_mcp.stdio()
         logger.info("Server stopped.")

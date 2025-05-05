@@ -8,6 +8,7 @@ import requests  # Grouped external imports
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+from fabric_mcp import __version__ as fabric_mcp_version
 from fabric_mcp.utils import Log
 
 logger = Log().logger
@@ -49,7 +50,9 @@ class FabricApiClient:
 
         self.session = requests.Session()
         # Basic user agent
-        self.session.headers.update({"User-Agent": "FabricMCPClient/0.1"})
+        self.session.headers.update(
+            {"User-Agent": f"FabricMCPClient/v{fabric_mcp_version}"}
+        )
         if self.api_key:
             # Add Auth header
             self.session.headers.update({self.FABRIC_API_HEADER: f"{self.api_key}"})
