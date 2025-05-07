@@ -50,7 +50,6 @@ class FabricApiClient:
         # Basic limits, retries are handled by transport
         limits = httpx.Limits(max_connections=100, max_keepalive_connections=20)
         # Configure retries directly on the transport
-        # transport = httpx.HTTPTransport(retries=3) # Old retry strategy
 
         # New retry strategy with backoff using httpx-retries
         retry_strategy = Retry(
