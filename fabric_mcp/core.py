@@ -46,7 +46,7 @@ class FabricMCP(FastMCP[None]):
                 input_str (str): The input string to be processed by the pattern.
 
             Returns:
-                dict[Any, Any]: A dictionary containing the pattern name, input, and result.
+                dict[Any, Any]: Contains the pattern name, input, and result.
             """
             # This is a placeholder for the actual implementation
             return {
