@@ -118,7 +118,8 @@ class FabricApiClient:
                 params=params,
                 json=json_data,
                 data=data,
-                headers=headers,
+                timeout=self.timeout,
+                headers=effective_request_headers,
             )
             logger.debug("Response Status: %s", response.status_code)
             response.raise_for_status()
