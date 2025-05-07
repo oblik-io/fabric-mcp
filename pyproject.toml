@@ -24,7 +24,7 @@ dependencies = [
 
 [project.urls]
 "Homepage" = "https://github.com/ksylvan/fabric-mcp"
-"Repository" = "https://github.com/ksylvan/fabric-mcp"
+"Releases" = "https://github.com/ksylvan/fabric-mcp/releases"
 "Bug Tracker" = "https://github.com/ksylvan/fabric-mcp/issues"
 "Documentation" = "https://github.com/ksylvan/fabric-mcp#readme"
 

@@ -104,7 +104,7 @@ class FabricApiClient:
             requests.exceptions.RequestException: For connection errors, timeouts, etc.
         """
         url = f"{self.base_url.rstrip('/')}/{endpoint.lstrip('/')}"
-        request_headers = self.session.headers.copy()
+        request_headers = dict(self.session.headers)
         if headers:
             request_headers.update(headers)
 

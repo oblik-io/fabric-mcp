@@ -73,4 +73,4 @@ class Log:
             raise ValueError(
                 f"Invalid log level: {level}. Choose from {list(levels.keys())}."
             )
-        return levels.get(level_upper)
+        return levels[level_upper]
