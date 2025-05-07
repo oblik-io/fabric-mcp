@@ -7,6 +7,8 @@
 		"fastmcp",
 		"forcelist",
 		"isort",
+		"keepalive",
+		"ksylvan",
 		"levelname",
 		"listmodels",
 		"listpatterns",
@@ -25,6 +27,7 @@
 		"venv"
 	],
 	"ignorePaths": [
+		"./bin/setup.sh",
 		".flake8",
 		"uv.lock",
 		"pyproject.toml",
