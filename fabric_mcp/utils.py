@@ -59,7 +59,14 @@ class Log:
 
     @staticmethod
     def log_level(level: str) -> int:
-        """Convert a string log level to its corresponding integer value."""
+        """Convert a string log level to its corresponding integer value.
+        Args:
+            level (str): The log level as a string (e.g., "DEBUG", "INFO").
+        Returns:
+            int: The corresponding log level as an integer.
+        Raises:
+            KeyError: If the provided log level is not valid.
+        """
         levels = {
             "DEBUG": logging.DEBUG,
             "INFO": logging.INFO,
@@ -70,7 +77,7 @@ class Log:
         # Ensure level is uppercase for dictionary lookup
         level_upper = level.upper()
         if level_upper not in levels:
-            raise ValueError(
+            raise KeyError(
                 f"Invalid log level: {level}. Choose from {list(levels.keys())}."
             )
         return levels[level_upper]

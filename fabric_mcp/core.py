@@ -38,7 +38,16 @@ class FabricMCP(FastMCP[None]):
 
         @self.tool()
         def fabric_run_pattern(pattern_name: str, input_str: str) -> dict[Any, Any]:
-            """Run a specific fabric pattern with the given arguments."""
+            """
+            Run a specific fabric pattern with the given arguments.
+
+            Args:
+                pattern_name (str): The name of the fabric pattern to run.
+                input_str (str): The input string to be processed by the pattern.
+
+            Returns:
+                dict[Any, Any]: A dictionary containing the pattern name, input, and result.
+            """
             # This is a placeholder for the actual implementation
             return {
                 "name": pattern_name,
