@@ -17,7 +17,7 @@ def test_log_init_valid_level():
 
 def test_log_init_invalid_level():
     """Test Log initialization with an invalid log level."""
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(KeyError) as excinfo:
         Log("INVALID")
     assert "Invalid log level: INVALID" in str(excinfo.value)
 
@@ -54,7 +54,7 @@ def test_log_level_static_method_valid():
 
 def test_log_level_static_method_invalid():
     """Test the log_level static method with an invalid level."""
-    with pytest.raises(ValueError) as excinfo:
+    with pytest.raises(KeyError) as excinfo:
         Log.log_level("invalid_level")
     assert "Invalid log level: invalid_level" in str(excinfo.value)
 

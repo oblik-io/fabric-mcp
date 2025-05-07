@@ -104,7 +104,7 @@ class FabricApiClient:
             requests.exceptions.RequestException: For connection errors, timeouts, etc.
         """
         url = f"{self.base_url.rstrip('/')}/{endpoint.lstrip('/')}"
-        request_headers = self.session.headers.copy()
+        request_headers = dict(self.session.headers)
         if headers:
             request_headers.update(headers)
 
@@ -147,7 +147,7 @@ class FabricApiClient:
     # --- Public API Methods (Wrapped signatures for line length) ---
 
     def get(
-        self, endpoint: str, params: Optional[Dict[str, Any]] = None, **kwargs
+        self, endpoint: str, params: Optional[Dict[str, Any]] = None, **kwargs: Any
     ) -> requests.Response:
         """Sends a GET request."""
         return self._request("GET", endpoint, params=params, **kwargs)
@@ -157,7 +157,7 @@ class FabricApiClient:
         endpoint: str,
         json_data: Optional[Dict[str, Any]] = None,
         data: Optional[Any] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> requests.Response:
         """Sends a POST request."""
         return self._request("POST", endpoint, json_data=json_data, data=data, **kwargs)
@@ -167,12 +167,12 @@ class FabricApiClient:
         endpoint: str,
         json_data: Optional[Dict[str, Any]] = None,
         data: Optional[Any] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> requests.Response:
         """Sends a PUT request."""
         return self._request("PUT", endpoint, json_data=json_data, data=data, **kwargs)
 
-    def delete(self, endpoint: str, **kwargs) -> requests.Response:
+    def delete(self, endpoint: str, **kwargs: Any) -> requests.Response:
         """Sends a DELETE request."""
         return self._request("DELETE", endpoint, **kwargs)
 

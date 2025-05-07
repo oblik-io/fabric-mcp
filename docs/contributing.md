@@ -68,7 +68,11 @@ We welcome contributions to this project! Please follow these guidelines:
 
 ## Code Style
 
-Please follow the existing code style. We use `ruff` for formatting and quick linting, and `pylint` for more thorough static analysis. Configuration can be found in `pyproject.toml`. Ensure you run the linters before committing (see step 7 above).
+Please follow the existing code style. We use `ruff` for formatting and quick linting, and `pylint` for more thorough static analysis. We also use `pyright` with `strict` level type checking.
+
+Configuration can be found in `pyproject.toml`.
+
+Ensure you run the linters before committing (see step 7 above).
 
 ## Fast MCP inspector
 

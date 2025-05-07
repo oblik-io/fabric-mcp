@@ -50,9 +50,23 @@ Imagine seamlessly using Fabric's specialized prompts for code explanation, refa
 
 This project is currently in the **implementation** phase.
 
-The core architecture and proposed tools are outlined in the [High-Level Design Document][tasks_list].
+The core architecture and proposed tools are outlined in the [High-Level Design Document][design_doc].
 
-The current task list is in the [tasks directory][tasks_directory] and is managed by the excellent [Task Master][taskmaster] tool.
+The current task list is in the [tasks directory][tasks_directory] and is managed by the excellent [Task Master][taskmaster] tool. You can install it like this:
+
+```bash
+# you can also use pnpm if you prefer
+npm install -g task-master-ai
+```
+
+And occasionally you should upgrade it:
+
+```bash
+# or use "pnpm upgrade -g task-master-ai"
+npm upgrade -g task-master-ai
+```
+
+Read the Task Master docs for how to set up your `.env` file with the appropriate API keys.
 
 ## Getting Started
 
@@ -137,7 +151,7 @@ fabric-mcp --stdio
 
 ## Contributing
 
-Feedback on the [design document][tasks_list] is highly welcome! Please open an issue to share your thoughts or suggestions.
+Feedback on the [design document][design_doc] is highly welcome! Please open an issue to share your thoughts or suggestions.
 
 Read the [contribution document here](./docs/contributing.md) and please follow the guidelines for this repository.
 
@@ -148,5 +162,5 @@ Copyright (c) 2025, [Kayvan Sylvan](kayvan@sylvan.com) Licensed under the [MIT L
 [fabricGithubLink]: https://github.com/danielmiessler/fabric
 [MCP]: https://modelcontextprotocol.io/
 [taskmaster]: https://github.com/eyaltoledano/claude-task-master
-[tasks_list]: ./docs/design.md
+[design_doc]: ./docs/design.md
 [tasks_directory]: ./tasks

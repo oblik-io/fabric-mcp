@@ -5,10 +5,17 @@ _here_dir=$(pwd)
 _dir="$(cd "$(dirname "$0")" && pwd)"
 _topdir="$(cd "${_dir}/.." && pwd)"
 
-GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
-RED='\033[0;31m'
-NO_COLOR='\033[0m'
+if command -v tput >/dev/null 2>&1 && [[ -n "${TERM:-}" ]] && [[ "${TERM:-}" != "dumb" ]]; then
+    GREEN=$(tput setaf 2)
+    YELLOW=$(tput setaf 3)
+    RED=$(tput setaf 1)
+    NO_COLOR=$(tput sgr0)
+else
+    GREEN='\033[0;32m'
+    YELLOW='\033[0;33m'
+    RED='\033[0;31m'
+    NO_COLOR='\033[0m'
+fi
 
 # Official trusted install script
 UV_INSTALL_URL=https://astral.sh/uv/install.sh

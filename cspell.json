@@ -17,6 +17,7 @@
 		"ollama",
 		"pylint",
 		"pyproject",
+		"pyright",
 		"pytest",
 		"restapi",
 		"toupper",
