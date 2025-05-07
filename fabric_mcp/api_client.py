@@ -4,9 +4,7 @@ import json
 import os
 from typing import Any, Dict, Optional
 
-import requests  # Grouped external imports
-from requests.adapters import HTTPAdapter
-from urllib3.util.retry import Retry
+import httpx
 
 from fabric_mcp import __version__ as fabric_mcp_version
 from fabric_mcp.utils import Log
@@ -36,7 +34,6 @@ class FabricApiClient:
             base_url: The base URL for the Fabric API. Defaults to env
                       FABRIC_BASE_URL or DEFAULT_BASE_URL.
             api_key: The API key for authentication. Defaults to env FABRIC_API_KEY.
-
             timeout: Request timeout in seconds.
         """
         self.base_url = base_url or os.environ.get("FABRIC_BASE_URL", DEFAULT_BASE_URL)
@@ -48,32 +45,23 @@ class FabricApiClient:
                 "Fabric API key not provided. If needed, set FABRIC_API_KEY variable."
             )
 
-        self.session = requests.Session()
-        # Basic user agent
-        self.session.headers.update(
-            {"User-Agent": f"FabricMCPClient/v{fabric_mcp_version}"}
-        )
-        if self.api_key:
-            # Add Auth header
-            self.session.headers.update({self.FABRIC_API_HEADER: f"{self.api_key}"})
+        # Configure retry strategy for httpx
+        # Basic limits, retries are handled by transport
+        limits = httpx.Limits(max_connections=100, max_keepalive_connections=20)
+        # Configure retries directly on the transport
+        transport = httpx.HTTPTransport(retries=3)
 
-        # Configure retry strategy
-        retry_strategy = Retry(
-            total=3,
-            backoff_factor=0.3,
-            status_forcelist=[500, 502, 503, 504],  # Retry on server errors
-            allowed_methods=[
-                "HEAD",
-                "GET",
-                "OPTIONS",
-                "POST",
-                "PUT",
-                "DELETE",
-            ],  # Retry on these methods
+        headers = {"User-Agent": f"FabricMCPClient/v{fabric_mcp_version}"}
+        if self.api_key:
+            headers[self.FABRIC_API_HEADER] = f"{self.api_key}"
+
+        self.client = httpx.Client(
+            base_url=self.base_url,
+            headers=headers,
+            timeout=self.timeout,
+            limits=limits,
+            transport=transport,
         )
-        adapter = HTTPAdapter(max_retries=retry_strategy)
-        self.session.mount("http://", adapter)
-        self.session.mount("https://", adapter)  # Ensure HTTPS is also covered
 
         logger.info("FabricApiClient initialized for base URL: %s", self.base_url)
 
@@ -85,7 +73,7 @@ class FabricApiClient:
         json_data: Optional[Dict[str, Any]] = None,
         data: Optional[Any] = None,
         headers: Optional[Dict[str, str]] = None,
-    ) -> requests.Response:
+    ) -> httpx.Response:
         """
         Makes a request to the Fabric API.
 
@@ -98,24 +86,23 @@ class FabricApiClient:
             headers: Additional request headers.
 
         Returns:
-            The requests.Response object.
+            The httpx.Response object.
 
         Raises:
-            requests.exceptions.RequestException: For connection errors, timeouts, etc.
+            httpx.RequestError: For connection errors, timeouts, etc.
+            httpx.HTTPStatusError: For 4xx or 5xx responses.
         """
-        url = f"{self.base_url.rstrip('/')}/{endpoint.lstrip('/')}"
-        request_headers = dict(self.session.headers)
+        log_request_headers = dict(self.client.headers)
         if headers:
-            request_headers.update(headers)
+            log_request_headers.update(headers)
 
         # Mask API key in logs
-        log_headers = request_headers.copy()
-        for header in self.REDACTED_HEADERS:
-            if header in log_headers:
-                log_headers[header] = "***REDACTED***"
+        for header_key in self.REDACTED_HEADERS:
+            if header_key in log_request_headers:
+                log_request_headers[header_key] = "***REDACTED***"
 
-        logger.debug("Request: %s %s", method, url)
-        logger.debug("Headers: %s", log_headers)
+        logger.debug("Request: %s %s", method, endpoint)
+        logger.debug("Headers: %s", log_request_headers)
         if params:
             logger.debug("Params: %s", params)
         if json_data:
@@ -124,31 +111,35 @@ class FabricApiClient:
             logger.debug("Body: <raw data>")
 
         try:
-            response = self.session.request(
+            response = self.client.request(
                 method=method,
-                url=url,
+                url=endpoint,
                 params=params,
                 json=json_data,
                 data=data,
-                headers=request_headers,
-                timeout=self.timeout,
+                headers=headers,
             )
             logger.debug("Response Status: %s", response.status_code)
-            # Log response body carefully, might be large or sensitive
-            # logger.debug("Response Body: %s...", response.text[:500]) # Example
-
-            # Raise HTTPError for bad responses (4xx or 5xx)
             response.raise_for_status()
             return response
-        except requests.exceptions.RequestException as e:
-            logger.error("API request failed: %s %s - %s", method, url, e)
-            raise  # Re-raise the exception after logging
+        except httpx.RequestError as e:
+            logger.error("API request failed: %s %s - %s", method, endpoint, e)
+            raise
+        except httpx.HTTPStatusError as e:
+            logger.error(
+                "API request failed with status %s: %s %s - %s",
+                e.response.status_code,
+                method,
+                endpoint,
+                e,
+            )
+            raise
 
-    # --- Public API Methods (Wrapped signatures for line length) ---
+    # --- Public API Methods ---
 
     def get(
         self, endpoint: str, params: Optional[Dict[str, Any]] = None, **kwargs: Any
-    ) -> requests.Response:
+    ) -> httpx.Response:
         """Sends a GET request."""
         return self._request("GET", endpoint, params=params, **kwargs)
 
@@ -158,7 +149,7 @@ class FabricApiClient:
         json_data: Optional[Dict[str, Any]] = None,
         data: Optional[Any] = None,
         **kwargs: Any,
-    ) -> requests.Response:
+    ) -> httpx.Response:
         """Sends a POST request."""
         return self._request("POST", endpoint, json_data=json_data, data=data, **kwargs)
 
@@ -168,13 +159,19 @@ class FabricApiClient:
         json_data: Optional[Dict[str, Any]] = None,
         data: Optional[Any] = None,
         **kwargs: Any,
-    ) -> requests.Response:
+    ) -> httpx.Response:
         """Sends a PUT request."""
         return self._request("PUT", endpoint, json_data=json_data, data=data, **kwargs)
 
-    def delete(self, endpoint: str, **kwargs: Any) -> requests.Response:
+    def delete(self, endpoint: str, **kwargs: Any) -> httpx.Response:
         """Sends a DELETE request."""
         return self._request("DELETE", endpoint, **kwargs)
+
+    def close(self):
+        """Closes the httpx client and releases resources."""
+        if hasattr(self, "client"):
+            self.client.close()
+        logger.info("FabricApiClient closed.")
 
 
 # Example usage (optional, for testing)
@@ -182,25 +179,22 @@ if __name__ == "__main__":
 
     def main():
         """Main function to demonstrate the Fabric API client."""
-        # Assumes FABRIC_API_KEY is set in the environment
         client = FabricApiClient()
         api_response = None
         try:
-            # Example: Try to get list of strategies
             print("Attempting to connect to Fabric API...")
             api_response = client.get("/strategies")
             print("Successfully connected and received response:")
-            # This specific call might raise JSONDecodeError
             print(api_response.json())
-        # Catch JSON decoding errors specifically first
-        except (requests.exceptions.JSONDecodeError, json.JSONDecodeError) as e:
+        except json.JSONDecodeError as e:
             print(f"Failed to decode JSON response: {e}")
-            # Optionally print the raw text if decoding fails
             if api_response is not None:
                 print(f"Raw response text: {api_response.text[:500]}...")
-        # Catch other request-related errors (Connection, Timeout, HTTPError, etc.)
-        except requests.exceptions.RequestException as e:
+        except httpx.RequestError as e:
             print(f"Failed to connect or get response: {e}")
-        # Removed the generic 'except Exception' for the example
+        except httpx.HTTPStatusError as e:
+            print(f"API request failed with status {e.response.status_code}: {e}")
+        finally:
+            client.close()
 
     main()
