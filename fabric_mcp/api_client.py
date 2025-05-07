@@ -55,7 +55,7 @@ class FabricApiClient:
         # New retry strategy with backoff using httpx-retries
         retry_strategy = Retry(
             total=3,  # Number of retries
-            backoff_factor=1,  # Exponential backoff factor (e.g., 1s, 2s, 4s)
+            backoff_factor=0.3,  # Exponential backoff factor (e.g., 0.3s, 0.6s, 1.2s)
             status_forcelist=[429, 500, 502, 503, 504],  # Status codes to retry on
             allowed_methods=[
                 "HEAD",
