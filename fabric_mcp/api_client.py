@@ -92,9 +92,10 @@ class FabricApiClient:
             httpx.RequestError: For connection errors, timeouts, etc.
             httpx.HTTPStatusError: For 4xx or 5xx responses.
         """
-        log_request_headers = dict(self.client.headers)
+        effective_request_headers = dict(self.client.headers)
         if headers:
-            log_request_headers.update(headers)
+            effective_request_headers.update(headers)
+        log_request_headers = dict(effective_request_headers)
 
         # Mask API key in logs
         for header_key in self.REDACTED_HEADERS:
