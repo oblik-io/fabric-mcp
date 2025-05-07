@@ -27,6 +27,7 @@
 		"venv"
 	],
 	"ignorePaths": [
+		"./bin/setup.sh",
 		".flake8",
 		"uv.lock",
 		"pyproject.toml",

@@ -5,6 +5,7 @@ import os
 from typing import Any, Dict, Optional
 
 import httpx
+from httpx_retries import Retry, RetryTransport
 
 from fabric_mcp import __version__ as fabric_mcp_version
 from fabric_mcp.utils import Log
@@ -49,7 +50,23 @@ class FabricApiClient:
         # Basic limits, retries are handled by transport
         limits = httpx.Limits(max_connections=100, max_keepalive_connections=20)
         # Configure retries directly on the transport
-        transport = httpx.HTTPTransport(retries=3)
+        # transport = httpx.HTTPTransport(retries=3) # Old retry strategy
+
+        # New retry strategy with backoff using httpx-retries
+        retry_strategy = Retry(
+            total=3,  # Number of retries
+            backoff_factor=1,  # Exponential backoff factor (e.g., 1s, 2s, 4s)
+            status_forcelist=[429, 500, 502, 503, 504],  # Status codes to retry on
+            allowed_methods=[
+                "HEAD",
+                "GET",
+                "PUT",
+                "DELETE",
+                "OPTIONS",
+                "TRACE",
+            ],  # Methods to retry on
+        )
+        transport = RetryTransport(retry=retry_strategy)
 
         headers = {"User-Agent": f"FabricMCPClient/v{fabric_mcp_version}"}
         if self.api_key:
@@ -171,8 +188,7 @@ class FabricApiClient:
 
     def close(self):
         """Closes the httpx client and releases resources."""
-        if hasattr(self, "client"):
-            self.client.close()
+        self.client.close()
         logger.info("FabricApiClient closed.")
 
 

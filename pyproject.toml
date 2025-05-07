@@ -20,6 +20,7 @@ dependencies = [
     "modelcontextprotocol>=0.1.0",
     "fastmcp>=2.2.10",
     "rich>=14.0.0",
+    "httpx-retries>=0.3.2",
 ]
 
 [project.urls]
