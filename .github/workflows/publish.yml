@@ -20,17 +20,17 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12" # Use a specific version for consistency
+          python-version: "3.12"
       - name: Set up uv
         uses: astral-sh/setup-uv@v6
         with:
-          version: latest # Ensure a version with 'uv build' is installed
+          version: latest
       - name: Install dependencies
-        run: uv sync --dev
-      - name: Run tests # Ensure tests pass before publishing
-        run: uv run pytest
+        run: make bootstrap
+      - name: Run tests
+        run: make test
       - name: Build package
-        run: uv build --sdist --wheel -o dist/ . # Removed uv --help &&
+        run: make build
 
       # Publish to TestPyPI for 'develop' branch
       - name: Publish package to TestPyPI

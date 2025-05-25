@@ -13,6 +13,7 @@ ignore=.git,
 max-line-length=88
 
 [MESSAGES CONTROL]
+enable = broad-except
 
 # Disable the message, report, category or checker with the given id(s).
 # disable=missing-docstring

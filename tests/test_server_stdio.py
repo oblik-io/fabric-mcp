@@ -39,7 +39,7 @@ def test_mcp_instance_creation():
 
 
 @pytest.mark.usefixtures("caplog")  # Use caplog fixture to capture logs
-def test_initial_log_message(caplog):
+def test_initial_log_message(caplog: pytest.LogCaptureFixture):
     """Test if the initial server start message is logged."""
     # Re-import or reload the module within the test if necessary
     # to ensure the log message is captured by caplog for this specific test.

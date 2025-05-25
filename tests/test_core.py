@@ -27,7 +27,7 @@ def test_cli_version():
 
 
 @pytest.fixture(name="server_instance")  # Renamed fixture
-def _server_instance() -> FabricMCP:
+def server_instance_fixture() -> FabricMCP:
     """Fixture to create a FabricMCPServer instance."""
     return FabricMCP(log_level="DEBUG")
 

@@ -27,7 +27,6 @@
 		"venv"
 	],
 	"ignorePaths": [
-		"./bin/setup.sh",
 		".flake8",
 		"uv.lock",
 		"pyproject.toml",
@@ -35,6 +34,8 @@
 		".gitignore",
 		".github/workflows/*.yml",
 		".ruff.toml",
-		".pylintrc"
+		".pylintrc",
+		"coverage_html/**",
+		"mypy.ini"
 	]
 }
