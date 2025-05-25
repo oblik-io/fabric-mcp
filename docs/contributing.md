@@ -17,11 +17,11 @@ We welcome contributions to this project! Please follow these guidelines:
     git checkout -b my-fix-branch
     ```
 
-3. **Set up the development environment:** Run the setup script from the root of the repository. This will create a virtual environment (`.venv`) using `uv` and install all necessary dependencies, including development tools.
+3. **Set up the development environment:** Run this step from the root of the repository. This will create a virtual environment (`.venv`) using `uv` and install all necessary dependencies, including development tools.
 
     ```bash
     # Run from the project root directory
-    ./bin/setup.sh
+    make bootstrap
     ```
 
 4. **Activate the virtual environment:** Before running any project commands, activate the environment:
@@ -35,13 +35,13 @@ We welcome contributions to this project! Please follow these guidelines:
 6. **Test your changes:** Run the test suite using `pytest`. You can also use the VS Code task "Run Test Suite". Tests are automatically run via GitHub Actions (`tests.yml`) when you open a pull request.
 
     ```bash
-    pytest -v
+    make test
     ```
 
 7. **Check code style:** Ensure your code adheres to the project's style guidelines by running the linters (`ruff` and `pylint`). You can also use the VS Code task "Run Linter". Linting is automatically checked via GitHub Actions (`tests.yml`) when you open a pull request.
 
     ```bash
-    ruff check . && pylint .
+    make lint
     ```
 
 8. **Commit your changes:** Commit your changes with a clear commit message following conventional commit standards if possible:
@@ -122,6 +122,8 @@ Please follow the existing code style. We use `ruff` for formatting and quick li
 Configuration can be found in `pyproject.toml`.
 
 Ensure you run the linters before committing (see step 7 above).
+
+Also, the test suite implements code coverage and is set up to fail with a 90% threshold.
 
 ## Fast MCP inspector
 

@@ -43,11 +43,13 @@ def main():
     # Allow running with just --log-level if --stdio is also present.
     if not args.stdio:
         # Show help if no arguments or only unrelated flags are provided
+        argv_no_prog = sys.argv[1:]
         if len(sys.argv) == 1 or all(
             arg in ["--version", "-h", "--help"]
             or arg.startswith("--log-level")
             or arg.startswith("-l=")
-            for arg in sys.argv[1:]
+            or arg in ["debug", "info", "warning", "error", "critical"]
+            for arg in argv_no_prog
         ):
             parser.print_help(sys.stderr)
             sys.exit(1)

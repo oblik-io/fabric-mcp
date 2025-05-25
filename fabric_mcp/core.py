@@ -2,7 +2,8 @@
 
 import logging
 from asyncio.exceptions import CancelledError
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 from anyio import WouldBlock
 from fastmcp import FastMCP
@@ -15,10 +16,11 @@ class FabricMCP(FastMCP[None]):
 
     def __init__(self, log_level: str = "INFO"):
         """Initialize the MCP server with a model."""
-        super().__init__(f"Fabric MCP v{__version__}", log_level=log_level)
+        super().__init__(f"Fabric MCP v{__version__}")
         self.mcp = self
         self.logger = logging.getLogger(__name__)
         self.__tools: list[Callable[..., Any]] = []
+        self.log_level = log_level
 
         @self.tool()
         def fabric_list_patterns() -> list[str]:
@@ -60,7 +62,7 @@ class FabricMCP(FastMCP[None]):
     def stdio(self):
         """Run the MCP server."""
         try:
-            self.mcp.run()
+            self.mcp.run(logging_level=self.log_level)
         except (KeyboardInterrupt, CancelledError, WouldBlock):
             # Handle graceful shutdown
             self.logger.info("Server stopped by user.")

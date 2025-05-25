@@ -1,8 +1,7 @@
 """Fabric API Client for Python"""
 
-import json
 import os
-from typing import Any, Dict, Optional
+from typing import Any
 
 import httpx
 from httpx_retries import Retry, RetryTransport
@@ -24,8 +23,8 @@ class FabricApiClient:
 
     def __init__(
         self,
-        base_url: Optional[str] = None,
-        api_key: Optional[str] = None,
+        base_url: str | None = None,
+        api_key: str | None = None,
         timeout: int = DEFAULT_TIMEOUT,
     ):
         """
@@ -33,7 +32,7 @@ class FabricApiClient:
 
         Args:
             base_url: The base URL for the Fabric API. Defaults to env
-                      FABRIC_BASE_URL or DEFAULT_BASE_URL.
+                FABRIC_BASE_URL or DEFAULT_BASE_URL.
             api_key: The API key for authentication. Defaults to env FABRIC_API_KEY.
             timeout: Request timeout in seconds.
         """
@@ -85,10 +84,10 @@ class FabricApiClient:
         self,
         method: str,
         endpoint: str,
-        params: Optional[Dict[str, Any]] = None,
-        json_data: Optional[Dict[str, Any]] = None,
-        data: Optional[Any] = None,
-        headers: Optional[Dict[str, str]] = None,
+        params: dict[str, Any] | None = None,
+        json_data: dict[str, Any] | None = None,
+        data: Any | None = None,
+        headers: dict[str, str] | None = None,
     ) -> httpx.Response:
         """
         Makes a request to the Fabric API.
@@ -156,7 +155,7 @@ class FabricApiClient:
     # --- Public API Methods ---
 
     def get(
-        self, endpoint: str, params: Optional[Dict[str, Any]] = None, **kwargs: Any
+        self, endpoint: str, params: dict[str, Any] | None = None, **kwargs: Any
     ) -> httpx.Response:
         """Sends a GET request."""
         return self._request("GET", endpoint, params=params, **kwargs)
@@ -164,8 +163,8 @@ class FabricApiClient:
     def post(
         self,
         endpoint: str,
-        json_data: Optional[Dict[str, Any]] = None,
-        data: Optional[Any] = None,
+        json_data: dict[str, Any] | None = None,
+        data: Any | None = None,
         **kwargs: Any,
     ) -> httpx.Response:
         """Sends a POST request."""
@@ -174,8 +173,8 @@ class FabricApiClient:
     def put(
         self,
         endpoint: str,
-        json_data: Optional[Dict[str, Any]] = None,
-        data: Optional[Any] = None,
+        json_data: dict[str, Any] | None = None,
+        data: Any | None = None,
         **kwargs: Any,
     ) -> httpx.Response:
         """Sends a PUT request."""
@@ -189,29 +188,3 @@ class FabricApiClient:
         """Closes the httpx client and releases resources."""
         self.client.close()
         logger.info("FabricApiClient closed.")
-
-
-# Example usage (optional, for testing)
-if __name__ == "__main__":
-
-    def main():
-        """Main function to demonstrate the Fabric API client."""
-        client = FabricApiClient()
-        api_response = None
-        try:
-            print("Attempting to connect to Fabric API...")
-            api_response = client.get("/strategies")
-            print("Successfully connected and received response:")
-            print(api_response.json())
-        except json.JSONDecodeError as e:
-            print(f"Failed to decode JSON response: {e}")
-            if api_response is not None:
-                print(f"Raw response text: {api_response.text[:500]}...")
-        except httpx.RequestError as e:
-            print(f"Failed to connect or get response: {e}")
-        except httpx.HTTPStatusError as e:
-            print(f"API request failed with status {e.response.status_code}: {e}")
-        finally:
-            client.close()
-
-    main()
