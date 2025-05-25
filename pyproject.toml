@@ -51,6 +51,8 @@ dev = [
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = "test_*.py"
+asyncio_default_fixture_loop_scope = "function"
+markers = ["integration: marks tests as integration tests"]
 
 # Tell hatchling where to find the version variable
 [tool.hatch.version]
@@ -67,3 +69,4 @@ typeCheckingMode = "strict"
 reportMissingTypeStubs = true
 reportUnknownParameterType = true
 reportUnknownMemberType = true
+reportAny = true

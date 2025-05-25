@@ -1,6 +1,5 @@
 """Fabric API Client for Python"""
 
-import json
 import os
 from typing import Any
 
@@ -189,29 +188,3 @@ class FabricApiClient:
         """Closes the httpx client and releases resources."""
         self.client.close()
         logger.info("FabricApiClient closed.")
-
-
-# Example usage (optional, for testing)
-if __name__ == "__main__":
-
-    def main():
-        """Main function to demonstrate the Fabric API client."""
-        client = FabricApiClient()
-        api_response = None
-        try:
-            print("Attempting to connect to Fabric API...")
-            api_response = client.get("/strategies")
-            print("Successfully connected and received response:")
-            print(api_response.json())
-        except json.JSONDecodeError as e:
-            print(f"Failed to decode JSON response: {e}")
-            if api_response is not None:
-                print(f"Raw response text: {api_response.text[:500]}...")
-        except httpx.RequestError as e:
-            print(f"Failed to connect or get response: {e}")
-        except httpx.HTTPStatusError as e:
-            print(f"API request failed with status {e.response.status_code}: {e}")
-        finally:
-            client.close()
-
-    main()

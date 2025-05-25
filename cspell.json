@@ -2,6 +2,7 @@
 	"words": [
 		"autouse",
 		"caplog",
+		"capsys",
 		"danielmiessler",
 		"excinfo",
 		"fastmcp",
