@@ -181,7 +181,6 @@ class TestFabricApiClient:
             # pylint: disable=protected-access
             request_method = getattr(client, "_request")
             request_method("GET", "/test")
-            request_method("GET", "/test")
 
     @patch("fabric_mcp.api_client.httpx.Client")
     def test_request_method_handles_http_status_error(self, mock_client_class: Mock):

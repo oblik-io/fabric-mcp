@@ -24,7 +24,7 @@ class FabricApiClient:
     def __init__(
         self,
         base_url: str | None = None,
-        api_key: str | None | None = None,
+        api_key: str | None = None,
         timeout: int = DEFAULT_TIMEOUT,
     ):
         """

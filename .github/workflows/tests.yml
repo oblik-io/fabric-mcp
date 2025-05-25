@@ -31,6 +31,8 @@ jobs:
       - name: Run linters and formatters
         run: make lint
       - name: Run tests
+        run: make test
+      - name: Run coverage
         run: make coverage
 
   check_pr_source:
