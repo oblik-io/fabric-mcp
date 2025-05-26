@@ -1,5 +1,16 @@
 # Fabric MCP Server
 
+[![License: MIT][mit_license]][mit_license_link]
+[![image](https://img.shields.io/pypi/v/fabric-mcp.svg)](https://pypi.python.org/pypi/fabric-mcp)
+
+| main  |   |  | develop  |   |
+|:---:|:---:|:---:|:---:|:---:|
+| [![Main Tests][main_tests]][main_tests_link] | [![Main Publish][main_publish]][main_publish_link] |  | [![Develop Tests][develop_tests]][develop_tests_link] | [![Develop Publish][develop_publish]][develop_publish_link] |
+
+<div align="center">
+<img src="https://github.com/ksylvan/pyhatchery/blob/main/docs/logo.png?raw=true" alt="fabric-mcp logo" width="150" height="150">
+</div>
+
 **Connect the power of the Fabric AI framework to any Model Context Protocol (MCP) compatible application.**
 
 This project implements a standalone server that bridges the gap between [Daniel Miessler's Fabric framework][fabricGithubLink] and the [Model Context Protocol (MCP)][MCP]. It allows you to use Fabric's patterns, models, and configurations directly within MCP-enabled environments like IDE extensions or chat interfaces.
@@ -16,9 +27,8 @@ Imagine seamlessly using Fabric's specialized prompts for code explanation, refa
   - [Project Status](#project-status)
   - [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
-    - [Installation](#installation)
-      - [From Source (for Development)](#from-source-for-development)
-      - [From PyPI (for Users)](#from-pypi-for-users)
+    - [Installation From Source (for developers)](#installation-from-source-for-developers)
+    - [Installation From PyPI (for users)](#installation-from-pypi-for-users)
   - [Configuration (Environment Variables)](#configuration-environment-variables)
   - [Contributing](#contributing)
   - [License](#license)
@@ -52,8 +62,6 @@ This project is currently in the **implementation** phase.
 
 The core architecture and proposed tools are outlined in the [High-Level Design Document][design_doc].
 
-The current task list is in the [tasks directory][tasks_directory] and is managed by the excellent [Task Master][taskmaster] tool. You can install it like this:
-
 ```bash
 # you can also use pnpm if you prefer
 npm install -g task-master-ai
@@ -75,11 +83,9 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 
 - Python >= 3.10
-- [uv](https://github.com/astral-sh/uv) (Python package and environment manager)
+- [uv](https://github.com/astral-sh/uv) (Python package and environment manager) for developers
 
-### Installation
-
-#### From Source (for Development)
+### Installation From Source (for developers)
 
 1. **Clone the repository:**
 
@@ -112,7 +118,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 Now you have the development environment set up!
 
-#### From PyPI (for Users)
+### Installation From PyPI (for users)
 
 If you just want to use the `fabric-mcp` server without developing it, you can install it directly from PyPI:
 
@@ -161,6 +167,14 @@ Copyright (c) 2025, [Kayvan Sylvan](kayvan@sylvan.com) Licensed under the [MIT L
 
 [fabricGithubLink]: https://github.com/danielmiessler/fabric
 [MCP]: https://modelcontextprotocol.io/
-[taskmaster]: https://github.com/eyaltoledano/claude-task-master
 [design_doc]: ./docs/design.md
-[tasks_directory]: ./tasks
+[develop_publish_link]: https://github.com/ksylvan/fabric-mcp/actions/workflows/publish.yml?branch=develop
+[develop_publish]: https://github.com/ksylvan/fabric-mcp/actions/workflows/publish.yml/badge.svg?branch=develop
+[develop_tests_link]: https://github.com/ksylvan/fabric-mcp/actions/workflows/tests.yml?branch=develop
+[develop_tests]: https://github.com/ksylvan/fabric-mcp/actions/workflows/tests.yml/badge.svg?branch=develop
+[mit_license_link]: https://opensource.org/licenses/MIT
+[mit_license]: https://img.shields.io/badge/License-MIT-yellow.svg
+[main_publish_link]: https://github.com/ksylvan/fabric-mcp/actions/workflows/publish.yml
+[main_publish]: https://github.com/ksylvan/fabric-mcp/actions/workflows/publish.yml/badge.svg
+[main_tests_link]: https://github.com/ksylvan/fabric-mcp/actions/workflows/tests.yml
+[main_tests]: https://github.com/ksylvan/fabric-mcp/actions/workflows/tests.yml/badge.svg
