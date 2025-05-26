@@ -62,7 +62,7 @@ class FabricMCP(FastMCP[None]):
     def stdio(self):
         """Run the MCP server."""
         try:
-            self.mcp.run(logging_level=self.log_level)
+            self.mcp.run()
         except (KeyboardInterrupt, CancelledError, WouldBlock):
             # Handle graceful shutdown
             self.logger.info("Server stopped by user.")

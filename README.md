@@ -52,8 +52,6 @@ This project is currently in the **implementation** phase.
 
 The core architecture and proposed tools are outlined in the [High-Level Design Document][design_doc].
 
-The current task list is in the [tasks directory][tasks_directory] and is managed by the excellent [Task Master][taskmaster] tool. You can install it like this:
-
 ```bash
 # you can also use pnpm if you prefer
 npm install -g task-master-ai
@@ -161,6 +159,4 @@ Copyright (c) 2025, [Kayvan Sylvan](kayvan@sylvan.com) Licensed under the [MIT L
 
 [fabricGithubLink]: https://github.com/danielmiessler/fabric
 [MCP]: https://modelcontextprotocol.io/
-[taskmaster]: https://github.com/eyaltoledano/claude-task-master
 [design_doc]: ./docs/design.md
-[tasks_directory]: ./tasks
