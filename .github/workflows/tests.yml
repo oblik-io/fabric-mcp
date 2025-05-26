@@ -55,7 +55,7 @@ jobs:
     uses: ./.github/workflows/get-version.yml
     with:
       branch-name: "develop"
-      file-path: "fabric_mcp/__about__.py"
+      file-path: "src/fabric_mcp/__about__.py"
 
   get_current_version:
     name: Get Current Version
@@ -63,7 +63,7 @@ jobs:
     uses: ./.github/workflows/get-version.yml
     with:
       branch-name: "${{ github.head_ref }}"
-      file-path: "fabric_mcp/__about__.py"
+      file-path: "src/fabric_mcp/__about__.py"
 
   check_pr_version_bump:
     name: Check PR Version Bump
