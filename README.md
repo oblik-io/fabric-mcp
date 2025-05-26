@@ -161,6 +161,9 @@ Feedback on the [design document][design_doc] is highly welcome! Please open an 
 
 Read the [contribution document here](./docs/contributing.md) and please follow the guidelines for this repository.
 
+Also refer to the [cheat-sheet for contributors](./docs/contributing-cheatsheet.md) which contains a micro-summary of the
+development workflow.
+
 ## License
 
 Copyright (c) 2025, [Kayvan Sylvan](kayvan@sylvan.com) Licensed under the [MIT License](./LICENSE).

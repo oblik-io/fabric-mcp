@@ -1,6 +1,8 @@
 # Contributing to `fabric-mcp`
 
-Thank you for your interest in improving `fabric-mcp`, a Model Context Protocol server for Fabric AI. Every contribution matters. This guide outlines how to get started, follow development practices, and submit effective changes.
+Thank you for your interest in improving `fabric-mcp`, a Model Context Protocol
+server for Fabric AI. Every contribution matters. This guide outlines how to
+get started, follow development practices, and submit effective changes.
 
 ## Getting Started
 
@@ -43,7 +45,7 @@ Use `make` to configure the development environment:
 make bootstrap
 ```
 
-This command uses `uv sync --dev` to install all dependencies into `.venv`.
+This command uses `uv sync --dev` to install all dependencies into `.venv`, and also configure pre-commit hooks.
 
 ## Development Workflow
 
