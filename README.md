@@ -11,7 +11,7 @@
 <img src="https://github.com/ksylvan/fabric-mcp/blob/main/docs/logo.png?raw=true" alt="fabric-mcp logo" width="150" height="150">
 </div>
 
-**Connect the power of the Fabric AI framework to any Model Context Protocol (MCP) compatible application.**
+Connect the power of the Fabric AI framework to any Model Context Protocol (MCP) compatible application.
 
 This project implements a standalone server that bridges the gap between [Daniel Miessler's Fabric framework][fabricGithubLink] and the [Model Context Protocol (MCP)][MCP]. It allows you to use Fabric's patterns, models, and configurations directly within MCP-enabled environments like IDE extensions or chat interfaces.
 
