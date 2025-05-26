@@ -8,7 +8,7 @@
 | [![Main Tests][main_tests]][main_tests_link] | [![Main Publish][main_publish]][main_publish_link] |  | [![Develop Tests][develop_tests]][develop_tests_link] | [![Develop Publish][develop_publish]][develop_publish_link] |
 
 <div align="center">
-<img src="https://github.com/ksylvan/pyhatchery/blob/main/docs/logo.png?raw=true" alt="fabric-mcp logo" width="150" height="150">
+<img src="https://github.com/ksylvan/fabric-mcp/blob/main/docs/logo.png?raw=true" alt="fabric-mcp logo" width="150" height="150">
 </div>
 
 **Connect the power of the Fabric AI framework to any Model Context Protocol (MCP) compatible application.**
