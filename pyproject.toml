@@ -56,7 +56,7 @@ markers = ["integration: marks tests as integration tests"]
 
 # Tell hatchling where to find the version variable
 [tool.hatch.version]
-path = "fabric_mcp/__about__.py"
+path = "src/fabric_mcp/__about__.py"
 
 [tool.uv]
 index = [
@@ -70,3 +70,13 @@ reportMissingTypeStubs = true
 reportUnknownParameterType = true
 reportUnknownMemberType = true
 reportAny = true
+
+[tool.hatch.build]
+# ensure editable installs pick up code under src/
+dev-mode-dirs = ["src"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/fabric_mcp"]
+
+[tool.hatch.build.targets.sdist]
+sources = ["src"]

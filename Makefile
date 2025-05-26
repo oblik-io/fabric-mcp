@@ -4,7 +4,7 @@
 .PHONY: help bootstrap test coverage coverage-html coverage-show lint format build clean tag
 
 COVERAGE_FAIL_UNDER := 90
-SRC := fabric_mcp
+SRC := src/fabric_mcp
 
 VERSION := $(shell uv run hatch version)
 
