@@ -4,7 +4,7 @@
 .PHONY: help bootstrap test coverage coverage-html coverage-show lint format build clean tag
 
 COVERAGE_FAIL_UNDER := 90
-SRC := src/fabric_mcp
+PACKAGE_PATH := src/fabric_mcp
 
 VERSION := $(shell uv run hatch version)
 
@@ -33,14 +33,14 @@ test: lint
 	uv run pytest -v
 
 coverage:
-	uv run pytest --cov=$(SRC) \
+	uv run pytest --cov=$(PACKAGE_PATH) \
 		-ra -q \
 		--cov-report=term-missing \
 		--cov-fail-under=$(COVERAGE_FAIL_UNDER)
 
 coverage-html:
 	# This will generate an HTML coverage report.
-	uv run pytest --cov=$(SRC) \
+	uv run pytest --cov=$(PACKAGE_PATH) \
 		--cov-report=html:coverage_html \
 		--cov-fail-under=$(COVERAGE_FAIL_UNDER)
 
@@ -54,8 +54,8 @@ coverage-show:
 lint:
 	uv run ruff format --check .
 	uv run ruff check .
-	uv run pylint --fail-on=W0718 $(SRC) tests
-	uv run pyright $(SRC) tests
+	uv run pylint --fail-on=W0718 $(PACKAGE_PATH) tests
+	uv run pyright $(PACKAGE_PATH) tests
 
 format:
 	uv run ruff format .
