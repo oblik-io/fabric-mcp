@@ -45,7 +45,7 @@ Use `make` to configure the development environment:
 make bootstrap
 ```
 
-This command uses `uv sync --dev` to install all dependencies into `.venv`, and also configure pre-commit hooks.
+This command uses `uv sync --dev` to install all dependencies into `.venv`, and also configures pre-commit hooks.
 
 ## Development Workflow
 
