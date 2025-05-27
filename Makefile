@@ -47,7 +47,7 @@ coverage-show:
 
 # See https://gofastmcp.com/deployment/cli#dev
 dev:
-	pnpm install @modelcontextprotocol/inspector
+	$(NPM_PACKAGER) install @modelcontextprotocol/inspector
 	uv run fastmcp dev ${STDIO_SERVER_SRC_FOR_MCP_INSPECTOR}
 
 format:
