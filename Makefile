@@ -71,6 +71,7 @@ lint:
 
 merge:
 	@echo "This will merge develop into main and push to origin."
+	@git diff-index --quiet HEAD -- || { echo "Error: Working directory not clean. Please commit or stash your changes before proceeding."; exit 1; }
 	@read -p "Are you sure? (y/N): " confirm && [ "$$confirm" = "y" ] || { echo "Merge aborted."; exit 1; }
 	@echo "Merging develop into main..."
 	@current_branch=$$(git rev-parse --abbrev-ref HEAD); \
