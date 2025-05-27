@@ -87,7 +87,7 @@ merge:
 	@echo "Pulling latest main..."
 	git pull origin main
 	@echo "Merging develop into main (bypassing pre-commit hooks)..."
-	git merge develop --no-verify
+	git merge develop --no-verify || { echo "Error: Merge failed. Please resolve conflicts and try again."; exit 1; }
 	@echo "Pushing to main..."
 	git push origin main
 	@echo "Switching back to develop..."
