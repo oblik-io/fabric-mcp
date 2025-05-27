@@ -20,6 +20,7 @@
     - [Writing Tests](#writing-tests)
     - [Running Tests](#running-tests)
     - [Code Coverage](#code-coverage)
+    - [Using the MCP Inspector](#using-the-mcp-inspector)
   - [Commit Message Guidelines](#commit-message-guidelines)
     - [Conventional Commits Standard](#conventional-commits-standard)
     - [Importance of Clear Messages](#importance-of-clear-messages)
@@ -311,6 +312,28 @@ Code coverage analysis helps identify parts of the codebase not exercised by the
 
     The HTML report can be found at `coverage_html/index.html`.
 
+### Using the MCP Inspector
+
+The MCP Inspector is an interactive developer tool for testing and debugging MCP (Model Context Protocol) servers.
+The FastMCP library provides a CLI tool for running our FastMCP-based servers and accessing the
+MCP inspector.
+
+```bash
+make dev
+```
+
+This runs the following commands:
+
+```bash
+pnpm install @modelcontextprotocol/inspector
+uv run fastmcp dev src/fabric_mcp/server_stdio.py
+```
+
+After running `make dev` you can browse to <http://127.0.0.1:6274> and Connect.
+
+See the [FastMCP documentation][fastmcp-dev] about using the MCP inspector
+for more information.
+
 ## Commit Message Guidelines
 
 Clear, consistent, and informative commit messages are crucial.
@@ -482,3 +505,4 @@ Thank you for your interest in contributing to `fabric-mcp`!
 
 [astral-uv-docs]: https://github.com/astral-sh/uv#readme
 [conventional-commits]: https://www.conventionalcommits.org/en/v1.0.0/#summary
+[fastmcp-dev]: https://gofastmcp.com/deployment/cli#dev

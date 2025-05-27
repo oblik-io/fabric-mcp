@@ -1,10 +1,15 @@
 # Makefile for
 #
 
-.PHONY: _default bootstrap build clean coverage coverage-html coverage-show format help lint merge tag test
+.PHONY: _default bootstrap build clean coverage coverage-html coverage-show dev format help lint merge tag test
 
 COVERAGE_FAIL_UNDER := 90
 PACKAGE_PATH := src/fabric_mcp
+
+# The node package manager could be npm, but why? pnpm is faster and more efficient
+# This is only needed if you are using the fastmcp dev server.
+NPM_PACKAGER := pnpm
+STDIO_SERVER_SRC_FOR_MCP_INSPECTOR := $(PACKAGE_PATH)/server_stdio.py
 
 VERSION := $(shell uv run hatch version)
 
@@ -40,6 +45,11 @@ coverage-show:
 	@open coverage_html/index.html || xdg-open coverage_html/index.html || start coverage_html/index.html
 	@echo "Done."
 
+# See https://gofastmcp.com/deployment/cli#dev
+dev:
+	$(NPM_PACKAGER) install @modelcontextprotocol/inspector
+	uv run fastmcp dev ${STDIO_SERVER_SRC_FOR_MCP_INSPECTOR}
+
 format:
 	uv run ruff format .
 	uv run isort .
@@ -56,6 +66,7 @@ help:
 	@echo "  coverage      Run test coverage"
 	@echo "  coverage-html Run tests and generate an HTML coverage report."
 	@echo "  coverage-show Show the coverage report in the browser."
+	@echo "  dev           Start the fastmcp dev server for MCP inspector"
 	@echo "  format        Format the codebase"
 	@echo "  help          Show this help message"
 	@echo "  lint          Run linters"

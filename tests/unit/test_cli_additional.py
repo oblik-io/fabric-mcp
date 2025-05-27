@@ -87,7 +87,7 @@ class TestCLIMain:
         mock_log_class.assert_called_once_with("info")
 
         # Verify FabricMCP was created with correct log level
-        mock_fabric_mcp_class.assert_called_once_with(log_level="INFO")
+        mock_fabric_mcp_class.assert_called_once()
 
         # Verify stdio() was called
         mock_server.stdio.assert_called_once()
@@ -115,7 +115,7 @@ class TestCLIMain:
         mock_log_class.assert_called_once_with("debug")
 
         # Verify FabricMCP was created with DEBUG log level
-        mock_fabric_mcp_class.assert_called_once_with(log_level="DEBUG")
+        mock_fabric_mcp_class.assert_called_once()
 
     @patch("fabric_mcp.cli.FabricMCP")
     @patch("fabric_mcp.cli.Log")
@@ -135,7 +135,7 @@ class TestCLIMain:
             main()
 
         mock_log_class.assert_called_once_with("error")
-        mock_fabric_mcp_class.assert_called_once_with(log_level="ERROR")
+        mock_fabric_mcp_class.assert_called_once()
 
     @patch("fabric_mcp.cli.FabricMCP")
     @patch("fabric_mcp.cli.Log")

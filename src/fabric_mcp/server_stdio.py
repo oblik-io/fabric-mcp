@@ -9,6 +9,6 @@ log = Log(LOG_LEVEL)
 logger = log.logger
 
 logger.info("Starting server with log level %s", LOG_LEVEL)
-fabric_mcp = FabricMCP(log_level=log.level_name)
+fabric_mcp = FabricMCP()
 
 mcp = fabric_mcp.mcp

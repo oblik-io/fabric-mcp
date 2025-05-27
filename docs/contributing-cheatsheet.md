@@ -22,6 +22,14 @@ git push -u origin feature/my-change
 
 Submit your PR with `develop` as its base. Your change must pass all automated tests and meet coverage targets.
 
+## Using the MCP Inspector
+
+```bash
+make dev
+```
+
+Then browse to <http://127.0.0.1:6274> and Connect.
+
 ## Release workflow (for maintainers)
 
 After a PR is merged:

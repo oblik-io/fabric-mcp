@@ -189,6 +189,17 @@ Common types:
 
 3. Push and create a PR targeting `develop` (a branch against `main` will be auto-rejected)
 
+## Using the MCP Inspector
+
+```bash
+make dev
+```
+
+Then browse to <http://127.0.0.1:6274> and Connect.
+
+See the [FastMCP documentation][fastmcp-dev] about using the MCP inspector
+for more information.
+
 ## Configuration Files
 
 * `pyproject.toml`: tool settings (`uv`, `ruff`, `isort`, `pytest`, `pyright`)
@@ -219,3 +230,4 @@ Thanks for contributing!
 [astral-uv-docs]: https://astral.sh/docs/uv/
 [conventional-commits]: https://www.conventionalcommits.org/
 [detailed]: ./contributing-detailed.md
+[fastmcp-dev]: https://gofastmcp.com/deployment/cli#dev
