@@ -114,6 +114,9 @@ make bootstrap
 
 This command executes `uv sync --dev` which sets up the `.venv` virtual environment and installs all packages defined in `pyproject.toml`. This single command ensures your development environment is correctly configured.
 
+We also install pre-commit hooks at this step to prevent direct commits into `develop` and `main`. All fixes
+and feature work will be done on branches in your fork.
+
 ## Development Workflow
 
 This section describes the common tasks and tools used during the development of `fabric-mcp`.
