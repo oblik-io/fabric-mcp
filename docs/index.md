@@ -16,6 +16,24 @@ Outlines the overall project architecture, including components, patterns, techn
 
 Details the command-line interface (CLI) design, Model Context Protocol (MCP) tool interaction conventions, target user personas, and overall usability goals.
 
+## Project Epics
+
+### [Epic 1: Foundational Server Setup & Basic Operations](./epic-1.md)
+
+Details the work to establish a runnable Fabric MCP server with essential CLI capabilities, basic MCP communication, connectivity to Fabric, configuration handling, packaging, and support for all transport layers.
+
+### [Epic 2: Fabric Pattern Discovery & Introspection](./epic-2.md)
+
+Covers enabling MCP clients to dynamically discover available Fabric patterns and retrieve detailed information like system prompts and metadata.
+
+### [Epic 3: Core Fabric Pattern Execution with Strategy & Parameter Control](./epic-3.md)
+
+Focuses on allowing MCP clients to execute Fabric patterns, apply strategies, control execution parameters (model, temperature, variables, attachments), and receive output, including streaming.
+
+### [Epic 4: Fabric Environment & Configuration Insights](./epic-4.md)
+
+Describes providing MCP clients with the ability to list available Fabric models and securely retrieve the current Fabric operational configuration.
+
 ## Architectural Granules (Sharded from Architecture Document)
 
 ### [API Reference](./api-reference.md)
