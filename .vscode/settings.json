@@ -10,5 +10,9 @@
 	"python.testing.pytestArgs": ["tests"],
 	"python.testing.unittestEnabled": false,
 	"python.testing.pytestEnabled": true,
-	"python.analysis.typeCheckingMode": "strict"
+	"markdownlint.config": {
+		"MD033": {
+			"allowed_elements": ["br", "div", "img"]
+		}
+	}
 }
