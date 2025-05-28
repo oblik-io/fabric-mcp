@@ -10,7 +10,7 @@ This integration brings Fabric's prompt engineering strengths directly into LLM 
 
 * **MCP Server Language/Library:** Choose a language (e.g., Go, Python) and library for the standalone MCP server. [DONE]
 
-* **MCP Transport Layer:** Decide on initial transport mechanisms (e.g., stdio, WebSockets).
+* **MCP Transport Layer:** Decide on initial transport mechanisms (e.g., stdio, SSE, HTTP/SSE).
 * **Streaming:** Detail how to proxy streaming responses from Fabric's REST API via the MCP server.
 * **Variable/Attachment Handling:** Finalize passing complex inputs (variables, attachments) via MCP tool parameters.
 * **Error Handling:** Define how Fabric errors propagate back via MCP.
@@ -121,7 +121,7 @@ Use Fabric's API key (`--api-key`). Configure MCP client with this key, potentia
 ## 5. Next Steps / Open Questions
 
 * **MCP Library:** Research/evaluate Go/Python MCP server libraries or estimate build effort.
-* **MCP Transport:** Decide initial transport support (stdio, WebSockets).
+* **MCP Transport:** Decide initial transport support (stdio, SSE, HTTP/SSE).
 * **Streaming:** Detail technical approach for MCP streaming.
 * **Variables/Attachments:** Finalize MCP parameter mapping.
 * **Error Handling:** Define Fabric-to-MCP error propagation.
