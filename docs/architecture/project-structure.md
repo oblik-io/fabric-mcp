@@ -18,18 +18,18 @@ fabric-mcp/
 │   ├── contributing-detailed.md   # Detailed contribution guidelines
 │   ├── contributing.md            # Main contribution guidelines
 │   ├── design.md                  # High-Level Design Document (existing)
-│   ├── DX-OPX-Interaction.md    # Developer/Operational Experience Spec (existing)
+│   ├── design-architecture/index.md  # Developer/Operational Experience Spec (existing)
 │   ├── logo.png                   # Project logo
 │   ├── PM-checklist.md            # Product Manager checklist (existing)
 │   ├── PRD.md                     # Product Requirements Document (existing)
-│   ├── architecture.md            # Main Architecture Document
-│   ├── api-reference.md           # This file: Details of Fabric API consumed & MCP tools provided
-│   ├── data-models.md             # This file: Data schemas for MCP tools and Fabric API
-│   ├── environment-vars.md        # This file: Detailed list of environment variables
-│   ├── operational-guidelines.md  # This file: Coding standards, testing, error handling
-│   ├── project-structure.md       # This file
-│   ├── tech-stack.md              # This file: Definitive technology stack
-│   └── index.md                   # Central catalog of all documentation
+│   ├── architecture/index.md      # The index file with all the architecture documents
+│   ├── api-reference.md           # Generated: Details of Fabric API consumed & MCP tools provided
+│   ├── data-models.md             # Generated: Data schemas for MCP tools and Fabric API
+│   ├── environment-vars.md        # Generated: Detailed list of environment variables
+│   ├── operational-guidelines.md  # Generated: Coding standards, testing, error handling
+│   ├── project-structure.md       # Generated: This section, as a standalone file
+│   ├── tech-stack.md              # Generated: Definitive technology stack
+│   └── index.md                   # Generated: Central catalog of all documentation
 ├── src/                        # Application source code
 │   └── fabric_mcp/             # Main Python package for the server
 │       ├── __about__.py        # Stores package version and metadata

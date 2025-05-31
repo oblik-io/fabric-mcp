@@ -113,11 +113,11 @@ fabric-mcp/
 │   ├── contributing-detailed.md   # Detailed contribution guidelines
 │   ├── contributing.md            # Main contribution guidelines
 │   ├── design.md                  # High-Level Design Document (existing)
-│   ├── DX-OPX-Interaction.md    # Developer/Operational Experience Spec (existing)
+│   ├── design-architecture/index.md  # Developer/Operational Experience Spec (existing)
 │   ├── logo.png                   # Project logo
 │   ├── PM-checklist.md            # Product Manager checklist (existing)
 │   ├── PRD.md                     # Product Requirements Document (existing)
-│   ├── architecture.md            # This document
+│   ├── architecture/index.md      # The index file with all the architecture documents
 │   ├── api-reference.md           # Generated: Details of Fabric API consumed & MCP tools provided
 │   ├── data-models.md             # Generated: Data schemas for MCP tools and Fabric API
 │   ├── environment-vars.md        # Generated: Detailed list of environment variables
@@ -517,7 +517,7 @@ The detailed JSON schemas for data exchanged are best understood in the context 
 
 These diagrams illustrate the primary interaction flows within the Fabric MCP Server system.
 
-### 1\. MCP Client: Tool Discovery (`list_tools`)
+### 1. MCP Client: Tool Discovery (`list_tools`)
 
 ```mermaid
 sequenceDiagram
@@ -538,7 +538,7 @@ sequenceDiagram
 3. The ToolLogic provides these definitions.
 4. The ServerCore formats this into an MCP `list_tools_result` and sends it back to the Client.
 
-### 2\. MCP Client: Execute Non-Streaming Pattern (e.g., `fabric_list_models`)
+### 2. MCP Client: Execute Non-Streaming Pattern (e.g., `fabric_list_models`)
 
 ```mermaid
 sequenceDiagram
@@ -582,7 +582,7 @@ sequenceDiagram
       * ToolLogic constructs an appropriate MCP error response.
       * ServerCore sends the MCP error response to the Client.
 
-### 3\. MCP Client: Execute Streaming Pattern (`fabric_run_pattern` with `stream: true`)
+### 3. MCP Client: Execute Streaming Pattern (`fabric_run_pattern` with `stream: true`)
 
 ```mermaid
 sequenceDiagram
@@ -630,7 +630,7 @@ sequenceDiagram
 7. ToolLogic wraps these chunks into MCP stream data and sends them via ServerCore to the Client.
 8. This continues until the FabricAPI SSE stream ends (e.g., with a "complete" type event) or an error occurs. The Fabric MCP Server then appropriately signals the end of the MCP stream or sends an MCP error to the client.
 
-### 4\. Server Startup & Fabric API Connectivity Check
+### 4. Server Startup & Fabric API Connectivity Check
 
 ```mermaid
 sequenceDiagram
@@ -677,14 +677,14 @@ This section outlines the definitive technology choices for the project. These s
 
 | Category                   | Technology                               | Version / Details         | Description / Purpose                                       | Justification (Optional)                                     |
 | :------------------------- | :--------------------------------------- | :------------------------ | :---------------------------------------------------------- | :----------------------------------------------------------- |
-| **Languages** | Python                                   | \>=3.11                    | Primary language for the server                             | Modern Python features, community support, available libraries. |
-| **Runtime** | CPython                                  | Matches Python \>=3.11     | Standard Python runtime                                     |                                                              |
-| **Frameworks** | FastMCP                                  | \>=2.5.1                   | Core Model Context Protocol implementation                  | Chosen for MCP adherence.                         |
-|                            | Click                                    | \>=8.1.8                   | CLI framework for user-friendly command-line interactions   | Specified in PRD for CLI.                         |
-| **Libraries** | httpx                                    | \>=0.28.1                  | HTTP client for Fabric API communication                    | Supports async, HTTP/2, chosen for REST API calls.  |
-|                            | httpx-retries                            | \>=0.4.0                   | Retry mechanisms for httpx                                  | Enhances resilience of Fabric API calls.        |
+| **Languages** | Python                                   | >=3.11                    | Primary language for the server                             | Modern Python features, community support, available libraries. |
+| **Runtime** | CPython                                  | Matches Python >=3.11     | Standard Python runtime                                     |                                                              |
+| **Frameworks** | FastMCP                                  | >=2.5.1                   | Core Model Context Protocol implementation                  | Chosen for MCP adherence.                         |
+|                            | Click                                    | >=8.1.8                   | CLI framework for user-friendly command-line interactions   | Specified in PRD for CLI.                         |
+| **Libraries** | httpx                                    | >=0.28.1                  | HTTP client for Fabric API communication                    | Supports async, HTTP/2, chosen for REST API calls.  |
+|                            | httpx-retries                            | >=0.4.0                   | Retry mechanisms for httpx                                  | Enhances resilience of Fabric API calls.        |
 |                            | httpx-sse                                | Specific version TBD (latest) | Client for consuming Server-Sent Events from Fabric API     | Required for streaming from Fabric API.           |
-|                            | Rich                                     | \>=14.0.0                  | Enhanced terminal output for logging and CLI messages     | Improves CLI usability and log readability.     |
+|                            | Rich                                     | >=14.0.0                  | Enhanced terminal output for logging and CLI messages     | Improves CLI usability and log readability.     |
 | **Development Tooling** | uv                                       | Latest stable             | Python package and environment manager                      | Speed and modern dependency management. |
 |                            | pre-commit                               | Latest stable             | Framework for managing pre-commit hooks                     | Enforces code quality and standards before commit. |
 |                            | Ruff                                     | Latest stable             | Linter and formatter                                        | Speed and comprehensive checks.                 |
@@ -711,7 +711,7 @@ The Fabric MCP Server is designed as a standalone Python application, intended t
   * The primary distribution method is via PyPI (Python Package Index). Users can install it using `pip install fabric-mcp` or `uv pip install fabric-mcp`.
   * For development, it can be run directly from the source code within a virtual environment managed by `uv`.
 * **Runtime Environment:**
-  * Requires a Python runtime (\>=3.11, as specified in the tech stack).
+  * Requires a Python runtime (>=3.11, as specified in the tech stack).
   * Necessary environment variables (`FABRIC_BASE_URL`, `FABRIC_API_KEY`, `FABRIC_MCP_LOG_LEVEL`) must be configured in the execution environment.
 * **Execution:**
   * The server is launched via its command-line interface (`fabric-mcp`), which is built using `click`.
@@ -775,7 +775,7 @@ A robust error handling strategy is crucial for providing a reliable and user-fr
 
 These standards are mandatory for all code generation by AI agents and human developers. Deviations are not permitted unless explicitly approved and documented as an exception in this section or a linked addendum.
 
-* **Primary Language & Runtime:** Python \>=3.11 with CPython (as per Definitive Tech Stack Selections).
+* **Primary Language & Runtime:** Python >=3.11 with CPython (as per Definitive Tech Stack Selections).
 * **Style Guide & Linter:**
   * **Tools:** `Ruff` for formatting and primary linting, `Pylint` for additional static analysis, `isort` for import sorting (often managed via Ruff). `Pyright` for static type checking in strict mode.
   * **Configuration:**
@@ -957,10 +957,10 @@ The following security considerations and practices are mandatory for the develo
 The following documents provide essential context, requirements, and background information for the Fabric MCP Server architecture:
 
 1. **Product Requirements Document (PRD):**
-      * Location: `docs/PRD.md` (or the user-provided PRD file)
+      * Location: `docs/PRD/index.md` (or the user-provided PRD file)
       * Description: Defines the project goals, objectives, functional and non-functional requirements, user interaction goals, technical assumptions, and MVP scope for the Fabric MCP Server. This is the foundational document driving the architecture.
 2. **Developer Experience (DX) and Operational Experience (OpX) Interaction Specification:**
-      * Location: `docs/DX-OPX-Interaction.md` (or the user-provided file)
+      * Location: `docs/design-architecture/index.md` (or the user-provided file)
       * Description: Details the command-line interface (CLI) design, Model Context Protocol (MCP) tool interaction conventions, target user personas, and overall usability goals for technical users of the server.
 3. **Fabric AI Framework (Daniel Miessler):**
       * Location: [https://github.com/danielmiessler/fabric](https://github.com/danielmiessler/fabric)
