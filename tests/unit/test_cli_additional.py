@@ -36,23 +36,26 @@ class TestCLIMain:
         assert "--log-level" in result.output
 
     def test_no_args_shows_help_and_exits(self):
-        """Test that running with no arguments shows help and exits with error."""
+        """Test that running with no arguments shows help and exits."""
         runner = CliRunner()
         result = runner.invoke(main, [])
 
-        # Should exit with error code
-        assert result.exit_code == 1
-
-        # Check that help was printed to stderr (captured in output by CliRunner)
+        # Should exit with code 0 and show help
+        assert result.exit_code == 0
         assert "A Model Context Protocol server for Fabric AI" in result.output
+        assert "--stdio" in result.output
+        assert "--http-streamable" in result.output
 
     def test_only_log_level_without_stdio_shows_help(self):
-        """Test that only --log-level without --stdio shows help."""
+        """Test that only --log-level without transport flags shows help."""
         runner = CliRunner()
         result = runner.invoke(main, ["--log-level", "debug"])
 
-        assert result.exit_code == 1
+        # Should exit with code 0 and show help
+        assert result.exit_code == 0
         assert "A Model Context Protocol server for Fabric AI" in result.output
+        assert "--stdio" in result.output
+        assert "--http-streamable" in result.output
 
     @patch("fabric_mcp.cli.FabricMCP")
     @patch("fabric_mcp.cli.Log")
@@ -157,7 +160,7 @@ class TestCLIMain:
             if "Starting server" in str(call)
         ]
         assert len(startup_calls) == 1
-        assert "Starting server with log level" in str(startup_calls[0])
+        assert "Starting server with stdio transport" in str(startup_calls[0])
         assert "'INFO'" in str(startup_calls[0])
 
         # Check that shutdown message was logged
@@ -206,3 +209,80 @@ class TestCLIMain:
 
             # Verify default log level was used
             mock_log_class.assert_called_once_with("info")
+
+    @patch("fabric_mcp.cli.FabricMCP")
+    @patch("fabric_mcp.cli.Log")
+    def test_http_streamable_flag_creates_server_and_runs(
+        self, mock_log_class: Mock, mock_fabric_mcp_class: Mock
+    ):
+        """Test that --http-streamable flag creates server and runs it."""
+        # Setup mocks
+        mock_log = Mock()
+        mock_log.level_name = "INFO"
+        mock_log.logger = Mock()
+        mock_log_class.return_value = mock_log
+
+        mock_server = Mock()
+        mock_fabric_mcp_class.return_value = mock_server
+
+        runner = CliRunner()
+        result = runner.invoke(main, ["--http-streamable"])
+
+        # Should exit successfully
+        assert result.exit_code == 0
+
+        # Verify Log was created with correct level
+        mock_log_class.assert_called_once_with("info")
+
+        # Verify FabricMCP was created
+        mock_fabric_mcp_class.assert_called_once()
+
+        # Verify http_streamable() was called with defaults
+        mock_server.http_streamable.assert_called_once_with(
+            host="127.0.0.1", port=8000, mcp_path="/mcp"
+        )
+
+    @patch("fabric_mcp.cli.FabricMCP")
+    @patch("fabric_mcp.cli.Log")
+    def test_http_streamable_with_custom_config(
+        self, mock_log_class: Mock, mock_fabric_mcp_class: Mock
+    ):
+        """Test --http-streamable with custom host, port, and path."""
+        # Setup mocks
+        mock_log = Mock()
+        mock_log.level_name = "DEBUG"
+        mock_log.logger = Mock()
+        mock_log_class.return_value = mock_log
+
+        mock_server = Mock()
+        mock_fabric_mcp_class.return_value = mock_server
+
+        runner = CliRunner()
+        result = runner.invoke(
+            main,
+            [
+                "--http-streamable",
+                "--host",
+                "0.0.0.0",
+                "--port",
+                "9000",
+                "--mcp-path",
+                "/api/mcp",
+                "--log-level",
+                "debug",
+            ],
+        )
+
+        # Should exit successfully
+        assert result.exit_code == 0
+
+        # Verify Log was created with correct level
+        mock_log_class.assert_called_once_with("debug")
+
+        # Verify FabricMCP was created
+        mock_fabric_mcp_class.assert_called_once()
+
+        # Verify http_streamable() was called with custom config
+        mock_server.http_streamable.assert_called_once_with(
+            host="0.0.0.0", port=9000, mcp_path="/api/mcp"
+        )

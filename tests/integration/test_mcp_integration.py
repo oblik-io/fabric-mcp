@@ -332,16 +332,19 @@ class TestFabricMCPEndToEnd:
         assert "--log-level" in result.stdout
 
     def test_no_args_shows_help(self):
-        """Test that running fabric-mcp with no args shows help and exits with error."""
+        """Test that running fabric-mcp with no args shows help and exits."""
         result = subprocess.run(
             [sys.executable, "-m", "fabric_mcp.cli"],
             capture_output=True,
             text=True,
-            check=False,  # We expect this to fail
+            check=False,
         )
 
-        assert result.returncode == 1
-        assert "A Model Context Protocol server for Fabric AI" in result.stderr
+        # Should succeed and show help
+        assert result.returncode == 0
+        assert "A Model Context Protocol server for Fabric AI" in result.stdout
+        assert "--stdio" in result.stdout
+        assert "--http-streamable" in result.stdout
 
     def test_script_entry_point_version(self):
         """Test the installed script entry point returns correct version."""
