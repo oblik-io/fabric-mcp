@@ -3,10 +3,10 @@
 The following documents provide essential context, requirements, and background information for the Fabric MCP Server architecture:
 
 1. **Product Requirements Document (PRD):**
-      * Location: `docs/PRD.md` (or the user-provided PRD file)
+      * Location: `docs/PRD/index.md` (or the user-provided PRD file)
       * Description: Defines the project goals, objectives, functional and non-functional requirements, user interaction goals, technical assumptions, and MVP scope for the Fabric MCP Server. This is the foundational document driving the architecture.
 2. **Developer Experience (DX) and Operational Experience (OpX) Interaction Specification:**
-      * Location: `docs/DX-OPX-Interaction.md` (or the user-provided file)
+      * Location: `docs/design-architecture/index.md` (or the user-provided file)
       * Description: Details the command-line interface (CLI) design, Model Context Protocol (MCP) tool interaction conventions, target user personas, and overall usability goals for technical users of the server.
 3. **Fabric AI Framework (Daniel Miessler):**
       * Location: [https://github.com/danielmiessler/fabric](https://github.com/danielmiessler/fabric)

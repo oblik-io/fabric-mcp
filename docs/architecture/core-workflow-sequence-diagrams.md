@@ -57,15 +57,15 @@ sequenceDiagram
 3. ToolLogic instructs the FabricClient to fetch the required data.
 4. FabricClient makes a `GET /models/names` HTTP request to the `fabric --serve` API.
 5. **If successful:**
-    * FabricAPI returns an HTTP 200 OK response with the JSON data.
-    * FabricClient parses this and returns it to ToolLogic.
-    * ToolLogic formats the data into the MCP success response structure.
-    * ServerCore sends the final MCP success response to the Client.
+      * FabricAPI returns an HTTP 200 OK response with the JSON data.
+      * FabricClient parses this and returns it to ToolLogic.
+      * ToolLogic formats the data into the MCP success response structure.
+      * ServerCore sends the final MCP success response to the Client.
 6. **If an error occurs at the Fabric API level:**
-    * FabricAPI returns an HTTP error (e.g., 4xx or 5xx).
-    * FabricClient conveys this error information to ToolLogic.
-    * ToolLogic constructs an appropriate MCP error response.
-    * ServerCore sends the MCP error response to the Client.
+      * FabricAPI returns an HTTP error (e.g., 4xx or 5xx).
+      * FabricClient conveys this error information to ToolLogic.
+      * ToolLogic constructs an appropriate MCP error response.
+      * ServerCore sends the MCP error response to the Client.
 
 ## 3. MCP Client: Execute Streaming Pattern (`fabric_run_pattern` with `stream: true`)
 

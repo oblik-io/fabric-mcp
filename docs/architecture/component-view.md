@@ -35,6 +35,8 @@ The Fabric MCP Server is composed of several key logical components that work to
   * **Responsibility:** This component, built using `click`, parses command-line arguments provided when the server is launched. It interprets arguments such as `--transport`, `--host`, `--port`, `--path`, and `--log-level` to configure and initialize the MCP Server Core with the correct transport mode and settings. It also handles informational commands like `--version` and `--help`.
   * **Interaction:** Acts as the entry point for the application. Initializes and starts the MCP Server Core based on user-provided CLI arguments and the Configuration Component.
 
+<!-- end list -->
+
 ```mermaid
 graph TD
     subgraph Fabric MCP Server
@@ -50,11 +52,3 @@ graph TD
 
     Config -- reads from --> EnvVars[(Environment Variables)]
 ```
-
-This component view is informed by the following Architectural / Design Patterns:
-
-* **Adapter Pattern:** Fundamental to adapting MCP to Fabric's API.
-* **Facade Pattern:** MCP tools simplify Fabric API interactions.
-* **Service Layer / Modular Design:** Clear separation for transport, core logic, and Fabric API client.
-* **Asynchronous Processing & Streaming:** For handling SSE and MCP streams.
-* **Configuration Management:** For environment variables.

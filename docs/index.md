@@ -4,15 +4,15 @@ This document serves as the central catalog for all key documentation related to
 
 ## Core Project Documents
 
-### [Product Requirements Document (PRD)](./PRD.md)
+### [Product Requirements Document (PRD)](./PRD/index.md)
 
 Defines the project goals, objectives, functional and non-functional requirements, user interaction goals, technical assumptions, and MVP scope.
 
-### [Architecture Document](./architecture.md)
+### [Architecture Document](./architecture/index.md)
 
 Outlines the overall project architecture, including components, patterns, technology stack, and key design decisions. *(This is the main source document before sharding)*
 
-### [Developer Experience (DX) and Operational Experience (OpX) Interaction Specification](./DX-OPX-Interaction.md)
+### [Developer Experience (DX) and Operational Experience (OpX) Interaction Specification](./design-architecture/index.md)
 
 Details the command-line interface (CLI) design, Model Context Protocol (MCP) tool interaction conventions, target user personas, and overall usability goals.
 
