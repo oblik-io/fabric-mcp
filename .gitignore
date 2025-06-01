@@ -338,3 +338,7 @@ dist
 .pnp.*
 package.json
 pnpm-lock.yaml
+
+# BMAD agent
+bmad-agent
+.ai

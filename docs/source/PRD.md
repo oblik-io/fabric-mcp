@@ -199,8 +199,8 @@ The project already establishes a foundation of unit testing with `pytest` and a
             4. `make bootstrap` successfully sets up/validates the dev environment and pre-commit hooks.
             5. Source code directory structure (`src/fabric_mcp/`, `tests/`) is confirmed.
             6. `Makefile` provides functional targets: `bootstrap`, `format`, `lint`, `test`, `coverage`, `build`, `dev`.
-            7. A new file, `docs/development_setup.md`, is created and populated with a summary of the verified project setup, including Python version, key development tools (`uv`, `ruff`, `pytest`, `hatch`, `pre-commit`, `pnpm` for MCP Inspector), and essential `make` commands, highlighting automated updates and MCP Inspector usage.
-            8. The main `README.md` is updated to link to `docs/development_setup.md` and `docs/contributing-cheatsheet.md`.
+            7. A new file, `docs/contributing-cheatsheet.md`, is created and populated with a summary of the verified project setup, including Python version, key development tools (`uv`, `ruff`, `pytest`, `hatch`, `pre-commit`, `pnpm` for MCP Inspector), and essential `make` commands, highlighting automated updates and MCP Inspector usage.
+            8. The main `README.md` is updated to link to `docs/contributing-cheatsheet.md` and `docs/contributing-cheatsheet.md`.
             9. The `.pre-commit-config.yaml` is implemented and configured for conventional commits and branch protection.
   - **Story 1.2: Implement Core CLI with `click` (Refactor from `argparse`)**
     - User Story: As a Server Operator, I want the Fabric MCP Server to have a CLI built with `click` so that command-line interactions are user-friendly, well-documented, and extensible.

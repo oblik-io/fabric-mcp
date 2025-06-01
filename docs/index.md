@@ -79,6 +79,8 @@ Provides the definitive list of technology choices for the project, including la
 
 ## Contribution & Development Setup
 
+These guides summarize the project setup, including Python version, key development tools (`uv`, `ruff`, `pytest`, `hatch`, `pre-commit`, `pnpm` for MCP Inspector), and essential `make` commands.
+
 ### [Main Contribution Guidelines](./contributing.md)
 
 Outlines the primary guidelines for contributing to the project, including development workflow and code style.
@@ -90,10 +92,6 @@ Provides an in-depth guide to contributing, covering advanced topics, tool confi
 ### [Contributing Cheatsheet](./contributing-cheatsheet.md)
 
 A micro-summary of the development workflow for quick reference.
-
-### [Development Setup Guide](./contributing-cheatsheet.md)
-
-Summarizes the project setup, including Python version, key development tools (`uv`, `ruff`, `pytest`, `hatch`, `pre-commit`, `pnpm` for MCP Inspector), and essential `make` commands.
 
 ## Other
 
