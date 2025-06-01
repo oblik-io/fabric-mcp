@@ -11,7 +11,51 @@ The Fabric MCP Server is designed as a standalone Python application, intended t
   * Necessary environment variables (`FABRIC_BASE_URL`, `FABRIC_API_KEY`, `FABRIC_MCP_LOG_LEVEL`) must be configured in the execution environment.
 * **Execution:**
   * The server is launched via its command-line interface (`fabric-mcp`), which is built using `click`.
-  * The CLI allows users to specify the MCP transport mode (`stdio`, `http`, `sse`) and associated parameters like host, port, and path for HTTP-based transports.
+  * The CLI allows users to specify the MCP transport mode (`stdio`, `sse`, `http-streamable`) and associated parameters like host, port, and path for HTTP-based transports.
+  * **Standard I/O Transport (`--stdio`)**: Default mode for direct integration with MCP clients that communicate via stdin/stdout.
+  * **Server-Sent Events Transport (`--sse`)**: HTTP-based transport using Server-Sent Events for real-time communication.
+  * **Streamable HTTP Transport (`--http-streamable`)**: Full HTTP-based transport that enables MCP clients to connect over HTTP with support for streaming operations. This transport runs a complete HTTP server that can handle multiple concurrent client connections.
+
+## Transport Configuration
+
+### Streamable HTTP Transport
+
+The Streamable HTTP transport provides a complete HTTP server implementation for MCP communication:
+
+**Basic Usage:**
+
+```bash
+# Start server with default settings (127.0.0.1:8000/mcp)
+fabric-mcp --http-streamable
+
+# Customize host, port, and endpoint path
+fabric-mcp --http-streamable --host 0.0.0.0 --port 3000 --mcp-path /api/mcp
+```
+
+**Configuration Options:**
+
+* `--host`: Server bind address (default: 127.0.0.1)
+* `--port`: Server port (default: 8000)
+* `--mcp-path`: MCP endpoint path (default: /mcp)
+
+**Features:**
+
+* Full HTTP server with concurrent client support
+* Streaming operations for large responses
+* Standard HTTP status codes and error handling
+* Compatible with FastMCP's streamable-http transport
+* Non-MCP HTTP requests receive 406 Not Acceptable responses
+
+**Client Connection:**
+
+MCP clients can connect using the streamable HTTP transport:
+
+```python
+from fastmcp.client.transports import StreamableHttpTransport
+
+transport = StreamableHttpTransport("http://127.0.0.1:8000/mcp")
+```
+
 * **Cloud Agnostic:** The server itself is cloud-agnostic. It can be run on any system that supports Python, whether it's a local machine, a virtual machine in any cloud (AWS, Azure, GCP), or a containerized environment. No specific cloud services are mandated for its core operation.
 * **Infrastructure as Code (IaC):** Not directly applicable for the server application itself, as it's a process rather than managed infrastructure. If users deploy it within a larger system managed by IaC (e.g., as part of an EC2 instance setup or a Kubernetes pod definition), that would be external to this project's direct scope.
 * **CI/CD:**

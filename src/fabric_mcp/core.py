@@ -148,6 +148,18 @@ class FabricMCP(FastMCP[None]):
 
         self.__tools.append(fabric_get_configuration)
 
+    def http_streamable(
+        self, host: str = "127.0.0.1", port: int = 8000, mcp_path: str = "/mcp"
+    ):
+        """Run the MCP server with StreamableHttpTransport."""
+        try:
+            self.mcp.run(
+                transport="streamable-http", host=host, port=port, path=mcp_path
+            )
+        except (KeyboardInterrupt, CancelledError, WouldBlock):
+            # Handle graceful shutdown
+            self.logger.info("Server stopped by user.")
+
     def stdio(self):
         """Run the MCP server."""
         try:

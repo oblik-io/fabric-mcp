@@ -151,3 +151,72 @@ def test_tool_registration_coverage():
     result = fabric_get_configuration()
     assert isinstance(result, dict)
     assert "openai_api_key" in result
+
+
+def test_http_streamable_method_runs_mcp(server_instance: FabricMCP):
+    """Test that the http_streamable method calls mcp.run() with streamable-http."""
+    with patch.object(server_instance.mcp, "run") as mock_run:
+        # Mock run to avoid actually starting the server
+        mock_run.return_value = None
+
+        # Test with default parameters
+        server_instance.http_streamable()
+
+        # Verify mcp.run was called with streamable-http transport and defaults
+        mock_run.assert_called_once_with(
+            transport="streamable-http",
+            host="127.0.0.1",
+            port=8000,
+            path="/mcp",
+        )
+
+
+def test_http_streamable_method_with_custom_config(server_instance: FabricMCP):
+    """Test that the http_streamable method calls mcp.run() with custom config."""
+    with patch.object(server_instance.mcp, "run") as mock_run:
+        # Mock run to avoid actually starting the server
+        mock_run.return_value = None
+
+        # Test with custom parameters
+        server_instance.http_streamable(host="0.0.0.0", port=9000, mcp_path="/api/mcp")
+
+        # Verify mcp.run was called with streamable-http transport and custom config
+        mock_run.assert_called_once_with(
+            transport="streamable-http",
+            host="0.0.0.0",
+            port=9000,
+            path="/api/mcp",
+        )
+
+
+def test_http_streamable_method_handles_keyboard_interrupt(server_instance: FabricMCP):
+    """Test that the http_streamable method handles KeyboardInterrupt gracefully."""
+    with patch.object(server_instance.mcp, "run") as mock_run:
+        mock_run.side_effect = KeyboardInterrupt
+
+        # Should not raise exception
+        server_instance.http_streamable()
+
+        mock_run.assert_called_once()
+
+
+def test_http_streamable_method_handles_cancelled_error(server_instance: FabricMCP):
+    """Test that the http_streamable method handles CancelledError gracefully."""
+    with patch.object(server_instance.mcp, "run") as mock_run:
+        mock_run.side_effect = CancelledError
+
+        # Should not raise exception
+        server_instance.http_streamable()
+
+        mock_run.assert_called_once()
+
+
+def test_http_streamable_method_handles_would_block(server_instance: FabricMCP):
+    """Test that the http_streamable method handles WouldBlock gracefully."""
+    with patch.object(server_instance.mcp, "run") as mock_run:
+        mock_run.side_effect = WouldBlock
+
+        # Should not raise exception
+        server_instance.http_streamable()
+
+        mock_run.assert_called_once()

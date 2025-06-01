@@ -152,8 +152,27 @@ export FABRIC_BASE_URL="http://your-fabric-host:port"
 export FABRIC_API_KEY="your_secret_api_key"
 export FABRIC_MCP_LOG_LEVEL="DEBUG"
 
+# Standard I/O transport (default)
 fabric-mcp --stdio
+
+# HTTP Streamable transport for HTTP-based MCP clients
+fabric-mcp --http-streamable
+
+# Custom host/port for HTTP transport
+fabric-mcp --http-streamable --host 0.0.0.0 --port 3000 --mcp-path /api/mcp
 ```
+
+### Transport Options
+
+The `fabric-mcp` server supports multiple transport methods:
+
+- **`--stdio`**: Standard I/O transport for direct MCP client integration (default)
+- **`--http-streamable`**: HTTP-based transport that runs a full HTTP server for MCP communication
+  - `--host`: Server bind address (default: 127.0.0.1)
+  - `--port`: Server port (default: 8000)
+  - `--mcp-path`: MCP endpoint path (default: /mcp)
+
+For more details on transport configuration, see the [Infrastructure and Deployment Overview](./docs/architecture/infrastructure-and-deployment-overview.md#transport-configuration).
 
 ## Contributing
 
