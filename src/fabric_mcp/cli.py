@@ -61,6 +61,7 @@ def main(
             "Error: --stdio and --http-streamable are mutually exclusive.", err=True
         )
         ctx = click.get_current_context()
+        click.echo(ctx.get_help())
         ctx.exit(1)
 
     if not stdio and not http_streamable:
