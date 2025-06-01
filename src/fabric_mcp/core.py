@@ -156,8 +156,9 @@ class FabricMCP(FastMCP[None]):
             self.mcp.run(
                 transport="streamable-http", host=host, port=port, path=mcp_path
             )
-        except (KeyboardInterrupt, CancelledError, WouldBlock):
+        except (KeyboardInterrupt, CancelledError, WouldBlock) as e:
             # Handle graceful shutdown
+            self.logger.debug("Exception details: %s: %s", type(e).__name__, e)
             self.logger.info("Server stopped by user.")
 
     def stdio(self):
