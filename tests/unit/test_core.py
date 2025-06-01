@@ -106,7 +106,7 @@ def test_fabric_mcp_tools_registration():
     # Note: The exact way to check registered tools may depend on FastMCP's API
     # This is a basic check to ensure the tools list is populated
     assert hasattr(server, "_FabricMCP__tools")
-    assert len(getattr(server, "_FabricMCP__tools")) == 3
+    assert len(getattr(server, "_FabricMCP__tools")) == 6
 
 
 def test_tool_registration_coverage():
@@ -114,9 +114,8 @@ def test_tool_registration_coverage():
     server = FabricMCP(log_level="DEBUG")
 
     # Check that the tools are registered by accessing them
-    # This will trigger the __tools.append() calls on lines 29, 37, 54
     tools: list[Callable[..., Any]] = getattr(server, "_FabricMCP__tools")
-    assert len(tools) == 3
+    assert len(tools) == 6
 
     # Test each tool to ensure they're callable
     fabric_list_patterns = tools[0]
@@ -124,14 +123,31 @@ def test_tool_registration_coverage():
     assert isinstance(result, list)
     assert len(result) == 3
 
-    fabric_pattern_details = tools[1]
-    result = fabric_pattern_details("test_pattern")
+    fabric_get_pattern_details = tools[1]
+    result = fabric_get_pattern_details("test_pattern")
     assert isinstance(result, dict)
     assert "name" in result
+    assert "description" in result
+    assert "system_prompt" in result
 
     fabric_run_pattern = tools[2]
     result = fabric_run_pattern("test_pattern", "test_input")
     assert isinstance(result, dict)
-    assert "name" in result
-    assert "input" in result
-    assert "result" in result
+    assert "output_format" in result
+    assert "output_text" in result
+
+    fabric_list_models = tools[3]
+    result = fabric_list_models()
+    assert isinstance(result, dict)
+    assert "all_models" in result
+    assert "models_by_vendor" in result
+
+    fabric_list_strategies = tools[4]
+    result = fabric_list_strategies()
+    assert isinstance(result, dict)
+    assert "strategies" in result
+
+    fabric_get_configuration = tools[5]
+    result = fabric_get_configuration()
+    assert isinstance(result, dict)
+    assert "openai_api_key" in result

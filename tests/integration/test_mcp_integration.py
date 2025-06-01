@@ -121,9 +121,8 @@ class TestFabricMCPIntegration:
                 result = run_pattern_tool("analyze_claims", "Test input text")
 
                 assert isinstance(result, dict)
-                assert "name" in result
-                assert "input" in result
-                assert "result" in result
+                assert "output_format" in result
+                assert "output_text" in result
 
     @pytest.mark.asyncio
     async def test_server_error_handling_with_fabric_api_down(self, server: FabricMCP):
@@ -203,7 +202,7 @@ class TestFabricMCPProtocol:
         # This tests the integration between our tools and the FastMCP framework
         # The actual tool registration happens in __init__
         tools = getattr(server, "_FabricMCP__tools", [])
-        assert len(tools) == 3
+        assert len(tools) == 6
 
         # Verify each tool is callable
         for tool in tools:
@@ -280,7 +279,8 @@ class TestEndToEndScenarios:
             run_pattern_tool = tools[2]
             result = run_pattern_tool(patterns[0], "Test input")
             assert isinstance(result, dict)
-            assert "result" in result
+            assert "output_format" in result
+            assert "output_text" in result
 
     def test_server_lifecycle(self, server: FabricMCP):
         """Test complete server lifecycle: init -> configure -> run -> shutdown."""
