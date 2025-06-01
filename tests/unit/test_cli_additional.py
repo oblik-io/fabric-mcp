@@ -1,9 +1,8 @@
 """Additional unit tests for fabric_mcp.cli module."""
 
-import sys
 from unittest.mock import Mock, patch
 
-import pytest
+from click.testing import CliRunner
 
 from fabric_mcp import __version__
 from fabric_mcp.cli import main
@@ -12,58 +11,48 @@ from fabric_mcp.cli import main
 class TestCLIMain:
     """Test cases for the main CLI function."""
 
-    def test_version_flag(self, capsys: pytest.CaptureFixture[str]):
+    def test_version_flag(self):
         """Test --version flag displays version and exits."""
-        with patch.object(sys, "argv", ["fabric-mcp", "--version"]):
-            with pytest.raises(SystemExit) as exc_info:
-                main()
+        runner = CliRunner()
+        result = runner.invoke(main, ["--version"])
 
-            # argparse --version action exits with code 0
-            assert exc_info.value.code == 0
+        # Click version option exits with code 0
+        assert result.exit_code == 0
 
-            # Check that version was printed to stdout
-            captured = capsys.readouterr()
-            assert f"fabric-mcp {__version__}" in captured.out
+        # Check that version was printed to output
+        assert f"fabric-mcp, version {__version__}" in result.output
 
-    def test_help_flag(self, capsys: pytest.CaptureFixture[str]):
+    def test_help_flag(self):
         """Test --help flag displays help and exits."""
-        with patch.object(sys, "argv", ["fabric-mcp", "--help"]):
-            with pytest.raises(SystemExit) as exc_info:
-                main()
+        runner = CliRunner()
+        result = runner.invoke(main, ["--help"])
 
-            # argparse --help action exits with code 0
-            assert exc_info.value.code == 0
+        # Click help option exits with code 0
+        assert result.exit_code == 0
 
-            # Check that help was printed
-            captured = capsys.readouterr()
-            assert "A Model Context Protocol server for Fabric AI" in captured.out
-            assert "--stdio" in captured.out
-            assert "--log-level" in captured.out
+        # Check that help was printed
+        assert "A Model Context Protocol server for Fabric AI" in result.output
+        assert "--stdio" in result.output
+        assert "--log-level" in result.output
 
-    def test_no_args_shows_help_and_exits(self, capsys: pytest.CaptureFixture[str]):
+    def test_no_args_shows_help_and_exits(self):
         """Test that running with no arguments shows help and exits with error."""
-        with patch.object(sys, "argv", ["fabric-mcp"]):
-            with pytest.raises(SystemExit) as exc_info:
-                main()
+        runner = CliRunner()
+        result = runner.invoke(main, [])
 
-            # Should exit with error code
-            assert exc_info.value.code == 1
+        # Should exit with error code
+        assert result.exit_code == 1
 
-            # Check that help was printed to stderr
-            captured = capsys.readouterr()
-            assert "A Model Context Protocol server for Fabric AI" in captured.err
+        # Check that help was printed to stderr (captured in output by CliRunner)
+        assert "A Model Context Protocol server for Fabric AI" in result.output
 
-    def test_only_log_level_without_stdio_shows_help(
-        self, capsys: pytest.CaptureFixture[str]
-    ):
+    def test_only_log_level_without_stdio_shows_help(self):
         """Test that only --log-level without --stdio shows help."""
-        with patch.object(sys, "argv", ["fabric-mcp", "--log-level", "debug"]):
-            with pytest.raises(SystemExit) as exc_info:
-                main()
+        runner = CliRunner()
+        result = runner.invoke(main, ["--log-level", "debug"])
 
-            assert exc_info.value.code == 1
-            captured = capsys.readouterr()
-            assert "A Model Context Protocol server for Fabric AI" in captured.err
+        assert result.exit_code == 1
+        assert "A Model Context Protocol server for Fabric AI" in result.output
 
     @patch("fabric_mcp.cli.FabricMCP")
     @patch("fabric_mcp.cli.Log")
@@ -80,13 +69,16 @@ class TestCLIMain:
         mock_server = Mock()
         mock_fabric_mcp_class.return_value = mock_server
 
-        with patch.object(sys, "argv", ["fabric-mcp", "--stdio"]):
-            main()
+        runner = CliRunner()
+        result = runner.invoke(main, ["--stdio"])
+
+        # Should exit successfully
+        assert result.exit_code == 0
 
         # Verify Log was created with correct level
         mock_log_class.assert_called_once_with("info")
 
-        # Verify FabricMCP was created with correct log level
+        # Verify FabricMCP was created
         mock_fabric_mcp_class.assert_called_once()
 
         # Verify stdio() was called
@@ -106,15 +98,15 @@ class TestCLIMain:
         mock_server = Mock()
         mock_fabric_mcp_class.return_value = mock_server
 
-        with patch.object(
-            sys, "argv", ["fabric-mcp", "--stdio", "--log-level", "debug"]
-        ):
-            main()
+        runner = CliRunner()
+        result = runner.invoke(main, ["--stdio", "--log-level", "debug"])
+
+        assert result.exit_code == 0
 
         # Verify Log was created with debug level
         mock_log_class.assert_called_once_with("debug")
 
-        # Verify FabricMCP was created with DEBUG log level
+        # Verify FabricMCP was created
         mock_fabric_mcp_class.assert_called_once()
 
     @patch("fabric_mcp.cli.FabricMCP")
@@ -131,9 +123,10 @@ class TestCLIMain:
         mock_server = Mock()
         mock_fabric_mcp_class.return_value = mock_server
 
-        with patch.object(sys, "argv", ["fabric-mcp", "--stdio", "-l", "error"]):
-            main()
+        runner = CliRunner()
+        result = runner.invoke(main, ["--stdio", "-l", "error"])
 
+        assert result.exit_code == 0
         mock_log_class.assert_called_once_with("error")
         mock_fabric_mcp_class.assert_called_once()
 
@@ -152,8 +145,10 @@ class TestCLIMain:
         mock_server = Mock()
         mock_fabric_mcp_class.return_value = mock_server
 
-        with patch.object(sys, "argv", ["fabric-mcp", "--stdio"]):
-            main()
+        runner = CliRunner()
+        result = runner.invoke(main, ["--stdio"])
+
+        assert result.exit_code == 0
 
         # Check that startup message was logged
         startup_calls = [
@@ -176,22 +171,19 @@ class TestCLIMain:
     def test_log_level_choices(self):
         """Test that valid log levels are accepted and invalid ones are rejected."""
         valid_levels = ["debug", "info", "warning", "error", "critical"]
+        runner = CliRunner()
 
         for level in valid_levels:
-            with patch.object(
-                sys, "argv", ["fabric-mcp", "--stdio", "--log-level", level]
-            ):
-                with patch("fabric_mcp.cli.FabricMCP"):
-                    with patch("fabric_mcp.cli.Log"):
-                        # Should not raise an exception
-                        main()
+            with patch("fabric_mcp.cli.FabricMCP"):
+                with patch("fabric_mcp.cli.Log"):
+                    result = runner.invoke(main, ["--stdio", "--log-level", level])
+                    # Should not raise an exception and exit successfully
+                    assert result.exit_code == 0
 
         # Test invalid log level
-        with patch.object(
-            sys, "argv", ["fabric-mcp", "--stdio", "--log-level", "invalid"]
-        ):
-            with pytest.raises(SystemExit):
-                main()
+        result = runner.invoke(main, ["--stdio", "--log-level", "invalid"])
+        # Click should exit with error for invalid choice
+        assert result.exit_code != 0
 
     def test_default_log_level_is_info(self):
         """Test that default log level is 'info'."""
@@ -207,8 +199,10 @@ class TestCLIMain:
             mock_fabric_mcp = Mock()
             mock_fabric_mcp_class.return_value = mock_fabric_mcp
 
-            with patch.object(sys, "argv", ["fabric-mcp", "--stdio"]):
-                main()
+            runner = CliRunner()
+            result = runner.invoke(main, ["--stdio"])
+
+            assert result.exit_code == 0
 
             # Verify default log level was used
             mock_log_class.assert_called_once_with("info")

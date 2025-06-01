@@ -314,7 +314,7 @@ class TestFabricMCPEndToEnd:
 
         assert result.returncode == 0
         assert __version__ in result.stdout
-        assert f"fabric-mcp {__version__}" in result.stdout
+        assert f"fabric-mcp, version {__version__}" in result.stdout
 
     def test_help_flag(self):
         """Test that fabric-mcp --help returns help text."""
@@ -356,7 +356,7 @@ class TestFabricMCPEndToEnd:
         # This might fail if not installed in development mode, so we'll check
         if result.returncode == 0:
             assert __version__ in result.stdout
-            assert f"fabric-mcp {__version__}" in result.stdout
+            assert f"fabric-mcp, version {__version__}" in result.stdout
         else:
             # If the script isn't available, we can skip this test
             pytest.skip("fabric-mcp script not available (not installed in dev mode)")

@@ -9,12 +9,12 @@ This checklist serves as a comprehensive framework for the Product Owner to vali
 * `[x]` Epic 1 includes explicit steps for project creation/initialization (Story 1.1 in PRD focuses on verifying and documenting existing scaffolding)
 * `[N/A]` If using a starter template, steps for cloning/setup are included (Not using a distinct starter template, but verifying existing setup)
 * `[x]` If building from scratch, all necessary scaffolding steps are defined (Story 1.1 covers verification of the current setup which is effectively the "from scratch" base for this project)
-* `[x]` Initial README or documentation setup is included (README exists and Story 1.1 includes creating `docs/development_setup.md` and linking)
+* `[x]` Initial README or documentation setup is included (README exists and Story 1.1 includes creating `docs/contributing-cheatsheet.md` and linking)
 * `[x]` Repository setup and initial commit processes are defined (if applicable) (Repo exists; `pre-commit` for conventional commits mentioned in PRD Story 1.1)
 
 ### 1.2 Development Environment
 
-* `[x]` Local development environment setup is clearly defined (PRD Story 1.1 AC7 refers to `docs/development_setup.md`; Architecture doc also refers to `README.md` and `contributing.md`)
+* `[x]` Local development environment setup is clearly defined (PRD Story 1.1 AC7 refers to `docs/contributing-cheatsheet.md`; Architecture doc also refers to `README.md` and `contributing.md`)
 * `[x]` Required tools and versions are specified (Python >=3.11, `uv`, `hatch`, `ruff`, `pytest`, `pre-commit`, `pnpm` in PRD Story 1.1 AC7; Tech Stack in Arch Doc)
 * `[x]` Steps for installing dependencies are included (`make bootstrap` mentioned in PRD Story 1.1 AC4; `uv sync` in Arch Doc)
 * `[x]` Configuration files (dotenv, config files, etc.) are addressed (`.env.example` in Project Structure; env var config in PRD & Arch Doc)
@@ -172,13 +172,13 @@ This checklist serves as a comprehensive framework for the Product Owner to vali
 ### 8.1 Developer Documentation
 
 * `[x]` API documentation is created alongside implementation (MCP tool definitions in Arch Doc serve as API docs; Fabric API documented in Arch Doc)
-* `[x]` Setup instructions are comprehensive (PRD Story 1.1 for `docs/development_setup.md`; `README.md` exists)
+* `[x]` Setup instructions are comprehensive (PRD Story 1.1 for `docs/contributing-cheatsheet.md`; `README.md` exists)
 * `[x]` Architecture decisions are documented (This `architecture.md` document)
 * `[x]` Patterns and conventions are documented (Arch Doc: "Architectural Design Patterns", "Coding Standards")
 
 ### 8.2 User Documentation
 
-* `[x]` User guides or help documentation is included if required (`README.md` for users, `docs/development_setup.md` for contributors, CLI `--help`)
+* `[x]` User guides or help documentation is included if required (`README.md` for users, `docs/contributing-cheatsheet.md` for contributors, CLI `--help`)
 * `[x]` Error messages and user feedback are considered (DX-OPX doc and Arch Doc Error Handling)
 * `[N/A]` Onboarding flows are fully specified (Server is a tool, not a service with user onboarding)
 * `[x]` Support processes are defined if applicable (Open source project, support via GitHub issues/discussions implied in PRD `PM-checklist.md` attachment Section 5.3 NFR)
