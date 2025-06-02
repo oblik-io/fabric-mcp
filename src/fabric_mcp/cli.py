@@ -30,7 +30,7 @@ def validate_http_options(
     "--transport",
     type=click.Choice(["stdio", "http"]),
     default="stdio",
-    show_default=True,
+    show_default=False,
     help="Transport mechanism to use for the MCP server.",
 )
 @click.option(
