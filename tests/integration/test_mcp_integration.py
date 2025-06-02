@@ -332,7 +332,7 @@ class TestFabricMCPEndToEnd:
         assert "--log-level" in result.stdout
 
     def test_no_args_shows_help(self):
-        """Test that running fabric-mcp with no args shows help and exits."""
+        """Test that running fabric-mcp with no args errors with missing transport."""
         result = subprocess.run(
             [sys.executable, "-m", "fabric_mcp.cli"],
             capture_output=True,
@@ -340,10 +340,8 @@ class TestFabricMCPEndToEnd:
             check=False,
         )
 
-        # Should succeed and start the stdio server (default behavior)
-        assert result.returncode == 0
-        # Server starts immediately, so there's no help text in stdout
-        # The server runs and logs to stderr, then exits when stdin closes
+        assert result.returncode != 0
+        assert "Missing option '--transport'" in result.stderr
 
     def test_script_entry_point_version(self):
         """Test the installed script entry point returns correct version."""

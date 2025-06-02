@@ -51,7 +51,7 @@ class TestHTTPStreamableTransport:
     ) -> AsyncGenerator[ServerConfig, None]:
         """Context manager to run HTTP server during tests."""
         # Start server as subprocess for proper isolation
-        server_process = subprocess.Popen(
+        with subprocess.Popen(
             [
                 sys.executable,
                 "-m",
@@ -70,48 +70,47 @@ class TestHTTPStreamableTransport:
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
-        )
-
-        try:
-            # Wait for server to start with timeout
-            server_url = (
-                f"http://{config['host']}:{config['port']}{config['mcp_path']}/"
-            )
-            for _ in range(30):  # 3 second timeout
-                try:
-                    async with httpx.AsyncClient() as client:
-                        await client.get(server_url, timeout=0.5)
-                        break  # Server is responding
-                except (httpx.ConnectError, httpx.TimeoutException) as exc:
-                    # Check if process is still alive
-                    if server_process.poll() is not None:
-                        stdout, stderr = server_process.communicate()
-                        raise RuntimeError(
-                            f"Server process died: stdout={stdout}, stderr={stderr}"
-                        ) from exc
-                    await asyncio.sleep(0.1)
-            else:
-                # Server failed to start, get logs
-                server_process.terminate()
-                stdout, stderr = server_process.communicate(timeout=5)
-                raise RuntimeError(
-                    f"Server failed to start on {config['host']}:{config['port']}\n"
-                    f"stdout: {stdout}\nstderr: {stderr}"
+        ) as server_process:
+            try:
+                # Wait for server to start with timeout
+                server_url = (
+                    f"http://{config['host']}:{config['port']}{config['mcp_path']}/"
                 )
+                for _ in range(30):  # 3 second timeout
+                    try:
+                        async with httpx.AsyncClient() as client:
+                            await client.get(server_url, timeout=0.5)
+                            break  # Server is responding
+                    except (httpx.ConnectError, httpx.TimeoutException) as exc:
+                        # Check if process is still alive
+                        if server_process.poll() is not None:
+                            stdout, stderr = server_process.communicate()
+                            raise RuntimeError(
+                                f"Server process died: stdout={stdout}, stderr={stderr}"
+                            ) from exc
+                        await asyncio.sleep(0.1)
+                else:
+                    # Server failed to start, get logs
+                    server_process.terminate()
+                    stdout, stderr = server_process.communicate(timeout=5)
+                    raise RuntimeError(
+                        f"Server failed to start on {config['host']}:{config['port']}\n"
+                        f"stdout: {stdout}\nstderr: {stderr}"
+                    )
 
-            yield config
+                yield config
 
-        finally:
-            # Clean up server process
-            if server_process.poll() is None:
-                # Try graceful shutdown first
-                server_process.terminate()
-                try:
-                    server_process.wait(timeout=3.0)
-                except subprocess.TimeoutExpired:
-                    # Force kill if graceful shutdown fails
-                    server_process.kill()
-                    server_process.wait(timeout=1.0)
+            finally:
+                # Clean up server process
+                if server_process.poll() is None:
+                    # Try graceful shutdown first
+                    server_process.terminate()
+                    try:
+                        server_process.wait(timeout=3.0)
+                    except subprocess.TimeoutExpired:
+                        # Force kill if graceful shutdown fails
+                        server_process.kill()
+                        server_process.wait(timeout=1.0)
 
     @pytest.mark.asyncio
     async def test_http_server_starts_and_responds(

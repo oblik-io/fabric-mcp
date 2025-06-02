@@ -35,8 +35,8 @@ class TestCLIMain:
         assert "--transport" in result.output
         assert "--log-level" in result.output
 
-    def test_no_args_uses_default_stdio_transport(self):
-        """Test that running with no arguments uses default stdio transport."""
+    def test_no_args_fails_needing_transport(self):
+        """Test that running with no arguments fails due to missing transport."""
         with (
             patch("fabric_mcp.cli.Log") as mock_log_class,
             patch("fabric_mcp.cli.FabricMCP") as mock_fabric_mcp_class,
@@ -53,29 +53,8 @@ class TestCLIMain:
             result = runner.invoke(main, [])
 
             # Should exit successfully with default stdio transport
-            assert result.exit_code == 0
-            mock_server.stdio.assert_called_once()
-
-    def test_only_log_level_uses_default_stdio_transport(self):
-        """Test that only --log-level without transport uses default stdio."""
-        with (
-            patch("fabric_mcp.cli.Log") as mock_log_class,
-            patch("fabric_mcp.cli.FabricMCP") as mock_fabric_mcp_class,
-        ):
-            mock_log = Mock()
-            mock_log.level_name = "DEBUG"
-            mock_log.logger = Mock()
-            mock_log_class.return_value = mock_log
-
-            mock_server = Mock()
-            mock_fabric_mcp_class.return_value = mock_server
-
-            runner = CliRunner()
-            result = runner.invoke(main, ["--log-level", "debug"])
-
-            # Should exit successfully with default stdio transport
-            assert result.exit_code == 0
-            mock_server.stdio.assert_called_once()
+            assert result.exit_code != 0
+            assert "Missing option '--transport'" in result.stderr
 
     @patch("fabric_mcp.cli.FabricMCP")
     @patch("fabric_mcp.cli.Log")
