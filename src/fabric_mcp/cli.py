@@ -15,8 +15,13 @@ def validate_http_options(
 ) -> Any:
     """Validate that HTTP-specific options are only used with HTTP transport."""
     transport = ctx.params.get("transport")
-    if transport != "http" and value != param.default:
-        raise click.UsageError(f"--{param.name} is only valid with --transport http")
+    if (
+        transport != "http"
+        and param.name is not None
+        and ctx.get_parameter_source(param.name)
+        == click.core.ParameterSource.COMMANDLINE
+    ):
+        raise click.UsageError(f"{param.opts[0]} is only valid with --transport http")
     return value
 
 
