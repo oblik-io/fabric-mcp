@@ -51,12 +51,13 @@ class TestHTTPStreamableTransport:
     ) -> AsyncGenerator[ServerConfig, None]:
         """Context manager to run HTTP server during tests."""
         # Start server as subprocess for proper isolation
-        server_process = subprocess.Popen(
+        with subprocess.Popen(
             [
                 sys.executable,
                 "-m",
                 "fabric_mcp.cli",
-                "--http-streamable",
+                "--transport",
+                "http",
                 "--host",
                 config["host"],
                 "--port",
@@ -69,48 +70,47 @@ class TestHTTPStreamableTransport:
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
-        )
-
-        try:
-            # Wait for server to start with timeout
-            server_url = (
-                f"http://{config['host']}:{config['port']}{config['mcp_path']}/"
-            )
-            for _ in range(30):  # 3 second timeout
-                try:
-                    async with httpx.AsyncClient() as client:
-                        await client.get(server_url, timeout=0.5)
-                        break  # Server is responding
-                except (httpx.ConnectError, httpx.TimeoutException) as exc:
-                    # Check if process is still alive
-                    if server_process.poll() is not None:
-                        stdout, stderr = server_process.communicate()
-                        raise RuntimeError(
-                            f"Server process died: stdout={stdout}, stderr={stderr}"
-                        ) from exc
-                    await asyncio.sleep(0.1)
-            else:
-                # Server failed to start, get logs
-                server_process.terminate()
-                stdout, stderr = server_process.communicate(timeout=5)
-                raise RuntimeError(
-                    f"Server failed to start on {config['host']}:{config['port']}\n"
-                    f"stdout: {stdout}\nstderr: {stderr}"
+        ) as server_process:
+            try:
+                # Wait for server to start with timeout
+                server_url = (
+                    f"http://{config['host']}:{config['port']}{config['mcp_path']}/"
                 )
+                for _ in range(30):  # 3 second timeout
+                    try:
+                        async with httpx.AsyncClient() as client:
+                            await client.get(server_url, timeout=0.5)
+                            break  # Server is responding
+                    except (httpx.ConnectError, httpx.TimeoutException) as exc:
+                        # Check if process is still alive
+                        if server_process.poll() is not None:
+                            stdout, stderr = server_process.communicate()
+                            raise RuntimeError(
+                                f"Server process died: stdout={stdout}, stderr={stderr}"
+                            ) from exc
+                        await asyncio.sleep(0.1)
+                else:
+                    # Server failed to start, get logs
+                    server_process.terminate()
+                    stdout, stderr = server_process.communicate(timeout=5)
+                    raise RuntimeError(
+                        f"Server failed to start on {config['host']}:{config['port']}\n"
+                        f"stdout: {stdout}\nstderr: {stderr}"
+                    )
 
-            yield config
+                yield config
 
-        finally:
-            # Clean up server process
-            if server_process.poll() is None:
-                # Try graceful shutdown first
-                server_process.terminate()
-                try:
-                    server_process.wait(timeout=3.0)
-                except subprocess.TimeoutExpired:
-                    # Force kill if graceful shutdown fails
-                    server_process.kill()
-                    server_process.wait(timeout=1.0)
+            finally:
+                # Clean up server process
+                if server_process.poll() is None:
+                    # Try graceful shutdown first
+                    server_process.terminate()
+                    try:
+                        server_process.wait(timeout=3.0)
+                    except subprocess.TimeoutExpired:
+                        # Force kill if graceful shutdown fails
+                        server_process.kill()
+                        server_process.wait(timeout=1.0)
 
     @pytest.mark.asyncio
     async def test_http_server_starts_and_responds(
@@ -388,11 +388,11 @@ class TestHTTPStreamableTransport:
 
 
 @pytest.mark.integration
-class TestHTTPStreamableTransportCLI:
-    """Integration tests for CLI with HTTP Streamable Transport."""
+class TestHTTPTransportCLI:
+    """Integration tests for CLI with HTTP Transport."""
 
-    def test_cli_http_streamable_help(self) -> None:
-        """Test CLI shows HTTP streamable options in help."""
+    def test_cli_http_transport_help(self) -> None:
+        """Test CLI shows HTTP transport options in help."""
         result = subprocess.run(
             [sys.executable, "-m", "fabric_mcp.cli", "--help"],
             capture_output=True,
@@ -402,20 +402,29 @@ class TestHTTPStreamableTransportCLI:
         )
 
         assert result.returncode == 0
-        assert "--http-streamable" in result.stdout
+        assert "--transport" in result.stdout
+        assert "[stdio|http]" in result.stdout
         assert "--host" in result.stdout
         assert "--port" in result.stdout
         assert "--mcp-path" in result.stdout
 
-    def test_cli_mutual_exclusion_stdio_http(self) -> None:
-        """Test CLI rejects both --stdio and --http-streamable."""
+    def test_cli_validates_http_options_with_stdio(self) -> None:
+        """Test CLI rejects HTTP options when using stdio transport."""
         result = subprocess.run(
-            [sys.executable, "-m", "fabric_mcp.cli", "--stdio", "--http-streamable"],
+            [
+                sys.executable,
+                "-m",
+                "fabric_mcp.cli",
+                "--transport",
+                "stdio",
+                "--host",
+                "custom-host",
+            ],
             capture_output=True,
             text=True,
             cwd=os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
             check=False,
         )
 
-        assert result.returncode == 1
-        assert "mutually exclusive" in result.stderr.lower()
+        assert result.returncode == 2
+        assert "only valid with --transport http" in result.stderr

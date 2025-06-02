@@ -328,11 +328,11 @@ class TestFabricMCPEndToEnd:
         assert result.returncode == 0
         assert "A Model Context Protocol server for Fabric AI" in result.stdout
         assert "--version" in result.stdout
-        assert "--stdio" in result.stdout
+        assert "--transport" in result.stdout
         assert "--log-level" in result.stdout
 
     def test_no_args_shows_help(self):
-        """Test that running fabric-mcp with no args shows help and exits."""
+        """Test that running fabric-mcp with no args errors with missing transport."""
         result = subprocess.run(
             [sys.executable, "-m", "fabric_mcp.cli"],
             capture_output=True,
@@ -340,11 +340,8 @@ class TestFabricMCPEndToEnd:
             check=False,
         )
 
-        # Should succeed and show help
-        assert result.returncode == 0
-        assert "A Model Context Protocol server for Fabric AI" in result.stdout
-        assert "--stdio" in result.stdout
-        assert "--http-streamable" in result.stdout
+        assert result.returncode != 0
+        assert "Missing option '--transport'" in result.stderr
 
     def test_script_entry_point_version(self):
         """Test the installed script entry point returns correct version."""
@@ -377,7 +374,7 @@ class TestFabricMCPEndToEnd:
         if result.returncode == 0:
             assert "A Model Context Protocol server for Fabric AI" in result.stdout
             assert "--version" in result.stdout
-            assert "--stdio" in result.stdout
+            assert "--transport" in result.stdout
         else:
             # If the script isn't available, we can skip this test
             pytest.skip("fabric-mcp script not available (not installed in dev mode)")
