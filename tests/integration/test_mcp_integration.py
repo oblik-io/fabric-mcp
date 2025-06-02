@@ -328,7 +328,7 @@ class TestFabricMCPEndToEnd:
         assert result.returncode == 0
         assert "A Model Context Protocol server for Fabric AI" in result.stdout
         assert "--version" in result.stdout
-        assert "--stdio" in result.stdout
+        assert "--transport" in result.stdout
         assert "--log-level" in result.stdout
 
     def test_no_args_shows_help(self):
@@ -340,11 +340,10 @@ class TestFabricMCPEndToEnd:
             check=False,
         )
 
-        # Should succeed and show help
+        # Should succeed and start the stdio server (default behavior)
         assert result.returncode == 0
-        assert "A Model Context Protocol server for Fabric AI" in result.stdout
-        assert "--stdio" in result.stdout
-        assert "--http-streamable" in result.stdout
+        # Server starts immediately, so there's no help text in stdout
+        # The server runs and logs to stderr, then exits when stdin closes
 
     def test_script_entry_point_version(self):
         """Test the installed script entry point returns correct version."""
@@ -377,7 +376,7 @@ class TestFabricMCPEndToEnd:
         if result.returncode == 0:
             assert "A Model Context Protocol server for Fabric AI" in result.stdout
             assert "--version" in result.stdout
-            assert "--stdio" in result.stdout
+            assert "--transport" in result.stdout
         else:
             # If the script isn't available, we can skip this test
             pytest.skip("fabric-mcp script not available (not installed in dev mode)")

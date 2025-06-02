@@ -32,37 +32,57 @@ class TestCLIMain:
 
         # Check that help was printed
         assert "A Model Context Protocol server for Fabric AI" in result.output
-        assert "--stdio" in result.output
+        assert "--transport" in result.output
         assert "--log-level" in result.output
 
-    def test_no_args_shows_help_and_exits(self):
-        """Test that running with no arguments shows help and exits."""
-        runner = CliRunner()
-        result = runner.invoke(main, [])
+    def test_no_args_uses_default_stdio_transport(self):
+        """Test that running with no arguments uses default stdio transport."""
+        with (
+            patch("fabric_mcp.cli.Log") as mock_log_class,
+            patch("fabric_mcp.cli.FabricMCP") as mock_fabric_mcp_class,
+        ):
+            mock_log = Mock()
+            mock_log.level_name = "INFO"
+            mock_log.logger = Mock()
+            mock_log_class.return_value = mock_log
 
-        # Should exit with code 0 and show help
-        assert result.exit_code == 0
-        assert "A Model Context Protocol server for Fabric AI" in result.output
-        assert "--stdio" in result.output
-        assert "--http-streamable" in result.output
+            mock_server = Mock()
+            mock_fabric_mcp_class.return_value = mock_server
 
-    def test_only_log_level_without_stdio_shows_help(self):
-        """Test that only --log-level without transport flags shows help."""
-        runner = CliRunner()
-        result = runner.invoke(main, ["--log-level", "debug"])
+            runner = CliRunner()
+            result = runner.invoke(main, [])
 
-        # Should exit with code 0 and show help
-        assert result.exit_code == 0
-        assert "A Model Context Protocol server for Fabric AI" in result.output
-        assert "--stdio" in result.output
-        assert "--http-streamable" in result.output
+            # Should exit successfully with default stdio transport
+            assert result.exit_code == 0
+            mock_server.stdio.assert_called_once()
+
+    def test_only_log_level_uses_default_stdio_transport(self):
+        """Test that only --log-level without transport uses default stdio."""
+        with (
+            patch("fabric_mcp.cli.Log") as mock_log_class,
+            patch("fabric_mcp.cli.FabricMCP") as mock_fabric_mcp_class,
+        ):
+            mock_log = Mock()
+            mock_log.level_name = "DEBUG"
+            mock_log.logger = Mock()
+            mock_log_class.return_value = mock_log
+
+            mock_server = Mock()
+            mock_fabric_mcp_class.return_value = mock_server
+
+            runner = CliRunner()
+            result = runner.invoke(main, ["--log-level", "debug"])
+
+            # Should exit successfully with default stdio transport
+            assert result.exit_code == 0
+            mock_server.stdio.assert_called_once()
 
     @patch("fabric_mcp.cli.FabricMCP")
     @patch("fabric_mcp.cli.Log")
-    def test_stdio_flag_creates_server_and_runs(
+    def test_transport_stdio_creates_server_and_runs(
         self, mock_log_class: Mock, mock_fabric_mcp_class: Mock
     ):
-        """Test that --stdio flag creates server and runs it."""
+        """Test that --transport stdio creates server and runs it."""
         # Setup mocks
         mock_log = Mock()
         mock_log.level_name = "INFO"
@@ -73,7 +93,7 @@ class TestCLIMain:
         mock_fabric_mcp_class.return_value = mock_server
 
         runner = CliRunner()
-        result = runner.invoke(main, ["--stdio"])
+        result = runner.invoke(main, ["--transport", "stdio"])
 
         # Should exit successfully
         assert result.exit_code == 0
@@ -89,10 +109,10 @@ class TestCLIMain:
 
     @patch("fabric_mcp.cli.FabricMCP")
     @patch("fabric_mcp.cli.Log")
-    def test_stdio_with_custom_log_level(
+    def test_transport_stdio_with_custom_log_level(
         self, mock_log_class: Mock, mock_fabric_mcp_class: Mock
     ):
-        """Test --stdio with custom log level."""
+        """Test --transport stdio with custom log level."""
         mock_log = Mock()
         mock_log.level_name = "DEBUG"
         mock_log.logger = Mock()
@@ -102,7 +122,7 @@ class TestCLIMain:
         mock_fabric_mcp_class.return_value = mock_server
 
         runner = CliRunner()
-        result = runner.invoke(main, ["--stdio", "--log-level", "debug"])
+        result = runner.invoke(main, ["--transport", "stdio", "--log-level", "debug"])
 
         assert result.exit_code == 0
 
@@ -114,10 +134,10 @@ class TestCLIMain:
 
     @patch("fabric_mcp.cli.FabricMCP")
     @patch("fabric_mcp.cli.Log")
-    def test_stdio_with_short_log_level_flag(
+    def test_transport_stdio_with_short_log_level_flag(
         self, mock_log_class: Mock, mock_fabric_mcp_class: Mock
     ):
-        """Test --stdio with short form -l for log level."""
+        """Test --transport stdio with short form -l for log level."""
         mock_log = Mock()
         mock_log.level_name = "ERROR"
         mock_log.logger = Mock()
@@ -127,7 +147,7 @@ class TestCLIMain:
         mock_fabric_mcp_class.return_value = mock_server
 
         runner = CliRunner()
-        result = runner.invoke(main, ["--stdio", "-l", "error"])
+        result = runner.invoke(main, ["--transport", "stdio", "-l", "error"])
 
         assert result.exit_code == 0
         mock_log_class.assert_called_once_with("error")
@@ -135,7 +155,7 @@ class TestCLIMain:
 
     @patch("fabric_mcp.cli.FabricMCP")
     @patch("fabric_mcp.cli.Log")
-    def test_stdio_logs_startup_and_shutdown_messages(
+    def test_transport_stdio_logs_startup_and_shutdown_messages(
         self, mock_log_class: Mock, mock_fabric_mcp_class: Mock
     ):
         """Test that appropriate log messages are generated."""
@@ -149,7 +169,7 @@ class TestCLIMain:
         mock_fabric_mcp_class.return_value = mock_server
 
         runner = CliRunner()
-        result = runner.invoke(main, ["--stdio"])
+        result = runner.invoke(main, ["--transport", "stdio"])
 
         assert result.exit_code == 0
 
@@ -179,12 +199,14 @@ class TestCLIMain:
         for level in valid_levels:
             with patch("fabric_mcp.cli.FabricMCP"):
                 with patch("fabric_mcp.cli.Log"):
-                    result = runner.invoke(main, ["--stdio", "--log-level", level])
+                    result = runner.invoke(
+                        main, ["--transport", "stdio", "--log-level", level]
+                    )
                     # Should not raise an exception and exit successfully
                     assert result.exit_code == 0
 
         # Test invalid log level
-        result = runner.invoke(main, ["--stdio", "--log-level", "invalid"])
+        result = runner.invoke(main, ["--transport", "stdio", "--log-level", "invalid"])
         # Click should exit with error for invalid choice
         assert result.exit_code != 0
 
@@ -203,7 +225,7 @@ class TestCLIMain:
             mock_fabric_mcp_class.return_value = mock_fabric_mcp
 
             runner = CliRunner()
-            result = runner.invoke(main, ["--stdio"])
+            result = runner.invoke(main, ["--transport", "stdio"])
 
             assert result.exit_code == 0
 
@@ -212,10 +234,10 @@ class TestCLIMain:
 
     @patch("fabric_mcp.cli.FabricMCP")
     @patch("fabric_mcp.cli.Log")
-    def test_http_streamable_flag_creates_server_and_runs(
+    def test_transport_http_creates_server_and_runs(
         self, mock_log_class: Mock, mock_fabric_mcp_class: Mock
     ):
-        """Test that --http-streamable flag creates server and runs it."""
+        """Test that --transport http creates server and runs it."""
         # Setup mocks
         mock_log = Mock()
         mock_log.level_name = "INFO"
@@ -226,7 +248,7 @@ class TestCLIMain:
         mock_fabric_mcp_class.return_value = mock_server
 
         runner = CliRunner()
-        result = runner.invoke(main, ["--http-streamable"])
+        result = runner.invoke(main, ["--transport", "http"])
 
         # Should exit successfully
         assert result.exit_code == 0
@@ -244,10 +266,10 @@ class TestCLIMain:
 
     @patch("fabric_mcp.cli.FabricMCP")
     @patch("fabric_mcp.cli.Log")
-    def test_http_streamable_with_custom_config(
+    def test_transport_http_with_custom_config(
         self, mock_log_class: Mock, mock_fabric_mcp_class: Mock
     ):
-        """Test --http-streamable with custom host, port, and path."""
+        """Test --transport http with custom host, port, and path."""
         # Setup mocks
         mock_log = Mock()
         mock_log.level_name = "DEBUG"
@@ -261,7 +283,8 @@ class TestCLIMain:
         result = runner.invoke(
             main,
             [
-                "--http-streamable",
+                "--transport",
+                "http",
                 "--host",
                 "0.0.0.0",
                 "--port",
@@ -286,3 +309,95 @@ class TestCLIMain:
         mock_server.http_streamable.assert_called_once_with(
             host="0.0.0.0", port=9000, mcp_path="/api/mcp"
         )
+
+
+class TestCLIValidation:
+    """Test cases for CLI argument validation."""
+
+    def test_host_option_rejected_with_stdio_transport(self):
+        """Test that --host option is rejected when using stdio transport."""
+        runner = CliRunner()
+        result = runner.invoke(main, ["--transport", "stdio", "--host", "custom-host"])
+
+        assert result.exit_code == 2
+        assert "only valid with --transport http" in result.output
+
+    def test_port_option_rejected_with_stdio_transport(self):
+        """Test that --port option is rejected when using stdio transport."""
+        runner = CliRunner()
+        result = runner.invoke(main, ["--transport", "stdio", "--port", "9000"])
+
+        assert result.exit_code == 2
+        assert "only valid with --transport http" in result.output
+
+    def test_mcp_path_option_rejected_with_stdio_transport(self):
+        """Test that --mcp-path option is rejected when using stdio transport."""
+        runner = CliRunner()
+        result = runner.invoke(main, ["--transport", "stdio", "--mcp-path", "/custom"])
+
+        assert result.exit_code == 2
+        assert "only valid with --transport http" in result.output
+
+    def test_http_options_accepted_with_http_transport(self):
+        """Test that HTTP options are accepted when using http transport."""
+        with (
+            patch("fabric_mcp.cli.Log") as mock_log_class,
+            patch("fabric_mcp.cli.FabricMCP") as mock_fabric_mcp_class,
+        ):
+            mock_log = Mock()
+            mock_log.level_name = "INFO"
+            mock_log.logger = Mock()
+            mock_log_class.return_value = mock_log
+
+            mock_server = Mock()
+            mock_fabric_mcp_class.return_value = mock_server
+
+            runner = CliRunner()
+            result = runner.invoke(
+                main,
+                [
+                    "--transport",
+                    "http",
+                    "--host",
+                    "0.0.0.0",
+                    "--port",
+                    "9000",
+                    "--mcp-path",
+                    "/api/mcp",
+                ],
+            )
+
+            assert result.exit_code == 0
+            mock_server.http_streamable.assert_called_once_with(
+                host="0.0.0.0", port=9000, mcp_path="/api/mcp"
+            )
+
+    def test_default_values_with_stdio_transport(self):
+        """Test that default values work correctly with stdio transport."""
+        with (
+            patch("fabric_mcp.cli.Log") as mock_log_class,
+            patch("fabric_mcp.cli.FabricMCP") as mock_fabric_mcp_class,
+        ):
+            mock_log = Mock()
+            mock_log.level_name = "INFO"
+            mock_log.logger = Mock()
+            mock_log_class.return_value = mock_log
+
+            mock_server = Mock()
+            mock_fabric_mcp_class.return_value = mock_server
+
+            runner = CliRunner()
+            result = runner.invoke(main, ["--transport", "stdio"])
+
+            assert result.exit_code == 0
+            # stdio() should be called, not http_streamable()
+            mock_server.stdio.assert_called_once()
+            mock_server.http_streamable.assert_not_called()
+
+    def test_implicit_stdio_transport_validation(self):
+        """Test validation when transport is not specified (default stdio)."""
+        runner = CliRunner()
+        result = runner.invoke(main, ["--host", "custom-host"])
+
+        assert result.exit_code == 2
+        assert "only valid with --transport http" in result.output

@@ -56,7 +56,8 @@ class TestHTTPStreamableTransport:
                 sys.executable,
                 "-m",
                 "fabric_mcp.cli",
-                "--http-streamable",
+                "--transport",
+                "http",
                 "--host",
                 config["host"],
                 "--port",
@@ -388,11 +389,11 @@ class TestHTTPStreamableTransport:
 
 
 @pytest.mark.integration
-class TestHTTPStreamableTransportCLI:
-    """Integration tests for CLI with HTTP Streamable Transport."""
+class TestHTTPTransportCLI:
+    """Integration tests for CLI with HTTP Transport."""
 
-    def test_cli_http_streamable_help(self) -> None:
-        """Test CLI shows HTTP streamable options in help."""
+    def test_cli_http_transport_help(self) -> None:
+        """Test CLI shows HTTP transport options in help."""
         result = subprocess.run(
             [sys.executable, "-m", "fabric_mcp.cli", "--help"],
             capture_output=True,
@@ -402,20 +403,29 @@ class TestHTTPStreamableTransportCLI:
         )
 
         assert result.returncode == 0
-        assert "--http-streamable" in result.stdout
+        assert "--transport" in result.stdout
+        assert "[stdio|http]" in result.stdout
         assert "--host" in result.stdout
         assert "--port" in result.stdout
         assert "--mcp-path" in result.stdout
 
-    def test_cli_mutual_exclusion_stdio_http(self) -> None:
-        """Test CLI rejects both --stdio and --http-streamable."""
+    def test_cli_validates_http_options_with_stdio(self) -> None:
+        """Test CLI rejects HTTP options when using stdio transport."""
         result = subprocess.run(
-            [sys.executable, "-m", "fabric_mcp.cli", "--stdio", "--http-streamable"],
+            [
+                sys.executable,
+                "-m",
+                "fabric_mcp.cli",
+                "--transport",
+                "stdio",
+                "--host",
+                "custom-host",
+            ],
             capture_output=True,
             text=True,
             cwd=os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
             check=False,
         )
 
-        assert result.returncode == 1
-        assert "mutually exclusive" in result.stderr.lower()
+        assert result.returncode == 2
+        assert "only valid with --transport http" in result.stderr

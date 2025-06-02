@@ -66,13 +66,25 @@
             5. MCP errors correctly transmitted over Streamable HTTP. HTTP-specific errors handled by underlying ASGI server.
             6. Documentation updated for running with Streamable HTTP transport.
             7. Integration tests validate all key MCP tool functionalities (including streaming) using an HTTP-based MCP client. Tests verify host/port/path config.
-  - **Story 1.7: Implement SSE Transport for MCP Server**
+  - **Story 1.7: Reorganize CLI Arguments with Transport Selection and Validation**
+    - User Story: As a Server Operator, I want the CLI to use a cleaner `--transport` option with proper validation so that the interface is more intuitive and prevents invalid option combinations.
+    - Acceptance Criteria:
+            1. Replace `--stdio` and `--http-streamable` flags with a single `--transport` option accepting `stdio|http` (default: `stdio`).
+            2. HTTP-specific options (`--host`, `--port`, `--mcp-path`) are only valid when `--transport http` is used.
+            3. Click callback validation prevents HTTP-specific options from being used with `stdio` transport.
+            4. Help text clearly indicates which options are transport-specific.
+            5. Default values are shown in help text for all options.
+            6. Existing functionality remains unchanged - only the CLI interface changes.
+            7. All existing CLI tests updated and passing.
+            8. Integration tests verify both transport modes work correctly with new CLI interface.
+  - **Story 1.8: Implement SSE Transport for MCP Server**
     - User Story: As a Server Operator, I want to be able to run the Fabric MCP Server using FastMCP's (deprecated) "SSE" transport so that specific MCP clients expecting an SSE connection can interact with it at a configurable endpoint (e.g., `/sse`).
     - Acceptance Criteria:
-            1. Server configurable and launchable with FastMCP's "SSE" transport (via CLI or programmatically).
-            2. Binds to configurable host/port.
-            3. MCP SSE endpoint path configurable (default `/sse`).
-            4. All defined MCP tools functional over SSE, including streaming for `fabric_run_pattern` (stream chunks as SSE events).
-            5. MCP errors correctly transmitted over SSE. HTTP-specific errors handled by ASGI server.
-            6. Documentation updated for running with SSE, noting FastMCP's deprecation.
-            7. Integration tests validate MCP tool functionalities (including streaming) using an SSE-configured MCP client. Tests verify host/port/SSE path config.
+            1. Add `sse` as a third option to the `--transport` choice (making it `stdio|http|sse`).
+            2. SSE-specific options (`--host`, `--port`, `--sse-path`) are only valid when `--transport sse` is used.
+            3. Click callback validation prevents SSE-specific options from being used with other transports.
+            4. Server configurable and launchable with FastMCP's "SSE" transport via `--transport sse`.
+            5. All defined MCP tools functional over SSE, including streaming for `fabric_run_pattern` (stream chunks as SSE events).
+            6. MCP errors correctly transmitted over SSE. HTTP-specific errors handled by ASGI server.
+            7. Documentation updated for running with SSE, noting FastMCP's deprecation.
+            8. Integration tests validate MCP tool functionalities (including streaming) using an SSE-configured MCP client. Tests verify host/port/SSE path config.
