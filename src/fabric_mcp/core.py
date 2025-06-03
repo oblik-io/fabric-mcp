@@ -161,6 +161,15 @@ class FabricMCP(FastMCP[None]):
             self.logger.debug("Exception details: %s: %s", type(e).__name__, e)
             self.logger.info("Server stopped by user.")
 
+    def sse(self, host: str = "127.0.0.1", port: int = 8000, path: str = "/sse"):
+        """Run the MCP server with SSE transport."""
+        try:
+            self.mcp.run(transport="sse", host=host, port=port, path=path)
+        except (KeyboardInterrupt, CancelledError, WouldBlock) as e:
+            # Handle graceful shutdown
+            self.logger.debug("Exception details: %s: %s", type(e).__name__, e)
+            self.logger.info("Server stopped by user.")
+
     def stdio(self):
         """Run the MCP server."""
         try:
