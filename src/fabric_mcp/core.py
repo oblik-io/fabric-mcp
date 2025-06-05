@@ -105,8 +105,8 @@ class FabricMCP(FastMCP[None]):
             """Retrieve configured Fabric models by vendor."""
             # This is a placeholder for the actual implementation
             return {
-                "all_models": ["gpt-4", "gpt-3.5-turbo", "claude-3-opus"],
-                "models_by_vendor": {
+                "models": ["gpt-4", "gpt-3.5-turbo", "claude-3-opus"],
+                "vendors": {
                     "openai": ["gpt-4", "gpt-3.5-turbo"],
                     "anthropic": ["claude-3-opus"],
                 },
@@ -149,7 +149,7 @@ class FabricMCP(FastMCP[None]):
         self.__tools.append(fabric_get_configuration)
 
     def http_streamable(
-        self, host: str = "127.0.0.1", port: int = 8000, mcp_path: str = "/mcp"
+        self, host: str = "127.0.0.1", port: int = 8000, mcp_path: str = "/message"
     ):
         """Run the MCP server with StreamableHttpTransport."""
         try:

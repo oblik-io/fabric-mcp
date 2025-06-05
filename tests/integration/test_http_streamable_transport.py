@@ -33,7 +33,7 @@ class TestHTTPStreamableTransport:
         return {
             "host": "127.0.0.1",
             "port": find_free_port(),
-            "mcp_path": "/mcp",
+            "mcp_path": "/message",
         }
 
     @pytest.mark.asyncio

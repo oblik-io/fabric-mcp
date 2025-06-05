@@ -45,7 +45,7 @@ async def run_server(
 
     # Add transport-specific arguments
     if transport_type == "http":
-        cmd_args.extend(["--mcp-path", config.get("mcp_path", "/mcp")])
+        cmd_args.extend(["--mcp-path", config.get("mcp_path", "/message")])
     elif transport_type == "sse":
         cmd_args.extend(["--sse-path", config.get("sse_path", "/sse")])
 

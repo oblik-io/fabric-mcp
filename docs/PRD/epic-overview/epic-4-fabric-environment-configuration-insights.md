@@ -9,7 +9,7 @@
             2. Registered and advertised via `list_tools()` (no params, returns object) per `design.md`.
             3. Uses `FabricApiClient` for GET to Fabric API `/models/names`.
             4. Parses JSON response from Fabric API (expected: list of all models, map of models by vendor).
-            5. MCP success response contains structured JSON (e.g., `{"all_models": [...], "models_by_vendor": {...}}`). Empty lists/objects if none.
+            5. MCP success response contains structured JSON (e.g., `{"models": [...], "vendors": {...}}`). Empty lists/objects if none.
             6. Returns structured MCP error for Fabric API errors or connection failures.
             7. Unit tests: mock `FabricApiClient` for success (models/vendors, empty), API errors.
             8. Integration tests: (vs. live local `fabric --serve`) verify response reflects local Fabric model config; test with no models if possible.

@@ -69,7 +69,7 @@ def validate_server_options(
 )
 @click.option(
     "--mcp-path",
-    default="/mcp",
+    default="/message",
     show_default=True,
     callback=validate_http_options,
     help="MCP endpoint path (HTTP transport only).",

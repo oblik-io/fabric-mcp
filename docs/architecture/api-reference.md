@@ -256,8 +256,8 @@ The Fabric MCP Server provides the following tools to MCP clients. These tools a
 
             ```json
             {
-              "all_models": ["string"],
-              "models_by_vendor": {
+              "models": ["string"],
+              "vendors": {
                 "vendor_name": ["string"]
               }
             }

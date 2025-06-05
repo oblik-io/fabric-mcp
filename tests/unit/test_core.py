@@ -139,8 +139,8 @@ def test_tool_registration_coverage():
     fabric_list_models = tools[3]
     result = fabric_list_models()
     assert isinstance(result, dict)
-    assert "all_models" in result
-    assert "models_by_vendor" in result
+    assert "models" in result
+    assert "vendors" in result
 
     fabric_list_strategies = tools[4]
     result = fabric_list_strategies()
@@ -167,7 +167,7 @@ def test_http_streamable_method_runs_mcp(server_instance: FabricMCP):
             transport="streamable-http",
             host="127.0.0.1",
             port=8000,
-            path="/mcp",
+            path="/message",
         )
 
 

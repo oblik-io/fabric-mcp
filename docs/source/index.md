@@ -1,6 +1,10 @@
 # Fabric MCP Server Documentation Index
 
-This index provides an overview of the original key documentation files for the Fabric MCP Server project, which integrates Daniel Miessler's Fabric AI framework with the Model Context Protocol (MCP).
+This index provides an overview of the original key documentation files for the Fabric MCP Server project,
+which integrates Daniel Miessler's Fabric AI framework with the Model Context Protocol (MCP).
+
+NOTE: These documents are here for archival purposes ONLY and should not be regarded
+as the source of truth about the current state. Please refer to the other documentation
 
 ## Core Documentation Files
 
