@@ -6,11 +6,8 @@ including all MCP tools over HTTP and configuration options.
 
 import asyncio
 import os
-import socket
 import subprocess
 import sys
-from collections.abc import AsyncGenerator
-from contextlib import asynccontextmanager
 from typing import Any
 
 import httpx
@@ -18,18 +15,12 @@ import pytest
 from fastmcp import Client
 from fastmcp.client.transports import StreamableHttpTransport
 
-# Type aliases for better readability
-ServerConfig = dict[str, Any]
-ToolResponse = dict[str, Any]
-
-
-def find_free_port() -> int:
-    """Find a free port to use for testing."""
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind(("", 0))
-        s.listen(1)
-        port = s.getsockname()[1]
-    return port
+from tests.shared.transport_test_utils import (
+    ServerConfig,
+    find_free_port,
+    get_expected_tools,
+    run_server,
+)
 
 
 @pytest.mark.integration
@@ -41,83 +32,16 @@ class TestHTTPStreamableTransport:
         """Configuration for the HTTP server."""
         return {
             "host": "127.0.0.1",
-            "port": find_free_port(),  # Use dynamic port allocation
+            "port": find_free_port(),
             "mcp_path": "/mcp",
         }
-
-    @asynccontextmanager
-    async def run_http_server(
-        self, config: ServerConfig
-    ) -> AsyncGenerator[ServerConfig, None]:
-        """Context manager to run HTTP server during tests."""
-        # Start server as subprocess for proper isolation
-        with subprocess.Popen(
-            [
-                sys.executable,
-                "-m",
-                "fabric_mcp.cli",
-                "--transport",
-                "http",
-                "--host",
-                config["host"],
-                "--port",
-                str(config["port"]),
-                "--mcp-path",
-                config["mcp_path"],
-                "--log-level",
-                "info",
-            ],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-        ) as server_process:
-            try:
-                # Wait for server to start with timeout
-                server_url = (
-                    f"http://{config['host']}:{config['port']}{config['mcp_path']}/"
-                )
-                for _ in range(30):  # 3 second timeout
-                    try:
-                        async with httpx.AsyncClient() as client:
-                            await client.get(server_url, timeout=0.5)
-                            break  # Server is responding
-                    except (httpx.ConnectError, httpx.TimeoutException) as exc:
-                        # Check if process is still alive
-                        if server_process.poll() is not None:
-                            stdout, stderr = server_process.communicate()
-                            raise RuntimeError(
-                                f"Server process died: stdout={stdout}, stderr={stderr}"
-                            ) from exc
-                        await asyncio.sleep(0.1)
-                else:
-                    # Server failed to start, get logs
-                    server_process.terminate()
-                    stdout, stderr = server_process.communicate(timeout=5)
-                    raise RuntimeError(
-                        f"Server failed to start on {config['host']}:{config['port']}\n"
-                        f"stdout: {stdout}\nstderr: {stderr}"
-                    )
-
-                yield config
-
-            finally:
-                # Clean up server process
-                if server_process.poll() is None:
-                    # Try graceful shutdown first
-                    server_process.terminate()
-                    try:
-                        server_process.wait(timeout=3.0)
-                    except subprocess.TimeoutExpired:
-                        # Force kill if graceful shutdown fails
-                        server_process.kill()
-                        server_process.wait(timeout=1.0)
 
     @pytest.mark.asyncio
     async def test_http_server_starts_and_responds(
         self, http_server_config: ServerConfig
     ) -> None:
         """Test that HTTP server starts and responds to basic requests."""
-        async with self.run_http_server(http_server_config) as config:
+        async with run_server(http_server_config, "http") as config:
             # Test basic connectivity
             url = f"http://{config['host']}:{config['port']}{config['mcp_path']}/"
 
@@ -133,7 +57,7 @@ class TestHTTPStreamableTransport:
         self, http_server_config: ServerConfig
     ) -> None:
         """Test MCP client can connect and list tools."""
-        async with self.run_http_server(http_server_config) as config:
+        async with run_server(http_server_config, "http") as config:
             url = f"http://{config['host']}:{config['port']}{config['mcp_path']}"
 
             # Create MCP client with HTTP transport
@@ -151,14 +75,7 @@ class TestHTTPStreamableTransport:
                     tool.name
                     for tool in tools  # type: ignore[misc]
                 ]
-                expected_tools = [
-                    "fabric_list_patterns",
-                    "fabric_get_pattern_details",
-                    "fabric_run_pattern",
-                    "fabric_list_models",
-                    "fabric_list_strategies",
-                    "fabric_get_configuration",
-                ]
+                expected_tools = get_expected_tools()
 
                 for expected_tool in expected_tools:
                     assert expected_tool in tool_names
@@ -168,7 +85,7 @@ class TestHTTPStreamableTransport:
         self, http_server_config: ServerConfig
     ) -> None:
         """Test fabric_list_patterns tool over HTTP."""
-        async with self.run_http_server(http_server_config) as config:
+        async with run_server(http_server_config, "http") as config:
             url = f"http://{config['host']}:{config['port']}{config['mcp_path']}"
 
             transport = StreamableHttpTransport(url=url)
@@ -188,7 +105,7 @@ class TestHTTPStreamableTransport:
         self, http_server_config: ServerConfig
     ) -> None:
         """Test fabric_get_pattern_details tool over HTTP."""
-        async with self.run_http_server(http_server_config) as config:
+        async with run_server(http_server_config, "http") as config:
             url = f"http://{config['host']}:{config['port']}{config['mcp_path']}"
 
             transport = StreamableHttpTransport(url=url)
@@ -211,7 +128,7 @@ class TestHTTPStreamableTransport:
         self, http_server_config: ServerConfig
     ) -> None:
         """Test fabric_run_pattern tool over HTTP (non-streaming)."""
-        async with self.run_http_server(http_server_config) as config:
+        async with run_server(http_server_config, "http") as config:
             url = f"http://{config['host']}:{config['port']}{config['mcp_path']}"
 
             transport = StreamableHttpTransport(url=url)
@@ -238,7 +155,7 @@ class TestHTTPStreamableTransport:
         self, http_server_config: ServerConfig
     ) -> None:
         """Test fabric_run_pattern tool over HTTP with streaming."""
-        async with self.run_http_server(http_server_config) as config:
+        async with run_server(http_server_config, "http") as config:
             url = f"http://{config['host']}:{config['port']}{config['mcp_path']}"
 
             transport = StreamableHttpTransport(url=url)
@@ -265,7 +182,7 @@ class TestHTTPStreamableTransport:
         self, http_server_config: ServerConfig
     ) -> None:
         """Test fabric_list_models tool over HTTP."""
-        async with self.run_http_server(http_server_config) as config:
+        async with run_server(http_server_config, "http") as config:
             url = f"http://{config['host']}:{config['port']}{config['mcp_path']}"
 
             transport = StreamableHttpTransport(url=url)
@@ -285,7 +202,7 @@ class TestHTTPStreamableTransport:
         self, http_server_config: ServerConfig
     ) -> None:
         """Test fabric_list_strategies tool over HTTP."""
-        async with self.run_http_server(http_server_config) as config:
+        async with run_server(http_server_config, "http") as config:
             url = f"http://{config['host']}:{config['port']}{config['mcp_path']}"
 
             transport = StreamableHttpTransport(url=url)
@@ -305,7 +222,7 @@ class TestHTTPStreamableTransport:
         self, http_server_config: ServerConfig
     ) -> None:
         """Test fabric_get_configuration tool over HTTP."""
-        async with self.run_http_server(http_server_config) as config:
+        async with run_server(http_server_config, "http") as config:
             url = f"http://{config['host']}:{config['port']}{config['mcp_path']}"
 
             transport = StreamableHttpTransport(url=url)
@@ -330,7 +247,7 @@ class TestHTTPStreamableTransport:
             "mcp_path": "/custom-path",
         }
 
-        async with self.run_http_server(custom_config) as config:
+        async with run_server(custom_config, "http") as config:
             url = f"http://{config['host']}:{config['port']}{config['mcp_path']}"
 
             transport = StreamableHttpTransport(url=url)
@@ -346,7 +263,7 @@ class TestHTTPStreamableTransport:
         self, http_server_config: ServerConfig
     ) -> None:
         """Test MCP error handling over HTTP."""
-        async with self.run_http_server(http_server_config) as config:
+        async with run_server(http_server_config, "http") as config:
             url = f"http://{config['host']}:{config['port']}{config['mcp_path']}"
 
             transport = StreamableHttpTransport(url=url)
@@ -362,7 +279,7 @@ class TestHTTPStreamableTransport:
         self, http_server_config: ServerConfig
     ) -> None:
         """Test handling multiple concurrent HTTP requests."""
-        async with self.run_http_server(http_server_config) as config:
+        async with run_server(http_server_config, "http") as config:
             url = f"http://{config['host']}:{config['port']}{config['mcp_path']}"
 
             transport = StreamableHttpTransport(url=url)
@@ -403,7 +320,7 @@ class TestHTTPTransportCLI:
 
         assert result.returncode == 0
         assert "--transport" in result.stdout
-        assert "[stdio|http]" in result.stdout
+        assert "[stdio|http|sse]" in result.stdout
         assert "--host" in result.stdout
         assert "--port" in result.stdout
         assert "--mcp-path" in result.stdout
