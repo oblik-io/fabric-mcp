@@ -81,7 +81,7 @@ class TransportTestBase:
                 assert isinstance(tools, list)
 
                 # Verify expected tools are present
-                tool_names: list[str] = [tool.name for tool in tools]  # type: ignore[misc]
+                tool_names: list[str] = [tool.name for tool in tools]
                 expected_tools = get_expected_tools()
 
                 for expected_tool in expected_tools:
