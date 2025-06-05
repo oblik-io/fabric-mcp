@@ -240,7 +240,7 @@ class TestCLIMain:
 
         # Verify http_streamable() was called with defaults
         mock_server.http_streamable.assert_called_once_with(
-            host="127.0.0.1", port=8000, mcp_path="/mcp"
+            host="127.0.0.1", port=8000, mcp_path="/message"
         )
 
     @patch("fabric_mcp.cli.FabricMCP")

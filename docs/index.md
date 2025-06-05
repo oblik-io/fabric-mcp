@@ -2,6 +2,34 @@
 
 This document serves as the central catalog for all key documentation related to the Fabric MCP Server project.
 
+- [Fabric MCP Server Documentation Index](#fabric-mcp-server-documentation-index)
+  - [Core Project Documents](#core-project-documents)
+    - [Product Requirements Document (PRD)](#product-requirements-document-prd)
+    - [Architecture Document](#architecture-document)
+    - [Developer Experience (DX) and Operational Experience (OpX) Interaction Specification](#developer-experience-dx-and-operational-experience-opx-interaction-specification)
+  - [Project Epics](#project-epics)
+    - [Epic 1: Foundational Server Setup \& Basic Operations](#epic-1-foundational-server-setup--basic-operations)
+    - [Epic 2: Fabric Pattern Discovery \& Introspection](#epic-2-fabric-pattern-discovery--introspection)
+    - [Epic 3: Core Fabric Pattern Execution with Strategy \& Parameter Control](#epic-3-core-fabric-pattern-execution-with-strategy--parameter-control)
+    - [Epic 4: Fabric Environment \& Configuration Insights](#epic-4-fabric-environment--configuration-insights)
+  - [Architectural Granules (Sharded from Architecture Document)](#architectural-granules-sharded-from-architecture-document)
+    - [API Reference](#api-reference)
+    - [Component View](#component-view)
+    - [Core Workflows \& Sequence Diagrams](#core-workflows--sequence-diagrams)
+    - [Data Models](#data-models)
+    - [Infrastructure and Deployment Overview](#infrastructure-and-deployment-overview)
+    - [Key Reference Documents (from Architecture)](#key-reference-documents-from-architecture)
+    - [Operational Guidelines](#operational-guidelines)
+    - [Project Structure (from Architecture)](#project-structure-from-architecture)
+    - [Technology Stack](#technology-stack)
+  - [Contribution \& Development Setup](#contribution--development-setup)
+    - [Main Contribution Guidelines](#main-contribution-guidelines)
+    - [Detailed Contribution Guide](#detailed-contribution-guide)
+    - [Contributing Cheatsheet](#contributing-cheatsheet)
+  - [Other (Archival Reference Documents) - Potentially Out of Date](#other-archival-reference-documents---potentially-out-of-date)
+    - [Original Documents](#original-documents)
+    - [PM, PO, and Architect Checklists](#pm-po-and-architect-checklists)
+
 ## Core Project Documents
 
 ### [Product Requirements Document (PRD)](./PRD/index.md)
@@ -93,7 +121,7 @@ Provides an in-depth guide to contributing, covering advanced topics, tool confi
 
 A micro-summary of the development workflow for quick reference.
 
-## Other
+## Other (Archival Reference Documents) - Potentially Out of Date
 
 ### [Original Documents](./source/index.md)
 

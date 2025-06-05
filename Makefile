@@ -9,6 +9,7 @@ PACKAGE_PATH := src/fabric_mcp
 # The node package manager could be npm, but why? pnpm is faster and more efficient
 # This is only needed if you are using the fastmcp dev server.
 NPM_PACKAGER := pnpm
+NPX := $(NPM_PACKAGER) dlx
 STDIO_SERVER_SRC_FOR_MCP_INSPECTOR := $(PACKAGE_PATH)/server_stdio.py
 
 VERSION := $(shell uv run hatch version)
@@ -71,6 +72,7 @@ help:
 	@echo "  help          Show this help message"
 	@echo "  lint          Run linters"
 	@echo "  merge         Merge develop into main branch (bypassing pre-commit hooks)"
+	@echo "  mcp-inspector Start the MCP inspector server"
 	@echo "  tag           Tag the current git HEAD with the semantic versioning name."
 	@echo "  test          Run tests"
 
@@ -104,6 +106,14 @@ merge:
 	@echo "Switching back to develop..."
 	git checkout develop
 	@echo "Merge completed successfully!"
+
+mcp-inspector:
+	@echo "Starting MCP inspector server..."
+	@echo "Ensure you have the @modelcontextprotocol/inspector package installed."
+	@echo "If not, run 'make dev' to install it."
+	@echo "Start fabric-mcp in a different terminal window with the http or sse transport."
+	@echo ""
+	$(NPX) @modelcontextprotocol/inspector
 
 tag:
 	git tag v$(VERSION)

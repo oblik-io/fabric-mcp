@@ -30,6 +30,7 @@ Imagine seamlessly using Fabric's specialized prompts for code explanation, refa
     - [Installation From Source (for developers)](#installation-from-source-for-developers)
     - [Installation From PyPI (for users)](#installation-from-pypi-for-users)
   - [Configuration (Environment Variables)](#configuration-environment-variables)
+    - [Transport Options](#transport-options)
   - [Contributing](#contributing)
   - [License](#license)
 
@@ -159,7 +160,7 @@ fabric-mcp --stdio
 fabric-mcp --http-streamable
 
 # Custom host/port for HTTP transport
-fabric-mcp --http-streamable --host 0.0.0.0 --port 3000 --mcp-path /api/mcp
+fabric-mcp --http-streamable --host 0.0.0.0 --port 3000 --mcp-path /message
 ```
 
 ### Transport Options
@@ -170,7 +171,7 @@ The `fabric-mcp` server supports multiple transport methods:
 - **`--http-streamable`**: HTTP-based transport that runs a full HTTP server for MCP communication
   - `--host`: Server bind address (default: 127.0.0.1)
   - `--port`: Server port (default: 8000)
-  - `--mcp-path`: MCP endpoint path (default: /mcp)
+  - `--mcp-path`: MCP endpoint path (default: /message)
 
 For more details on transport configuration, see the [Infrastructure and Deployment Overview](./docs/architecture/infrastructure-and-deployment-overview.md#transport-configuration).
 

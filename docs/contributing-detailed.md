@@ -21,6 +21,8 @@
     - [Running Tests](#running-tests)
     - [Code Coverage](#code-coverage)
     - [Using the MCP Inspector](#using-the-mcp-inspector)
+      - [Option 1: FastMCP Dev Server (Recommended for Development)](#option-1-fastmcp-dev-server-recommended-for-development)
+      - [Option 2: Standalone MCP Inspector](#option-2-standalone-mcp-inspector)
   - [Commit Message Guidelines](#commit-message-guidelines)
     - [Conventional Commits Standard](#conventional-commits-standard)
     - [Importance of Clear Messages](#importance-of-clear-messages)
@@ -174,6 +176,8 @@ The `Makefile` provides convenient shortcuts for common development tasks. Below
 | `make coverage` | Runs tests and reports code coverage, failing if below threshold. | `uv run pytest --cov=fabric_mcp -ra -q --cov-report=term-missing --cov-fail-under=90` |
 | `make coverage-html` | Runs tests and generates an HTML code coverage report. | `uv run pytest --cov=fabric_mcp --cov-report=html:coverage_html --cov-fail-under=90` |
 | `make coverage-show` | Opens the HTML coverage report in the browser. | `open coverage_html/index.html \|\| xdg-open coverage_html/index.html \|\| start coverage_html/index.html` |
+| `make dev` | Starts the FastMCP dev server with MCP inspector for interactive testing. | `pnpm install @modelcontextprotocol/inspector`<br>`uv run fastmcp dev src/fabric_mcp/server_stdio.py` |
+| `make mcp-inspector` | Starts the standalone MCP inspector for connecting to running servers. | `pnpm dlx @modelcontextprotocol/inspector` |
 | `make build` | Builds the package. | `uv run hatch build` |
 | `make clean` | Removes temporary build, test, and environment artifacts. | `rm -rf .venv && rm -rf dist` |
 | `make tag` | Tags the current git HEAD with the semantic version. | `git tag v$(VERSION)` (where VERSION is from `uv run hatch version`) |
@@ -315,8 +319,12 @@ Code coverage analysis helps identify parts of the codebase not exercised by the
 ### Using the MCP Inspector
 
 The MCP Inspector is an interactive developer tool for testing and debugging MCP (Model Context Protocol) servers.
+There are two ways to use the MCP Inspector with `fabric-mcp`:
+
+#### Option 1: FastMCP Dev Server (Recommended for Development)
+
 The FastMCP library provides a CLI tool for running our FastMCP-based servers and accessing the
-MCP inspector.
+MCP inspector in an integrated development environment.
 
 ```bash
 make dev
@@ -330,6 +338,25 @@ uv run fastmcp dev src/fabric_mcp/server_stdio.py
 ```
 
 After running `make dev` you can browse to <http://127.0.0.1:6274> and Connect.
+
+#### Option 2: Standalone MCP Inspector
+
+For more advanced testing scenarios or when you need to connect to a separately running `fabric-mcp` server:
+
+```bash
+make mcp-inspector
+```
+
+This starts the standalone MCP inspector using:
+
+```bash
+pnpm dlx @modelcontextprotocol/inspector
+```
+
+When using this option, you'll need to:
+
+1. Start `fabric-mcp` in a separate terminal with the appropriate transport (http or sse)
+2. Connect to the running server through the inspector interface
 
 See the [FastMCP documentation][fastmcp-dev] about using the MCP inspector
 for more information.

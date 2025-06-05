@@ -10,6 +10,9 @@ from fastmcp import FastMCP
 
 from . import __version__
 
+DEFAULT_MCP_HTTP_PATH = "/message"
+DEFAULT_MCP_SSE_PATH = "/sse"
+
 
 class FabricMCP(FastMCP[None]):
     """Base class for the Model Context Protocol server."""
@@ -105,8 +108,8 @@ class FabricMCP(FastMCP[None]):
             """Retrieve configured Fabric models by vendor."""
             # This is a placeholder for the actual implementation
             return {
-                "all_models": ["gpt-4", "gpt-3.5-turbo", "claude-3-opus"],
-                "models_by_vendor": {
+                "models": ["gpt-4", "gpt-3.5-turbo", "claude-3-opus"],
+                "vendors": {
                     "openai": ["gpt-4", "gpt-3.5-turbo"],
                     "anthropic": ["claude-3-opus"],
                 },
@@ -149,7 +152,10 @@ class FabricMCP(FastMCP[None]):
         self.__tools.append(fabric_get_configuration)
 
     def http_streamable(
-        self, host: str = "127.0.0.1", port: int = 8000, mcp_path: str = "/mcp"
+        self,
+        host: str = "127.0.0.1",
+        port: int = 8000,
+        mcp_path: str = DEFAULT_MCP_HTTP_PATH,
     ):
         """Run the MCP server with StreamableHttpTransport."""
         try:
@@ -161,7 +167,12 @@ class FabricMCP(FastMCP[None]):
             self.logger.debug("Exception details: %s: %s", type(e).__name__, e)
             self.logger.info("Server stopped by user.")
 
-    def sse(self, host: str = "127.0.0.1", port: int = 8000, path: str = "/sse"):
+    def sse(
+        self,
+        host: str = "127.0.0.1",
+        port: int = 8000,
+        path: str = DEFAULT_MCP_SSE_PATH,
+    ):
         """Run the MCP server with SSE transport."""
         try:
             self.mcp.run(transport="sse", host=host, port=port, path=path)
