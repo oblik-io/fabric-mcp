@@ -362,7 +362,7 @@ class TestSSETransport(TransportTestBase):
         server_process = None
         try:
             # Start server manually to test shutdown
-            server_process = subprocess.Popen(
+            with subprocess.Popen(
                 [
                     sys.executable,
                     "-m",
@@ -381,29 +381,32 @@ class TestSSETransport(TransportTestBase):
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
-            )
+            ) as server_process:
+                # Wait for server to start
+                await asyncio.sleep(0.5)
 
-            # Wait for server to start
-            await asyncio.sleep(0.5)
+                # Verify server is running
+                assert server_process.poll() is None
 
-            # Verify server is running
-            assert server_process.poll() is None
+                # Send SIGTERM for graceful shutdown
+                server_process.terminate()
 
-            # Send SIGTERM for graceful shutdown
-            server_process.terminate()
+                # Server should exit gracefully within reasonable time
+                try:
+                    return_code = server_process.wait(timeout=3.0)
+                    # Return code should be negative (terminated by signal) or 0
+                    assert return_code in [0, -15], (
+                        f"Unexpected return code: {return_code}"
+                    )
+                except subprocess.TimeoutExpired:
+                    pytest.fail("Server did not shut down gracefully within timeout")
 
-            # Server should exit gracefully within reasonable time
-            try:
-                return_code = server_process.wait(timeout=3.0)
-                # Return code should be negative (terminated by signal) or 0 (graceful)
-                assert return_code in [0, -15], f"Unexpected return code: {return_code}"
-            except subprocess.TimeoutExpired:
-                pytest.fail("Server did not shut down gracefully within timeout")
-
-        finally:
+        except Exception:
+            # If anything goes wrong, make sure we clean up
             if server_process and server_process.poll() is None:
                 server_process.kill()
                 server_process.wait(timeout=1.0)
+            raise
 
 
 @pytest.mark.integration

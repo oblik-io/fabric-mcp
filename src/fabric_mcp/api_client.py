@@ -1,6 +1,7 @@
 """Fabric API Client for Python"""
 
 import os
+from dataclasses import dataclass
 from typing import Any
 
 import httpx
@@ -13,6 +14,16 @@ logger = Log().logger
 
 DEFAULT_BASE_URL = "http://127.0.0.1:8080"  # Default for fabric --serve
 DEFAULT_TIMEOUT = 30  # seconds
+
+
+@dataclass
+class RequestConfig:
+    """Configuration for HTTP request parameters."""
+
+    params: dict[str, Any] | None = None
+    json_data: dict[str, Any] | None = None
+    data: Any | None = None
+    headers: dict[str, str] | None = None
 
 
 class FabricApiClient:
@@ -84,10 +95,7 @@ class FabricApiClient:
         self,
         method: str,
         endpoint: str,
-        params: dict[str, Any] | None = None,
-        json_data: dict[str, Any] | None = None,
-        data: Any | None = None,
-        headers: dict[str, str] | None = None,
+        config: RequestConfig | None = None,
     ) -> httpx.Response:
         """
         Makes a request to the Fabric API.
@@ -95,10 +103,7 @@ class FabricApiClient:
         Args:
             method: HTTP method (e.g., 'GET', 'POST').
             endpoint: API endpoint path (e.g., '/patterns').
-            params: URL parameters.
-            json_data: JSON payload for the request body.
-            data: Raw data for the request body.
-            headers: Additional request headers.
+            config: Request configuration containing params, data, headers, etc.
 
         Returns:
             The httpx.Response object.
@@ -107,9 +112,12 @@ class FabricApiClient:
             httpx.RequestError: For connection errors, timeouts, etc.
             httpx.HTTPStatusError: For 4xx or 5xx responses.
         """
+        if config is None:
+            config = RequestConfig()
+
         effective_request_headers = dict(self.client.headers)
-        if headers:
-            effective_request_headers.update(headers)
+        if config.headers:
+            effective_request_headers.update(config.headers)
         log_request_headers = dict(effective_request_headers)
 
         # Mask API key in logs
@@ -119,20 +127,20 @@ class FabricApiClient:
 
         logger.debug("Request: %s %s", method, endpoint)
         logger.debug("Headers: %s", log_request_headers)
-        if params:
-            logger.debug("Params: %s", params)
-        if json_data:
-            logger.debug("JSON Body: %s", json_data)
-        elif data:
+        if config.params:
+            logger.debug("Params: %s", config.params)
+        if config.json_data:
+            logger.debug("JSON Body: %s", config.json_data)
+        elif config.data:
             logger.debug("Body: <raw data>")
 
         try:
             response = self.client.request(
                 method=method,
                 url=endpoint,
-                params=params,
-                json=json_data,
-                data=data,
+                params=config.params,
+                json=config.json_data,
+                data=config.data,
                 timeout=self.timeout,
                 headers=effective_request_headers,
             )
@@ -158,7 +166,8 @@ class FabricApiClient:
         self, endpoint: str, params: dict[str, Any] | None = None, **kwargs: Any
     ) -> httpx.Response:
         """Sends a GET request."""
-        return self._request("GET", endpoint, params=params, **kwargs)
+        config = RequestConfig(params=params, **kwargs)
+        return self._request("GET", endpoint, config)
 
     def post(
         self,
@@ -168,7 +177,8 @@ class FabricApiClient:
         **kwargs: Any,
     ) -> httpx.Response:
         """Sends a POST request."""
-        return self._request("POST", endpoint, json_data=json_data, data=data, **kwargs)
+        config = RequestConfig(json_data=json_data, data=data, **kwargs)
+        return self._request("POST", endpoint, config)
 
     def put(
         self,
@@ -178,11 +188,13 @@ class FabricApiClient:
         **kwargs: Any,
     ) -> httpx.Response:
         """Sends a PUT request."""
-        return self._request("PUT", endpoint, json_data=json_data, data=data, **kwargs)
+        config = RequestConfig(json_data=json_data, data=data, **kwargs)
+        return self._request("PUT", endpoint, config)
 
     def delete(self, endpoint: str, **kwargs: Any) -> httpx.Response:
         """Sends a DELETE request."""
-        return self._request("DELETE", endpoint, **kwargs)
+        config = RequestConfig(**kwargs)
+        return self._request("DELETE", endpoint, config)
 
     def close(self):
         """Closes the httpx client and releases resources."""
