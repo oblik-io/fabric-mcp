@@ -10,6 +10,8 @@ from typing import Any
 
 import httpx
 
+from fabric_mcp.core import DEFAULT_MCP_HTTP_PATH, DEFAULT_MCP_SSE_PATH
+
 # Type aliases for better readability
 ServerConfig = dict[str, Any]
 
@@ -45,9 +47,9 @@ async def run_server(
 
     # Add transport-specific arguments
     if transport_type == "http":
-        cmd_args.extend(["--mcp-path", config.get("mcp_path", "/message")])
+        cmd_args.extend(["--mcp-path", config.get("mcp_path", DEFAULT_MCP_HTTP_PATH)])
     elif transport_type == "sse":
-        cmd_args.extend(["--sse-path", config.get("sse_path", "/sse")])
+        cmd_args.extend(["--sse-path", config.get("sse_path", DEFAULT_MCP_SSE_PATH)])
 
     # Start server as subprocess for proper isolation
     with subprocess.Popen(

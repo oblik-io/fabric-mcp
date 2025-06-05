@@ -6,7 +6,7 @@ import click
 
 from fabric_mcp import __version__
 
-from .core import FabricMCP
+from .core import DEFAULT_MCP_HTTP_PATH, DEFAULT_MCP_SSE_PATH, FabricMCP
 from .utils import Log
 
 
@@ -69,14 +69,14 @@ def validate_server_options(
 )
 @click.option(
     "--mcp-path",
-    default="/message",
+    default=DEFAULT_MCP_HTTP_PATH,
     show_default=True,
     callback=validate_http_options,
     help="MCP endpoint path (HTTP transport only).",
 )
 @click.option(
     "--sse-path",
-    default="/sse",
+    default=DEFAULT_MCP_SSE_PATH,
     show_default=True,
     callback=validate_sse_options,
     help="SSE endpoint path (SSE transport only).",
