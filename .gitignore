@@ -339,6 +339,8 @@ dist
 package.json
 pnpm-lock.yaml
 
-# BMAD agent
+# BMAD agent + other AI artifacts
 bmad-agent
 .ai
+.opencode
+OpenCode.md

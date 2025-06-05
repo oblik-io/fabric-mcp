@@ -3,6 +3,7 @@
 import logging
 from asyncio.exceptions import CancelledError
 from collections.abc import Callable
+from dataclasses import dataclass
 from typing import Any
 
 from anyio import WouldBlock
@@ -12,6 +13,20 @@ from . import __version__
 
 DEFAULT_MCP_HTTP_PATH = "/message"
 DEFAULT_MCP_SSE_PATH = "/sse"
+
+
+@dataclass
+class PatternExecutionConfig:  # pylint: disable=too-many-instance-attributes
+    """Configuration for pattern execution parameters."""
+
+    model_name: str | None = None
+    strategy_name: str | None = None
+    variables: dict[str, str] | None = None
+    attachments: list[str] | None = None
+    temperature: float | None = None
+    top_p: float | None = None
+    presence_penalty: float | None = None
+    frequency_penalty: float | None = None
 
 
 class FabricMCP(FastMCP[None]):
@@ -52,14 +67,7 @@ class FabricMCP(FastMCP[None]):
             pattern_name: str,
             input_text: str = "",
             stream: bool = False,
-            model_name: str | None = None,
-            strategy_name: str | None = None,
-            variables: dict[str, str] | None = None,
-            attachments: list[str] | None = None,
-            temperature: float | None = None,
-            top_p: float | None = None,
-            presence_penalty: float | None = None,
-            frequency_penalty: float | None = None,
+            config: PatternExecutionConfig | None = None,
         ) -> dict[Any, Any]:
             """
             Execute a Fabric pattern with options and optional streaming.
@@ -68,30 +76,25 @@ class FabricMCP(FastMCP[None]):
                 pattern_name: The name of the fabric pattern to run.
                 input_text: The input text to be processed by the pattern.
                 stream: Whether to stream the output.
-                model_name: Optional model name to use.
-                strategy_name: Optional strategy name to use.
-                variables: Optional variables for the pattern.
-                attachments: Optional file paths/URLs.
-                temperature: Optional temperature parameter.
-                top_p: Optional top_p parameter.
-                presence_penalty: Optional presence_penalty parameter.
-                frequency_penalty: Optional frequency_penalty parameter.
+                config: Optional configuration for execution parameters.
 
             Returns:
                 dict[Any, Any]: Contains the output format and text.
             """
-            # This is a placeholder for the actual implementation
-            # Use parameters to avoid unused warnings
+            if config is None:
+                config = PatternExecutionConfig()
+
+            # Use config to avoid unused warnings
             _ = (
                 stream,
-                model_name,
-                strategy_name,
-                variables,
-                attachments,
-                temperature,
-                top_p,
-                presence_penalty,
-                frequency_penalty,
+                config.model_name,
+                config.strategy_name,
+                config.variables,
+                config.attachments,
+                config.temperature,
+                config.top_p,
+                config.presence_penalty,
+                config.frequency_penalty,
             )
 
             return {

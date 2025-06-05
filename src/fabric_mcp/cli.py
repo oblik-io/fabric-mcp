@@ -1,5 +1,6 @@
 """CLI entry point for fabric-mcp."""
 
+from dataclasses import dataclass
 from typing import Any
 
 import click
@@ -8,6 +9,18 @@ from fabric_mcp import __version__
 
 from .core import DEFAULT_MCP_HTTP_PATH, DEFAULT_MCP_SSE_PATH, FabricMCP
 from .utils import Log
+
+
+@dataclass
+class ServerConfig:
+    """Configuration for the MCP server."""
+
+    transport: str
+    host: str
+    port: int
+    mcp_path: str
+    sse_path: str
+    log_level: str
 
 
 def validate_transport_specific_option(
@@ -92,7 +105,7 @@ def validate_server_options(
     help="Set the logging level.",
 )
 @click.version_option(version=__version__, prog_name="fabric-mcp")
-def main(
+def main(  # pylint: disable=too-many-arguments,too-many-positional-arguments
     transport: str,
     host: str,
     port: int,
@@ -101,36 +114,50 @@ def main(
     log_level: str,
 ) -> None:
     """A Model Context Protocol server for Fabric AI."""
+    config = ServerConfig(
+        transport=transport,
+        host=host,
+        port=port,
+        mcp_path=mcp_path,
+        sse_path=sse_path,
+        log_level=log_level,
+    )
+    _run_server(config)
 
-    log = Log(log_level)
+
+def _run_server(config: ServerConfig) -> None:
+    """Run the MCP server with the given configuration."""
+    log = Log(config.log_level)
     logger = log.logger
 
-    fabric_mcp = FabricMCP(log_level)
+    fabric_mcp = FabricMCP(config.log_level)
 
-    if transport == "stdio":
+    if config.transport == "stdio":
         logger.info(
             "Starting server with stdio transport (log level: %s)", log.level_name
         )
         fabric_mcp.stdio()
-    elif transport == "http":
+    elif config.transport == "http":
         logger.info(
             "Starting server with streamable HTTP transport at "
             "http://%s:%d%s (log level: %s)",
-            host,
-            port,
-            mcp_path,
+            config.host,
+            config.port,
+            config.mcp_path,
             log.level_name,
         )
-        fabric_mcp.http_streamable(host=host, port=port, mcp_path=mcp_path)
-    elif transport == "sse":
+        fabric_mcp.http_streamable(
+            host=config.host, port=config.port, mcp_path=config.mcp_path
+        )
+    elif config.transport == "sse":
         logger.info(
             "Starting server with SSE transport at http://%s:%d%s (log level: %s)",
-            host,
-            port,
-            sse_path,
+            config.host,
+            config.port,
+            config.sse_path,
             log.level_name,
         )
-        fabric_mcp.sse(host=host, port=port, path=sse_path)
+        fabric_mcp.sse(host=config.host, port=config.port, path=config.sse_path)
     logger.info("Server stopped.")
 
 
