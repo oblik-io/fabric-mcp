@@ -90,6 +90,7 @@ class TestFabricApiClientConfiguration:
         # Check that transport is configured (without accessing protected members)
         assert hasattr(client.client, "_transport")
 
+    @patch.dict(os.environ, {}, clear=True)
     def test_client_without_api_key_no_header(self):
         """Test that client without API key doesn't set the API header."""
         client = FabricApiClient()
