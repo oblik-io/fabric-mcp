@@ -1,7 +1,8 @@
 # Makefile for
 #
 
-.PHONY: _default bootstrap build clean coverage coverage-html coverage-show dev format help lint merge tag test
+.PHONY: _default bootstrap build clean coverage coverage-html \
+	coverage-show dev format help lint mcp-inspector merge tag test
 
 COVERAGE_FAIL_UNDER := 90
 PACKAGE_PATH := src/fabric_mcp
