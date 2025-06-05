@@ -16,7 +16,7 @@ DEFAULT_MCP_SSE_PATH = "/sse"
 
 
 @dataclass
-class PatternExecutionConfig:
+class PatternExecutionConfig:  # pylint: disable=too-many-instance-attributes
     """Configuration for pattern execution parameters."""
 
     model_name: str | None = None
@@ -29,7 +29,7 @@ class PatternExecutionConfig:
     frequency_penalty: float | None = None
 
 
-class FabricMCP(FastMCP[None]):  # pylint: disable=too-many-instance-attributes
+class FabricMCP(FastMCP[None]):
     """Base class for the Model Context Protocol server."""
 
     def __init__(self, log_level: str = "INFO"):
