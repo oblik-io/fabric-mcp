@@ -30,14 +30,14 @@ clean:
 	rm -rf .venv dist node_modules
 
 coverage:
-	uv run pytest --cov=$(PACKAGE_PATH) \
+	uv run pytest -n auto --cov=$(PACKAGE_PATH) \
 		-ra -q \
 		--cov-report=term-missing \
 		--cov-fail-under=$(COVERAGE_FAIL_UNDER)
 
 coverage-html:
 	# This will generate an HTML coverage report.
-	uv run pytest --cov=$(PACKAGE_PATH) \
+	uv run pytest -n auto --cov=$(PACKAGE_PATH) \
 		--cov-report=html:coverage_html \
 		--cov-fail-under=$(COVERAGE_FAIL_UNDER)
 
