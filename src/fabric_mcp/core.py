@@ -50,37 +50,42 @@ class FabricMCP(FastMCP[None]):
             try:
                 # Initialize FabricApiClient
                 api_client = FabricApiClient()
+                try:
+                    # Make GET request to /patterns/names endpoint
+                    response = api_client.get("/patterns/names")
 
-                # Make GET request to /patterns/names endpoint
-                response = api_client.get("/patterns/names")
+                    # Parse JSON response to extract pattern names
+                    response_data: Any = response.json()
 
-                # Parse JSON response to extract pattern names
-                response_data: Any = response.json()
-
-                # Validate response is a list
-                if not isinstance(response_data, list):
-                    error_msg = "Invalid response format from Fabric API: expected list"
-                    raise McpError(
-                        ErrorData(code=-32603, message=error_msg)  # Internal error
-                    )
-
-                # Ensure all items are strings
-                validated_patterns: list[str] = []
-                # Type ignore: validated it's a list but pyright can't infer item types
-                for item in response_data:  # type: ignore[misc]
-                    if isinstance(item, str):
-                        validated_patterns.append(item)
-                    else:
-                        # Log warning but continue with valid patterns
-                        item_any = cast(Any, item)
-                        item_type = (
-                            type(item_any).__name__ if item_any is not None else "None"
+                    # Validate response is a list
+                    if not isinstance(response_data, list):
+                        error_msg = (
+                            "Invalid response format from Fabric API: expected list"
                         )
-                        logging.warning("Non-string pattern name found: %s", item_type)
+                        raise McpError(
+                            ErrorData(code=-32603, message=error_msg)  # Internal error
+                        )
 
-                api_client.close()
-                return validated_patterns
+                    # Ensure all items are strings
+                    validated_patterns: list[str] = []
+                    for item in response_data:  # type: ignore[misc]
+                        if isinstance(item, str):
+                            validated_patterns.append(item)
+                        else:
+                            # Log warning but continue with valid patterns
+                            item_any = cast(Any, item)
+                            item_type = (
+                                type(item_any).__name__
+                                if item_any is not None
+                                else "None"
+                            )
+                            logging.warning(
+                                "Non-string pattern name found: %s", item_type
+                            )
 
+                    return validated_patterns
+                finally:
+                    api_client.close()
             except httpx.RequestError as e:
                 # Connection errors, timeouts, etc.
                 raise McpError(
