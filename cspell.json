@@ -44,6 +44,7 @@
 		"reqs",
 		"restapi",
 		"sdist",
+		"signum",
 		"Streamable",
 		"testpypi",
 		"toupper",

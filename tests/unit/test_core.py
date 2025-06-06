@@ -6,7 +6,7 @@ import sys
 from asyncio.exceptions import CancelledError
 from collections.abc import Callable
 from typing import Any
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import pytest
 from anyio import WouldBlock
@@ -119,9 +119,19 @@ def test_tool_registration_coverage():
 
     # Test each tool to ensure they're callable
     fabric_list_patterns = tools[0]
-    result: list[str] = fabric_list_patterns()
-    assert isinstance(result, list)
-    assert len(result) == 3
+
+    # Mock the FabricApiClient for fabric_list_patterns test
+    with patch("fabric_mcp.core.FabricApiClient") as mock_api_client_class:
+        mock_api_client = Mock()
+        mock_api_client_class.return_value = mock_api_client
+
+        mock_response = Mock()
+        mock_response.json.return_value = ["pattern1", "pattern2", "pattern3"]
+        mock_api_client.get.return_value = mock_response
+
+        result: list[str] = fabric_list_patterns()
+        assert isinstance(result, list)
+        assert len(result) == 3
 
     fabric_get_pattern_details = tools[1]
     result = fabric_get_pattern_details("test_pattern")
