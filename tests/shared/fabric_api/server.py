@@ -230,6 +230,12 @@ async def run_pattern(pattern_name: str, request_data: dict[str, Any]):
 @app.exception_handler(Exception)
 async def global_exception_handler(_request: Any, exc: Exception) -> JSONResponse:
     """Global exception handler."""
+    if isinstance(exc, HTTPException):
+        # If it's an HTTPException, we can return it directly
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"detail": exc.detail},
+        )
     logger.error("Unhandled exception: %s", exc, exc_info=True)
     return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 

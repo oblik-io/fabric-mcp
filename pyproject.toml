@@ -50,7 +50,6 @@ dev = [
     "uv>=0.7.11",
     "fastapi>=0.115.12",
     "uvicorn>=0.34.3",
-    "requests>=2.32.3",
     "pytest-xdist>=3.7.0",
 ]
 

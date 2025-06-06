@@ -12,6 +12,7 @@ import time
 from collections.abc import AsyncGenerator, Generator
 from contextlib import asynccontextmanager, contextmanager
 
+import pytest
 import uvicorn
 
 from ..port_utils import find_free_port, is_port_in_use
@@ -183,6 +184,7 @@ def setup_mock_fabric_api_env(server: MockFabricAPIServer) -> dict[str, str]:
 
 
 # Pytest fixtures for easy use in tests
+@pytest.fixture(scope="session")
 def pytest_mock_fabric_api() -> Generator[MockFabricAPIServer, None, None]:
     """Pytest fixture for mock Fabric API server."""
     with MockFabricAPIServer() as server:

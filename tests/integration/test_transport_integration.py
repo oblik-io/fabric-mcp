@@ -5,6 +5,7 @@ in a DRY manner, avoiding code duplication across transport types.
 """
 
 import asyncio
+import json
 import subprocess
 import sys
 from collections.abc import Generator
@@ -16,7 +17,11 @@ from fastmcp import Client
 from fastmcp.client.transports import SSETransport, StreamableHttpTransport
 from fastmcp.exceptions import ToolError
 
-from tests.shared.fabric_api.utils import MockFabricAPIServer, setup_mock_fabric_api_env
+from tests.shared.fabric_api.utils import (
+    MockFabricAPIServer,
+    override_env,
+    setup_mock_fabric_api_env,
+)
 from tests.shared.port_utils import find_free_port
 from tests.shared.transport_test_utils import (
     ServerConfig,
@@ -97,7 +102,9 @@ class TransportTestBase:
                     assert expected_tool in tool_names
 
     @pytest.mark.asyncio
-    async def test_fabric_list_patterns_tool(self, server_config: ServerConfig) -> None:
+    async def test_fabric_list_patterns_tool_fail(
+        self, server_config: ServerConfig
+    ) -> None:
         """Test fabric_list_patterns tool.
 
         Expects connection error when Fabric API unavailable.
@@ -279,6 +286,50 @@ class TransportTestBase:
                     assert result is not None
                     assert isinstance(result, list)
                     assert len(result) > 0
+
+    @pytest.mark.asyncio
+    async def test_fabric_list_patterns_tool_success(
+        self, server_config: ServerConfig, mock_fabric_api_env: dict[str, str]
+    ) -> None:
+        """Test fabric_list_patterns tool success path.
+
+        Uses mock Fabric API server to test successful pattern retrieval.
+        """
+        # Override environment to use mock server
+        with override_env(mock_fabric_api_env):
+            async with run_server(server_config, self.transport_type) as config:
+                url = self.get_server_url(config)
+                client = self.create_client(url)
+
+                async with client:
+                    # Call the tool and expect success
+                    result = await client.call_tool("fabric_list_patterns")
+
+                    # Verify response structure
+                    assert result is not None
+                    assert isinstance(result, list)
+                    assert len(result) == 1
+
+                    # Extract the JSON text and parse it
+                    patterns_text = result[0].text  # type: ignore[misc]
+                    assert isinstance(patterns_text, str)
+
+                    patterns: list[str] = json.loads(patterns_text)
+                    assert isinstance(patterns, list)
+                    assert len(patterns) > 0
+
+                    # Expected patterns from mock server
+                    expected_patterns = [
+                        "analyze_claims",
+                        "create_story",
+                        "summarize",
+                        "extract_insights",
+                        "check_grammar",
+                        "create_outline",
+                    ]
+
+                    # Verify all expected patterns are present
+                    assert patterns == expected_patterns
 
 
 @pytest.mark.integration

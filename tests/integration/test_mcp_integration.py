@@ -308,7 +308,7 @@ class TestFabricMCPCore:
 
 
 @pytest.mark.integration
-class TestFabricMcpCli:
+class TestFabricMCPCli:
     """End-to-end integration tests for the fabric-mcp CLI."""
 
     def test_version_flag(self):
