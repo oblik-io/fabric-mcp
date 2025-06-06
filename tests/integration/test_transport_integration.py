@@ -30,7 +30,7 @@ from tests.shared.transport_test_utils import (
 
 _ = fabric_api_server_fixture  # eliminate unused variable warning
 
-INVALID_PORT = 99999  # Port used for testing invalid configurations
+INVALID_PORT = 9999  # Port used for testing invalid configurations
 
 
 class TransportTestBase:
