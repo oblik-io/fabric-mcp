@@ -2,7 +2,7 @@
 #
 
 .PHONY: _default bootstrap build clean coverage coverage-html \
-	coverage-show dev format help lint mcp-inspector merge tag test
+	coverage-show dev format help lint mcp-inspector merge tag test test-fast test-serial
 
 COVERAGE_FAIL_UNDER := 90
 PACKAGE_PATH := src/fabric_mcp
@@ -30,14 +30,14 @@ clean:
 	rm -rf .venv dist node_modules
 
 coverage:
-	uv run pytest --cov=$(PACKAGE_PATH) \
+	uv run pytest -n auto --cov=$(PACKAGE_PATH) \
 		-ra -q \
 		--cov-report=term-missing \
 		--cov-fail-under=$(COVERAGE_FAIL_UNDER)
 
 coverage-html:
 	# This will generate an HTML coverage report.
-	uv run pytest --cov=$(PACKAGE_PATH) \
+	uv run pytest -n auto --cov=$(PACKAGE_PATH) \
 		--cov-report=html:coverage_html \
 		--cov-fail-under=$(COVERAGE_FAIL_UNDER)
 
@@ -75,7 +75,9 @@ help:
 	@echo "  merge         Merge develop into main branch (bypassing pre-commit hooks)"
 	@echo "  mcp-inspector Start the MCP inspector server"
 	@echo "  tag           Tag the current git HEAD with the semantic versioning name."
-	@echo "  test          Run tests"
+	@echo "  test          Run tests with parallel execution"
+	@echo "  test-fast     Run tests with optimized parallel execution (skips linting)"
+	@echo "  test-serial   Run tests serially (single-threaded)"
 
 lint:
 	uv run ruff format --check .
@@ -119,6 +121,11 @@ mcp-inspector:
 tag:
 	git tag v$(VERSION)
 
-test: lint
+test: lint test-fast
+
+test-fast:
+	uv run pytest -v -n auto
+
+test-serial: lint
 	uv run pytest -v
 

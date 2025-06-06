@@ -28,13 +28,13 @@ from tests.shared.transport_test_utils import (
 class TransportTestBase:
     """Base class for transport-specific test configurations."""
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def mock_fabric_api_env(self) -> Generator[dict[str, str], None, None]:
         """Fixture that provides mock Fabric API environment variables."""
         with MockFabricAPIServer() as mock_server:
             yield setup_mock_fabric_api_env(mock_server)
 
-    @pytest.fixture
+    @pytest.fixture(scope="class")
     def server_config(self) -> ServerConfig:
         """Override in subclasses to provide transport-specific config."""
         raise NotImplementedError

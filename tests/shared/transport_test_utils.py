@@ -60,7 +60,7 @@ async def _check_sse_endpoint(client: httpx.AsyncClient, health_url: str) -> boo
     try:
         response = await client.get(
             health_url,
-            timeout=0.5,
+            timeout=0.3,
             headers={"Accept": "text/event-stream"},
         )
         return response.status_code == 200
@@ -74,7 +74,7 @@ async def _check_sse_endpoint(client: httpx.AsyncClient, health_url: str) -> boo
 async def _check_http_endpoint(client: httpx.AsyncClient, health_url: str) -> bool:
     """Check if HTTP endpoint is ready."""
     try:
-        response = await client.get(health_url, timeout=1.0)
+        response = await client.get(health_url, timeout=0.3)
         return response.status_code in [200, 307, 404, 405, 406]
     except (httpx.ConnectError, httpx.TimeoutException):
         return False
@@ -86,10 +86,10 @@ async def _wait_for_server_ready(
     """Wait for the server to be ready."""
     health_url = _get_health_url(config, transport_type)
 
-    for _ in range(50):  # 5 second timeout
+    for _ in range(60):  # 3 second timeout with faster polling
         # Check if server process died
         if server_process.poll() is not None:
-            stdout, stderr = server_process.communicate(timeout=5)
+            stdout, stderr = server_process.communicate(timeout=3)
             raise RuntimeError(f"Server process died: stdout={stdout}, stderr={stderr}")
 
         # Try to connect to server
@@ -102,11 +102,11 @@ async def _wait_for_server_ready(
             if is_ready:
                 return
 
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.05)
 
     # Server failed to start
     server_process.terminate()
-    stdout, stderr = server_process.communicate(timeout=5)
+    stdout, stderr = server_process.communicate(timeout=3)
     raise RuntimeError(
         f"Server failed to start on {config['host']}:{config['port']}\n"
         f"stdout: {stdout}\nstderr: {stderr}"

@@ -100,7 +100,7 @@ class MockFabricAPIServer:
         )
         self.process.start()
         # Wait for server to be ready
-        if not wait_for_server(self.host, self.port, timeout=10.0):
+        if not wait_for_server(self.host, self.port, timeout=5.0):
             self.stop()
             raise RuntimeError(
                 f"Mock server failed to start on {self.host}:{self.port}"
@@ -120,7 +120,7 @@ class MockFabricAPIServer:
         # Try graceful shutdown first
         if self.process.is_alive():
             self.process.terminate()
-            self.process.join(timeout=5.0)
+            self.process.join(timeout=2.0)
 
         # Force kill if still alive
         if self.process.is_alive():
