@@ -14,6 +14,7 @@ import httpx
 import pytest
 from fastmcp import Client
 from fastmcp.client.transports import SSETransport, StreamableHttpTransport
+from fastmcp.exceptions import ToolError
 
 from tests.shared.fabric_api.utils import MockFabricAPIServer, setup_mock_fabric_api_env
 from tests.shared.transport_test_utils import (
@@ -107,7 +108,7 @@ class TransportTestBase:
 
             async with client:
                 # Since we don't have a real Fabric API running, we expect a ToolError
-                with pytest.raises(Exception) as exc_info:
+                with pytest.raises(ToolError) as exc_info:
                     await client.call_tool("fabric_list_patterns")
 
                 # Verify it's the expected connection error
