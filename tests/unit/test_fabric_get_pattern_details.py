@@ -11,6 +11,10 @@ import pytest
 from mcp.shared.exceptions import McpError
 
 from fabric_mcp.core import FabricMCP
+from tests.shared.mocking_utils import (
+    assert_api_client_calls,
+    create_fabric_api_mock,
+)
 
 
 class TestFabricGetPatternDetails:
@@ -37,16 +41,16 @@ class TestFabricGetPatternDetails:
     ):
         """Test successful retrieval of pattern details."""
         # Arrange
-        mock_api_client = Mock()
-        mock_api_client_class.return_value = mock_api_client
-
-        mock_response = Mock()
-        mock_response.json.return_value = {
+        custom_pattern_data = {
             "Name": "summarize",
             "Description": "Create a concise summary",
             "Pattern": "# IDENTITY\nYou are an expert summarizer...",
         }
-        mock_api_client.get.return_value = mock_response
+        mock_api_client = (
+            create_fabric_api_mock(mock_api_client_class)
+            .with_successful_response(custom_pattern_data)
+            .build()
+        )
 
         # Act
         result = get_pattern_details_tool("summarize")
@@ -57,8 +61,7 @@ class TestFabricGetPatternDetails:
         assert result["description"] == "Create a concise summary"
         assert result["system_prompt"] == "# IDENTITY\nYou are an expert summarizer..."
 
-        mock_api_client.get.assert_called_once_with("/patterns/summarize")
-        mock_api_client.close.assert_called_once()
+        assert_api_client_calls(mock_api_client, "/patterns/summarize")
 
     @patch("fabric_mcp.core.FabricApiClient")
     def test_successful_pattern_details_with_empty_description(
@@ -68,16 +71,16 @@ class TestFabricGetPatternDetails:
     ):
         """Test successful retrieval when description is empty."""
         # Arrange
-        mock_api_client = Mock()
-        mock_api_client_class.return_value = mock_api_client
-
-        mock_response = Mock()
-        mock_response.json.return_value = {
+        custom_pattern_data = {
             "Name": "test_pattern",
             "Description": "",  # Empty description
             "Pattern": "# Test pattern content",
         }
-        mock_api_client.get.return_value = mock_response
+        mock_api_client = (
+            create_fabric_api_mock(mock_api_client_class)
+            .with_successful_response(custom_pattern_data)
+            .build()
+        )
 
         # Act
         result = get_pattern_details_tool("test_pattern")
@@ -86,6 +89,7 @@ class TestFabricGetPatternDetails:
         assert result["name"] == "test_pattern"
         assert result["description"] == ""
         assert result["system_prompt"] == "# Test pattern content"
+        assert_api_client_calls(mock_api_client, "/patterns/test_pattern")
 
     @patch("fabric_mcp.core.FabricApiClient")
     def test_pattern_not_found_500_error(
@@ -161,17 +165,11 @@ class TestFabricGetPatternDetails:
     ):
         """Test HTTP 4xx errors."""
         # Arrange
-        mock_api_client = Mock()
-        mock_api_client_class.return_value = mock_api_client
-
-        mock_response = Mock()
-        mock_response.status_code = 403
-        mock_response.reason_phrase = "Forbidden"
-
-        http_error = httpx.HTTPStatusError(
-            "Client error '403 Forbidden'", request=Mock(), response=mock_response
+        mock_api_client = (
+            create_fabric_api_mock(mock_api_client_class)
+            .with_http_status_error(403, "Forbidden")
+            .build()
         )
-        mock_api_client.get.side_effect = http_error
 
         # Act & Assert
         with pytest.raises(McpError) as exc_info:
@@ -179,7 +177,7 @@ class TestFabricGetPatternDetails:
 
         assert exc_info.value.error.code == -32603  # Internal error
         assert "Fabric API error: 403 Forbidden" in str(exc_info.value.error.message)
-        mock_api_client.close.assert_called_once()
+        assert_api_client_calls(mock_api_client, "/patterns/test_pattern")
 
     @patch("fabric_mcp.core.FabricApiClient")
     def test_connection_error(
@@ -189,11 +187,11 @@ class TestFabricGetPatternDetails:
     ):
         """Test connection errors."""
         # Arrange
-        mock_api_client = Mock()
-        mock_api_client_class.return_value = mock_api_client
-
-        connection_error = httpx.RequestError("Connection failed")
-        mock_api_client.get.side_effect = connection_error
+        mock_api_client = (
+            create_fabric_api_mock(mock_api_client_class)
+            .with_connection_error("Connection failed")
+            .build()
+        )
 
         # Act & Assert
         with pytest.raises(McpError) as exc_info:
@@ -201,7 +199,7 @@ class TestFabricGetPatternDetails:
 
         assert exc_info.value.error.code == -32603  # Internal error
         assert "Failed to connect to Fabric API" in str(exc_info.value.error.message)
-        mock_api_client.close.assert_called_once()
+        assert_api_client_calls(mock_api_client, "/patterns/test_pattern")
 
     @patch("fabric_mcp.core.FabricApiClient")
     def test_malformed_json_response(
@@ -307,11 +305,11 @@ class TestFabricGetPatternDetails:
     ):
         """Test handling of unexpected exceptions."""
         # Arrange
-        mock_api_client = Mock()
-        mock_api_client_class.return_value = mock_api_client
-
-        # Simulate an unexpected exception (not httpx related)
-        mock_api_client.get.side_effect = ValueError("Unexpected error")
+        mock_api_client = (
+            create_fabric_api_mock(mock_api_client_class)
+            .with_unexpected_error(ValueError("Unexpected error"))
+            .build()
+        )
 
         # Act & Assert
         with pytest.raises(McpError) as exc_info:
@@ -322,7 +320,7 @@ class TestFabricGetPatternDetails:
             exc_info.value.error.message
         )
         assert "Unexpected error" in str(exc_info.value.error.message)
-        mock_api_client.close.assert_called_once()
+        assert_api_client_calls(mock_api_client, "/patterns/test_pattern")
 
     @patch("fabric_mcp.core.FabricApiClient")
     def test_response_transformation_format(
