@@ -30,6 +30,8 @@ from tests.shared.transport_test_utils import (
 
 _ = fabric_api_server_fixture  # eliminate unused variable warning
 
+INVALID_PORT = 99999  # Port used for testing invalid configurations
+
 
 class TransportTestBase:
     """Base class for transport-specific test configurations."""
@@ -105,7 +107,7 @@ class TransportTestBase:
         Expects connection error when Fabric API unavailable.
         """
         # Override environment to point to non-existent Fabric API
-        monkeypatch.setenv("FABRIC_BASE_URL", "http://localhost:99999")
+        monkeypatch.setenv("FABRIC_BASE_URL", f"http://localhost:{INVALID_PORT}")
         monkeypatch.setenv("FABRIC_API_KEY", "test")
 
         async with run_server(server_config, self.transport_type) as config:
