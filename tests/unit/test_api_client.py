@@ -17,8 +17,11 @@ from fabric_mcp.api_client import (
 class TestFabricApiClientInitialization:
     """Test cases for FabricApiClient initialization."""
 
-    def test_init_with_defaults(self):
+    def test_init_with_defaults(self, monkeypatch: pytest.MonkeyPatch):
         """Test client initialization with default values."""
+        # Clear the environment variable that might be set by the mock fixture
+        monkeypatch.delenv("FABRIC_BASE_URL", raising=False)
+
         client = FabricApiClient()
 
         assert client.base_url == DEFAULT_BASE_URL
