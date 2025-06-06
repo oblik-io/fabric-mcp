@@ -19,8 +19,9 @@ class TestFabricApiClientInitialization:
 
     def test_init_with_defaults(self, monkeypatch: pytest.MonkeyPatch):
         """Test client initialization with default values."""
-        # Clear the environment variable that might be set by the mock fixture
+        # Clear the environment variables that might be set by the mock fixture
         monkeypatch.delenv("FABRIC_BASE_URL", raising=False)
+        monkeypatch.delenv("FABRIC_API_KEY", raising=False)
 
         client = FabricApiClient()
 
