@@ -27,7 +27,7 @@ build:
 	uv run hatch build
 
 clean:
-	rm -f ../.venv && rm -rf .venv && rm -rf dist
+	rm -rf .venv dist node_modules
 
 coverage:
 	uv run pytest --cov=$(PACKAGE_PATH) \

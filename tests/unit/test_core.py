@@ -15,8 +15,6 @@ from fastmcp import FastMCP
 from fabric_mcp import __version__
 from fabric_mcp.core import FabricMCP
 
-# Tests for core functionality
-
 
 def test_cli_version():
     """Test the --version flag of the CLI."""
@@ -129,38 +127,56 @@ def test_tool_registration_coverage():
         mock_response.json.return_value = ["pattern1", "pattern2", "pattern3"]
         mock_api_client.get.return_value = mock_response
 
-        result: list[str] = fabric_list_patterns()
-        assert isinstance(result, list)
-        assert len(result) == 3
+        patterns_result: list[str] = fabric_list_patterns()
+        assert isinstance(patterns_result, list)
+        assert len(patterns_result) == 3
 
     fabric_get_pattern_details = tools[1]
-    result = fabric_get_pattern_details("test_pattern")
-    assert isinstance(result, dict)
-    assert "name" in result
-    assert "description" in result
-    assert "system_prompt" in result
+    # Mock the FabricApiClient for fabric_get_pattern_details test
+    with patch("fabric_mcp.core.FabricApiClient") as mock_api_client_class:
+        mock_api_client = Mock()
+        mock_api_client_class.return_value = mock_api_client
+
+        mock_response = Mock()
+        mock_response.json.return_value = {
+            "Name": "test_pattern",
+            "Description": "Test pattern description",
+            "Pattern": "# Test pattern system prompt",
+        }
+        mock_api_client.get.return_value = mock_response
+
+        pattern_details_result: dict[str, str] = fabric_get_pattern_details(
+            "test_pattern"
+        )
+        assert isinstance(pattern_details_result, dict)
+        assert "name" in pattern_details_result
+        assert "description" in pattern_details_result
+        assert "system_prompt" in pattern_details_result
+        assert pattern_details_result["name"] == "test_pattern"
+        assert pattern_details_result["description"] == "Test pattern description"
+        assert pattern_details_result["system_prompt"] == "# Test pattern system prompt"
 
     fabric_run_pattern = tools[2]
-    result = fabric_run_pattern("test_pattern", "test_input")
-    assert isinstance(result, dict)
-    assert "output_format" in result
-    assert "output_text" in result
+    run_pattern_result = fabric_run_pattern("test_pattern", "test_input")
+    assert isinstance(run_pattern_result, dict)
+    assert "output_format" in run_pattern_result
+    assert "output_text" in run_pattern_result
 
     fabric_list_models = tools[3]
-    result = fabric_list_models()
-    assert isinstance(result, dict)
-    assert "models" in result
-    assert "vendors" in result
+    models_result = fabric_list_models()
+    assert isinstance(models_result, dict)
+    assert "models" in models_result
+    assert "vendors" in models_result
 
     fabric_list_strategies = tools[4]
-    result = fabric_list_strategies()
-    assert isinstance(result, dict)
-    assert "strategies" in result
+    strategies_result = fabric_list_strategies()
+    assert isinstance(strategies_result, dict)
+    assert "strategies" in strategies_result
 
     fabric_get_configuration = tools[5]
-    result = fabric_get_configuration()
-    assert isinstance(result, dict)
-    assert "openai_api_key" in result
+    config_result = fabric_get_configuration()
+    assert isinstance(config_result, dict)
+    assert "openai_api_key" in config_result
 
 
 def test_http_streamable_method_runs_mcp(server_instance: FabricMCP):

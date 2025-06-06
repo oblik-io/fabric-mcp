@@ -169,7 +169,7 @@ class TestFabricListPatterns:
         with pytest.raises(McpError) as exc_info:
             self.fabric_list_patterns()
 
-        assert "Unexpected error retrieving patterns" in str(
+        assert "Unexpected error during retrieving patterns" in str(
             exc_info.value.error.message
         )
         assert exc_info.value.error.code == -32603
@@ -187,7 +187,7 @@ class TestFabricListPatterns:
         with pytest.raises(McpError) as exc_info:
             self.fabric_list_patterns()
 
-        assert "Unexpected error retrieving patterns" in str(
+        assert "Unexpected error during retrieving patterns" in str(
             exc_info.value.error.message
         )
         assert exc_info.value.error.code == -32603

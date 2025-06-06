@@ -89,9 +89,22 @@ class TestFabricMCPCore:
             assert len(result) == 3
 
         pattern_details_tool = tools[1]
-        result = pattern_details_tool("test_pattern")
-        assert isinstance(result, dict)
-        assert "name" in result
+        # Mock the FabricApiClient for pattern details test
+        with patch("fabric_mcp.core.FabricApiClient") as mock_api_client_class:
+            mock_api_client = Mock()
+            mock_api_client_class.return_value = mock_api_client
+
+            mock_response = Mock()
+            mock_response.json.return_value = {
+                "Name": "test_pattern",
+                "Description": "Test pattern description",
+                "Pattern": "# Test pattern system prompt",
+            }
+            mock_api_client.get.return_value = mock_response
+
+            result = pattern_details_tool("test_pattern")
+            assert isinstance(result, dict)
+            assert "name" in result
 
     @pytest.mark.asyncio
     async def test_fabric_list_patterns_with_mocked_api(
@@ -122,26 +135,39 @@ class TestFabricMCPCore:
             mock_api_client.close.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_fabric_pattern_details_with_mocked_api(
-        self, server: FabricMCP, mock_fabric_api_response: Mock
-    ):
-        """Test the fabric_pattern_details tool with mocked API calls."""
-        with patch("httpx.Client") as mock_client:
-            # Setup mock response
-            mock_response = Mock()
-            mock_response.json.return_value = mock_fabric_api_response[
-                "pattern_details"
-            ]
-            mock_response.status_code = 200
-            mock_client.return_value.get.return_value = mock_response
+    async def test_fabric_pattern_details_with_mocked_api(self, server: FabricMCP):
+        """Test the fabric_get_pattern_details tool with mocked API calls."""
+        with patch("fabric_mcp.core.FabricApiClient") as mock_api_client_class:
+            # Setup mock API client
+            mock_api_client = Mock()
+            mock_api_client_class.return_value = mock_api_client
 
-            # Execute the tool (currently returns hardcoded values)
+            # Setup mock response with actual Fabric API format
+            mock_response = Mock()
+            mock_response.json.return_value = {
+                "Name": "analyze_claims",
+                "Description": "Analyze truth claims",
+                "Pattern": "# IDENTITY\nYou are an expert fact checker...",
+            }
+            mock_api_client.get.return_value = mock_response
+
+            # Execute the tool
             tools = getattr(server, "_FabricMCP__tools", [])
             pattern_details_tool = tools[1]
             result = pattern_details_tool("analyze_claims")
 
+            # Verify response structure
             assert isinstance(result, dict)
-            assert "name" in result
+            assert result["name"] == "analyze_claims"
+            assert result["description"] == "Analyze truth claims"
+            assert (
+                result["system_prompt"]
+                == "# IDENTITY\nYou are an expert fact checker..."
+            )
+
+            # Verify API client was called correctly
+            mock_api_client.get.assert_called_once_with("/patterns/analyze_claims")
+            mock_api_client.close.assert_called_once()
 
     @pytest.mark.asyncio
     async def test_fabric_run_pattern_with_mocked_api(
@@ -243,26 +269,29 @@ class TestFabricMCPCore:
         self, server: FabricMCP, mock_fabric_api_env: dict[str, str]
     ):
         """Test a complete workflow: list patterns -> get details -> run pattern."""
-        # Set up environment to use mock server
+        # Set up environment to use mock server for all API calls
         with override_env(mock_fabric_api_env):
             tools = getattr(server, "_FabricMCP__tools", [])
 
             # Step 1: List patterns
             list_patterns_tool = tools[0]
             patterns: list[str] = list_patterns_tool()
-        assert isinstance(patterns, list)
-        assert len(patterns) > 0
+            assert isinstance(patterns, list)
+            assert len(patterns) > 0
 
-        # Step 2: Get pattern details
-        pattern_details_tool = tools[1]
-        details = pattern_details_tool("test_pattern")
-        assert isinstance(details, dict)
-        assert "name" in details
+            # Step 2: Get pattern details using a pattern that exists in mock server
+            pattern_details_tool = tools[1]
+            details = pattern_details_tool("summarize")
+            assert isinstance(details, dict)
+            assert "name" in details
+            assert details["name"] == "summarize"
+            assert "description" in details
+            assert "system_prompt" in details
 
-        # Step 3: Run pattern
-        run_pattern_tool = tools[2]
-        result = run_pattern_tool("test_pattern", "Test input")
-        assert isinstance(result, dict)
+            # Step 3: Run pattern
+            run_pattern_tool = tools[2]
+            result = run_pattern_tool("test_pattern", "Test input")
+            assert isinstance(result, dict)
         assert "output_format" in result
         assert "output_text" in result
 
