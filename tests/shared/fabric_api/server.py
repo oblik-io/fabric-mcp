@@ -15,6 +15,8 @@ import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 
+from fabric_mcp import __version__ as fabric_mcp_version
+
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -163,7 +165,7 @@ async def lifespan(_app: FastAPI):  # type: ignore[misc]
 app = FastAPI(
     title="Mock Fabric API",
     description="Mock Fabric REST API server for integration testing",
-    version="1.0.0",
+    version=fabric_mcp_version,
     lifespan=lifespan,
 )
 

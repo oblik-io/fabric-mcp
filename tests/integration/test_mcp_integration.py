@@ -8,7 +8,6 @@ import logging
 import subprocess
 import sys
 from asyncio.exceptions import CancelledError
-from collections.abc import Generator
 from unittest.mock import Mock, patch
 
 import httpx
@@ -19,14 +18,15 @@ from fabric_mcp import __version__
 from fabric_mcp.core import FabricMCP
 from tests.shared.fabric_api.utils import (
     MockFabricAPIServer,
-    override_env,
-    setup_mock_fabric_api_env,
+    fabric_api_server_fixture,
 )
 from tests.shared.mocking_utils import (
     COMMON_PATTERN_DETAILS,
     COMMON_PATTERN_LIST,
     create_fabric_api_mock,
 )
+
+_ = fabric_api_server_fixture  # to get rid of unused variable warning
 
 
 @pytest.mark.integration
@@ -37,12 +37,6 @@ class TestFabricMCPCore:
     def server(self):
         """Create a FabricMCP server instance for testing."""
         return FabricMCP(log_level="DEBUG")
-
-    @pytest.fixture
-    def mock_fabric_api_env(self) -> Generator[dict[str, str], None, None]:
-        """Fixture that provides mock Fabric API environment variables."""
-        with MockFabricAPIServer() as mock_server:
-            yield setup_mock_fabric_api_env(mock_server)
 
     @pytest.fixture
     def mock_fabric_api_response(self):
@@ -261,32 +255,33 @@ class TestFabricMCPCore:
 
     @pytest.mark.asyncio
     async def test_complete_pattern_workflow(
-        self, server: FabricMCP, mock_fabric_api_env: dict[str, str]
+        self, server: FabricMCP, mock_fabric_api_server: MockFabricAPIServer
     ):
         """Test a complete workflow: list patterns -> get details -> run pattern."""
-        # Set up environment to use mock server for all API calls
-        with override_env(mock_fabric_api_env):
-            tools = getattr(server, "_FabricMCP__tools", [])
 
-            # Step 1: List patterns
-            list_patterns_tool = tools[0]
-            patterns: list[str] = list_patterns_tool()
-            assert isinstance(patterns, list)
-            assert len(patterns) > 0
+        _ = mock_fabric_api_server  # to get rid of unused variable warning
 
-            # Step 2: Get pattern details using a pattern that exists in mock server
-            pattern_details_tool = tools[1]
-            details = pattern_details_tool("summarize")
-            assert isinstance(details, dict)
-            assert "name" in details
-            assert details["name"] == "summarize"
-            assert "description" in details
-            assert "system_prompt" in details
+        tools = getattr(server, "_FabricMCP__tools", [])
 
-            # Step 3: Run pattern
-            run_pattern_tool = tools[2]
-            result = run_pattern_tool("test_pattern", "Test input")
-            assert isinstance(result, dict)
+        # Step 1: List patterns
+        list_patterns_tool = tools[0]
+        patterns: list[str] = list_patterns_tool()
+        assert isinstance(patterns, list)
+        assert len(patterns) > 0
+
+        # Step 2: Get pattern details using a pattern that exists in mock server
+        pattern_details_tool = tools[1]
+        details = pattern_details_tool("summarize")
+        assert isinstance(details, dict)
+        assert "name" in details
+        assert details["name"] == "summarize"
+        assert "description" in details
+        assert "system_prompt" in details
+
+        # Step 3: Run pattern
+        run_pattern_tool = tools[2]
+        result = run_pattern_tool("test_pattern", "Test input")
+        assert isinstance(result, dict)
         assert "output_format" in result
         assert "output_text" in result
 

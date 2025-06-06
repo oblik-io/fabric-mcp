@@ -8,7 +8,6 @@ import asyncio
 import json
 import subprocess
 import sys
-from collections.abc import Generator
 from typing import Any
 
 import httpx
@@ -17,10 +16,10 @@ from fastmcp import Client
 from fastmcp.client.transports import SSETransport, StreamableHttpTransport
 from fastmcp.exceptions import ToolError
 
+from tests.shared.fabric_api.server import MOCK_PATTERNS
 from tests.shared.fabric_api.utils import (
     MockFabricAPIServer,
-    override_env,
-    setup_mock_fabric_api_env,
+    fabric_api_server_fixture,
 )
 from tests.shared.port_utils import find_free_port
 from tests.shared.transport_test_utils import (
@@ -29,15 +28,11 @@ from tests.shared.transport_test_utils import (
     run_server,
 )
 
+_ = fabric_api_server_fixture  # eliminate unused variable warning
+
 
 class TransportTestBase:
     """Base class for transport-specific test configurations."""
-
-    @pytest.fixture(scope="class")
-    def mock_fabric_api_env(self) -> Generator[dict[str, str], None, None]:
-        """Fixture that provides mock Fabric API environment variables."""
-        with MockFabricAPIServer() as mock_server:
-            yield setup_mock_fabric_api_env(mock_server)
 
     @pytest.fixture(scope="class")
     def server_config(self) -> ServerConfig:
@@ -103,12 +98,16 @@ class TransportTestBase:
 
     @pytest.mark.asyncio
     async def test_fabric_list_patterns_tool_fail(
-        self, server_config: ServerConfig
+        self, server_config: ServerConfig, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Test fabric_list_patterns tool.
 
         Expects connection error when Fabric API unavailable.
         """
+        # Override environment to point to non-existent Fabric API
+        monkeypatch.setenv("FABRIC_BASE_URL", "http://localhost:99999")
+        monkeypatch.setenv("FABRIC_API_KEY", "test")
+
         async with run_server(server_config, self.transport_type) as config:
             url = self.get_server_url(config)
             client = self.create_client(url)
@@ -127,12 +126,16 @@ class TransportTestBase:
 
     @pytest.mark.asyncio
     async def test_fabric_get_pattern_details_tool(
-        self, server_config: ServerConfig
+        self, server_config: ServerConfig, monkeypatch: pytest.MonkeyPatch
     ) -> None:
         """Test fabric_get_pattern_details tool.
 
         Expects connection error when Fabric API unavailable.
         """
+        # Override environment to point to non-existent Fabric API
+        monkeypatch.setenv("FABRIC_BASE_URL", "http://localhost:99999")
+        monkeypatch.setenv("FABRIC_API_KEY", "test")
+
         async with run_server(server_config, self.transport_type) as config:
             url = self.get_server_url(config)
             client = self.create_client(url)
@@ -263,12 +266,11 @@ class TransportTestBase:
 
     @pytest.mark.asyncio
     async def test_concurrent_requests(
-        self, server_config: ServerConfig, mock_fabric_api_env: dict[str, str]
+        self, server_config: ServerConfig, mock_fabric_api_server: MockFabricAPIServer
     ) -> None:
         """Test handling multiple concurrent requests."""
-        async with run_server(
-            server_config, self.transport_type, mock_fabric_api_env
-        ) as config:
+        _ = mock_fabric_api_server  # eliminate unused variable warning
+        async with run_server(server_config, self.transport_type) as config:
             url = self.get_server_url(config)
             client = self.create_client(url)
 
@@ -289,47 +291,41 @@ class TransportTestBase:
 
     @pytest.mark.asyncio
     async def test_fabric_list_patterns_tool_success(
-        self, server_config: ServerConfig, mock_fabric_api_env: dict[str, str]
+        self, server_config: ServerConfig, mock_fabric_api_server: MockFabricAPIServer
     ) -> None:
         """Test fabric_list_patterns tool success path.
 
         Uses mock Fabric API server to test successful pattern retrieval.
         """
-        # Override environment to use mock server
-        with override_env(mock_fabric_api_env):
-            async with run_server(server_config, self.transport_type) as config:
-                url = self.get_server_url(config)
-                client = self.create_client(url)
+        _ = mock_fabric_api_server  # eliminate unused variable warning
 
-                async with client:
-                    # Call the tool and expect success
-                    result = await client.call_tool("fabric_list_patterns")
+        # Environment is automatically configured by fixture
+        async with run_server(server_config, self.transport_type) as config:
+            url = self.get_server_url(config)
+            client = self.create_client(url)
 
-                    # Verify response structure
-                    assert result is not None
-                    assert isinstance(result, list)
-                    assert len(result) == 1
+            async with client:
+                # Call the tool and expect success
+                result = await client.call_tool("fabric_list_patterns")
 
-                    # Extract the JSON text and parse it
-                    patterns_text = result[0].text  # type: ignore[misc]
-                    assert isinstance(patterns_text, str)
+                # Verify response structure
+                assert result is not None
+                assert isinstance(result, list)
+                assert len(result) == 1
 
-                    patterns: list[str] = json.loads(patterns_text)
-                    assert isinstance(patterns, list)
-                    assert len(patterns) > 0
+                # Extract the JSON text and parse it
+                patterns_text = result[0].text  # type: ignore[misc]
+                assert isinstance(patterns_text, str)
 
-                    # Expected patterns from mock server
-                    expected_patterns = [
-                        "analyze_claims",
-                        "create_story",
-                        "summarize",
-                        "extract_insights",
-                        "check_grammar",
-                        "create_outline",
-                    ]
+                patterns: list[str] = json.loads(patterns_text)
+                assert isinstance(patterns, list)
+                assert len(patterns) > 0
 
-                    # Verify all expected patterns are present
-                    assert patterns == expected_patterns
+                # Expected patterns from mock server
+                expected_patterns = MOCK_PATTERNS
+
+                # Verify all expected patterns are present
+                assert patterns == expected_patterns
 
 
 @pytest.mark.integration
