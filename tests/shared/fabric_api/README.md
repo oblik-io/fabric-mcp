@@ -112,11 +112,11 @@ def test_with_mock_server(mock_fabric_api_server):
 Alternatively, you can use the pre-built pytest fixture:
 
 ```python
-from tests.shared.fabric_api.utils import pytest_mock_fabric_api
+from tests.shared.fabric_api.utils import fabric_api_server_fixture
 
-def test_with_built_in_fixture(pytest_mock_fabric_api):
+def test_with_built_in_fixture(fabric_api_server_fixture):
     # Environment variables are automatically set and restored
-    server = pytest_mock_fabric_api
+    server = fabric_api_server_fixture
     print(f"Server running at {server.base_url}")
     # Your test code here
 ```

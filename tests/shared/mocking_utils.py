@@ -164,3 +164,57 @@ def assert_api_client_calls(
         mock_api_client.get.assert_called_with(expected_endpoint)
 
     mock_api_client.close.assert_called_once()
+
+
+# Test helper functions to eliminate duplicate code patterns
+def assert_connection_error_test(
+    mock_api_client_class: MagicMock,
+    test_function: Any,
+    error_message_contains: str = "Failed to connect to Fabric API",
+) -> None:
+    """Helper function for testing connection error scenarios.
+
+    Args:
+        mock_api_client_class: The patched FabricApiClient class mock
+        test_function: The function to test (e.g., fabric_list_patterns)
+        error_message_contains: Expected substring in error message
+    """
+    import pytest  # pylint: disable=import-outside-toplevel
+    from mcp import McpError  # pylint: disable=import-outside-toplevel
+
+    # Arrange
+    create_fabric_api_mock(mock_api_client_class).with_connection_error(
+        "Connection failed"
+    ).build()
+
+    # Act & Assert
+    with pytest.raises(McpError) as exc_info:
+        test_function()
+
+    assert error_message_contains in str(exc_info.value.error.message)
+
+
+def assert_unexpected_error_test(
+    mock_api_client_class: MagicMock, test_function: Any, error_message_contains: str
+) -> None:
+    """Helper function for testing unexpected error scenarios.
+
+    Args:
+        mock_api_client_class: The patched FabricApiClient class mock
+        test_function: The function to test
+        error_message_contains: Expected substring in error message
+    """
+    import pytest  # pylint: disable=import-outside-toplevel
+    from mcp import McpError  # pylint: disable=import-outside-toplevel
+
+    # Arrange
+    create_fabric_api_mock(mock_api_client_class).with_unexpected_error(
+        ValueError("Unexpected error")
+    ).build()
+
+    # Act & Assert
+    with pytest.raises(McpError) as exc_info:
+        test_function()
+
+    assert exc_info.value.error.code == -32603  # Internal error
+    assert error_message_contains in str(exc_info.value.error.message)
