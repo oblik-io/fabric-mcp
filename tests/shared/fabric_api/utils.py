@@ -8,33 +8,21 @@ import logging
 import multiprocessing
 import os
 import signal
-import socket
 import time
 from collections.abc import AsyncGenerator, Generator
 from contextlib import asynccontextmanager, contextmanager
 
 import uvicorn
 
+from ..port_utils import find_free_port, is_port_in_use
+
+# Backward compatibility alias
+get_random_port = find_free_port
+
 logger = logging.getLogger(__name__)
 
 
-def find_free_port() -> int:
-    """Find a free port for the mock server."""
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind(("", 0))
-        s.listen(1)
-        port = s.getsockname()[1]
-    return port
-
-
-def is_port_in_use(port: int, host: str = "127.0.0.1") -> bool:
-    """Check if a port is already in use."""
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        try:
-            s.connect((host, port))
-            return True
-        except (OSError, ConnectionRefusedError):
-            return False
+# Port utilities moved to shared.port_utils
 
 
 def wait_for_server(host: str, port: int, timeout: float = 10.0) -> bool:
