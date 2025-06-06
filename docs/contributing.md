@@ -76,6 +76,8 @@ make test          # Lint and run all tests
 make coverage      # Run tests with coverage enforcement (90%)
 make coverage-html # Generate HTML coverage report
 make coverage-show # Open HTML coverage in browser
+make dev           # Start FastMCP dev server with MCP inspector
+make mcp-inspector # Start standalone MCP inspector
 make build         # Build the project
 make clean         # Remove build/test artifacts
 ```
@@ -191,11 +193,23 @@ Common types:
 
 ## Using the MCP Inspector
 
+There are two ways to use the MCP Inspector:
+
+### Option 1: Using the FastMCP Dev Server (Recommended for Development)
+
 ```bash
 make dev
 ```
 
 Then browse to <http://127.0.0.1:6274> and Connect.
+
+### Option 2: Using the Standalone MCP Inspector
+
+```bash
+make mcp-inspector
+```
+
+This starts the standalone MCP inspector. You'll need to run `fabric-mcp` in a separate terminal with the appropriate transport (http or sse) and connect to it through the inspector interface.
 
 See the [FastMCP documentation][fastmcp-dev] about using the MCP inspector
 for more information.

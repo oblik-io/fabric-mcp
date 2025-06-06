@@ -28,7 +28,7 @@ jobs:
       - name: Install dependencies
         run: make bootstrap
       - name: Run tests
-        run: make test
+        run: make test-fast
       - name: Build package
         run: make build
 

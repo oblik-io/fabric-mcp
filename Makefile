@@ -1,7 +1,8 @@
 # Makefile for
 #
 
-.PHONY: _default bootstrap build clean coverage coverage-html coverage-show dev format help lint merge tag test
+.PHONY: _default bootstrap build clean coverage coverage-html \
+	coverage-show dev format help lint mcp-inspector merge tag test test-fast test-serial
 
 COVERAGE_FAIL_UNDER := 90
 PACKAGE_PATH := src/fabric_mcp
@@ -9,6 +10,7 @@ PACKAGE_PATH := src/fabric_mcp
 # The node package manager could be npm, but why? pnpm is faster and more efficient
 # This is only needed if you are using the fastmcp dev server.
 NPM_PACKAGER := pnpm
+NPX := $(NPM_PACKAGER) dlx
 STDIO_SERVER_SRC_FOR_MCP_INSPECTOR := $(PACKAGE_PATH)/server_stdio.py
 
 VERSION := $(shell uv run hatch version)
@@ -25,17 +27,17 @@ build:
 	uv run hatch build
 
 clean:
-	rm -f ../.venv && rm -rf .venv && rm -rf dist
+	rm -rf .venv dist node_modules
 
 coverage:
-	uv run pytest --cov=$(PACKAGE_PATH) \
+	uv run pytest -n auto --cov=$(PACKAGE_PATH) \
 		-ra -q \
 		--cov-report=term-missing \
 		--cov-fail-under=$(COVERAGE_FAIL_UNDER)
 
 coverage-html:
 	# This will generate an HTML coverage report.
-	uv run pytest --cov=$(PACKAGE_PATH) \
+	uv run pytest -n auto --cov=$(PACKAGE_PATH) \
 		--cov-report=html:coverage_html \
 		--cov-fail-under=$(COVERAGE_FAIL_UNDER)
 
@@ -71,8 +73,11 @@ help:
 	@echo "  help          Show this help message"
 	@echo "  lint          Run linters"
 	@echo "  merge         Merge develop into main branch (bypassing pre-commit hooks)"
+	@echo "  mcp-inspector Start the MCP inspector server"
 	@echo "  tag           Tag the current git HEAD with the semantic versioning name."
-	@echo "  test          Run tests"
+	@echo "  test          Run tests with parallel execution"
+	@echo "  test-fast     Run tests with optimized parallel execution (skips linting)"
+	@echo "  test-serial   Run tests serially (single-threaded)"
 
 lint:
 	uv run ruff format --check .
@@ -105,9 +110,22 @@ merge:
 	git checkout develop
 	@echo "Merge completed successfully!"
 
+mcp-inspector:
+	@echo "Starting MCP inspector server..."
+	@echo "Ensure you have the @modelcontextprotocol/inspector package installed."
+	@echo "If not, run 'make dev' to install it."
+	@echo "Start fabric-mcp in a different terminal window with the http or sse transport."
+	@echo ""
+	$(NPX) @modelcontextprotocol/inspector
+
 tag:
 	git tag v$(VERSION)
 
-test: lint
+test: lint test-fast
+
+test-fast:
+	uv run pytest -v -n auto
+
+test-serial: lint
 	uv run pytest -v
 

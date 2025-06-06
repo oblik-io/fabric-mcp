@@ -2,6 +2,9 @@
 
 The Fabric MCP Server will adhere to the following project structure. This structure is designed for clarity, maintainability, and to support standard Python packaging and development practices.
 
+(Note that as the project evolves, there will be deviations from this, but this illustrates the
+original organization of the project following Python best practices)
+
 ```plaintext
 fabric-mcp/
 ├── .github/                    # GitHub specific configurations
@@ -37,9 +40,7 @@ fabric-mcp/
 │       ├── api_client.py       # Fabric API Client component
 │       ├── cli.py              # CLI Handler component (using Click)
 │       ├── core.py             # MCP Tool Implementations (core logic)
-│       ├── server_hooks.py     # (New) Callbacks or hooks for FastMCP (if needed)
 │       ├── server_stdio.py     # Existing entry point for `make dev` / MCP Inspector
-│       ├── server_transports.py # (New) Specific configurations for stdio, HTTP, SSE transports (used by cli.py)
 │       └── utils.py            # Utility functions shared within the application
 ├── tests/                      # Automated tests
 │   ├── __init__.py
@@ -51,7 +52,6 @@ fabric-mcp/
 │       ├── test_api_client.py
 │       ├── test_cli.py         # Renamed from test_cli_additional.py for consistency
 │       ├── test_core.py
-│       ├── test_server_transports.py # (New) Tests for transport configurations
 │       └── test_utils.py
 ├── .env.example                # Example environment variables file
 ├── .gitignore                  # Git ignore rules
@@ -76,7 +76,6 @@ fabric-mcp/
   * `core.py`: Contains the logic for MCP tool implementations.
   * `server_hooks.py` (New): Intended for any callback functions or hooks that FastMCP might require for specific events or customizations during the MCP communication lifecycle.
   * `server_stdio.py`: Existing file, maintained as the specific entry point for `make dev` which uses `uv run fastmcp dev src/fabric_mcp/server_stdio.py` for the MCP Inspector.
-  * `server_transports.py` (New): Will contain helper functions or classes for setting up and configuring the different MCP transports (stdio, Streamable HTTP, SSE) to be used by `cli.py` when launching FastMCP for general use.
 * **`tests/`**: Contains all automated tests.
   * `tests/unit/`: Unit tests for individual modules and functions, mirroring the `src/fabric_mcp/` structure.
   * `tests/integration/`: Integration tests that verify interactions between components or with a mocked/live Fabric API instance.
@@ -92,4 +91,3 @@ fabric-mcp/
 * The `src/fabric_mcp/server_stdio.py` is understood to be a specific entry point for development and debugging with the MCP Inspector via `make dev`.
 * The main `cli.py` will handle the operational launch of the server in stdio mode for end-users, as well as for HTTP and SSE transports, likely utilizing helpers from the new `server_transports.py` for configuring FastMCP.
 * I've suggested renaming `test_cli_additional.py` to `test_cli.py` for more direct correspondence if it's the primary test file for `cli.py`.
-* New files like `server_hooks.py` and `server_transports.py` are proposed to better organize the server's operational aspects and cleanly integrate with FastMCP via the main `cli.py`.

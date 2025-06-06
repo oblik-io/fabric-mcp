@@ -30,6 +30,14 @@ make dev
 
 Then browse to <http://127.0.0.1:6274> and Connect.
 
+You can also test the http streaming and sse transports by using:
+
+```bash
+make mcp-inspector
+```
+
+This launches the bare MCP inspector (and does not start `fabric-mcp` with the `stdio` transport)
+
 ## Release workflow (for maintainers)
 
 After a PR is merged:
