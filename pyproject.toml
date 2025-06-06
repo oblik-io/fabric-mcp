@@ -48,6 +48,9 @@ dev = [
     "pytest-mock>=3.14.1",
     "ruff>=0.11.12",
     "uv>=0.7.11",
+    "fastapi>=0.115.12",
+    "uvicorn>=0.34.3",
+    "requests>=2.32.3",
 ]
 
 [tool.pytest.ini_options]

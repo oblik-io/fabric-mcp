@@ -1,6 +1,7 @@
 """Shared utilities for transport integration tests."""
 
 import asyncio
+import os
 import socket
 import subprocess
 import sys
@@ -121,10 +122,15 @@ async def _wait_for_server_ready(
 
 @asynccontextmanager
 async def run_server(
-    config: ServerConfig, transport_type: str
+    config: ServerConfig, transport_type: str, env_vars: dict[str, str] | None = None
 ) -> AsyncGenerator[ServerConfig, None]:
     """Context manager to run a server during tests."""
     cmd_args = _build_server_command(config, transport_type)
+
+    # Prepare environment variables
+    env = os.environ.copy()
+    if env_vars:
+        env.update(env_vars)
 
     # Start server as subprocess for proper isolation
     with subprocess.Popen(
@@ -132,6 +138,7 @@ async def run_server(
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
+        env=env,
     ) as server_process:
         try:
             # Wait for server to start

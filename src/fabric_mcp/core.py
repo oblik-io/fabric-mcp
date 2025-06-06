@@ -4,12 +4,16 @@ import logging
 from asyncio.exceptions import CancelledError
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
+import httpx
 from anyio import WouldBlock
 from fastmcp import FastMCP
+from mcp.shared.exceptions import McpError
+from mcp.types import ErrorData
 
 from . import __version__
+from .api_client import FabricApiClient
 
 DEFAULT_MCP_HTTP_PATH = "/message"
 DEFAULT_MCP_SSE_PATH = "/sse"
@@ -43,8 +47,69 @@ class FabricMCP(FastMCP[None]):
         @self.tool()
         def fabric_list_patterns() -> list[str]:
             """Return a list of available fabric patterns."""
-            # This is a placeholder for the actual implementation
-            return ["pattern1", "pattern2", "pattern3"]
+            try:
+                # Initialize FabricApiClient
+                api_client = FabricApiClient()
+                try:
+                    # Make GET request to /patterns/names endpoint
+                    response = api_client.get("/patterns/names")
+
+                    # Parse JSON response to extract pattern names
+                    response_data: Any = response.json()
+
+                    # Validate response is a list
+                    if not isinstance(response_data, list):
+                        error_msg = (
+                            "Invalid response format from Fabric API: expected list"
+                        )
+                        raise McpError(
+                            ErrorData(code=-32603, message=error_msg)  # Internal error
+                        )
+
+                    # Ensure all items are strings
+                    validated_patterns: list[str] = []
+                    for item in response_data:  # type: ignore[misc]
+                        if isinstance(item, str):
+                            validated_patterns.append(item)
+                        else:
+                            # Log warning but continue with valid patterns
+                            item_any = cast(Any, item)
+                            item_type = (
+                                type(item_any).__name__
+                                if item_any is not None
+                                else "None"
+                            )
+                            logging.warning(
+                                "Non-string pattern name found: %s", item_type
+                            )
+
+                    return validated_patterns
+                finally:
+                    api_client.close()
+            except httpx.RequestError as e:
+                # Connection errors, timeouts, etc.
+                raise McpError(
+                    ErrorData(
+                        code=-32603, message=f"Failed to connect to Fabric API: {e}"
+                    )
+                ) from e
+            except httpx.HTTPStatusError as e:
+                # HTTP status errors (4xx, 5xx)
+                status_code = e.response.status_code
+                reason = e.response.reason_phrase
+                raise McpError(
+                    ErrorData(
+                        code=-32603, message=f"Fabric API error: {status_code} {reason}"
+                    )
+                ) from e
+            except Exception as e:
+                # Any other unexpected errors
+                raise McpError(
+                    ErrorData(
+                        code=-32603,
+                        message=f"Unexpected error retrieving patterns: {e}",
+                    )
+                ) from e
 
         self.__tools.append(fabric_list_patterns)
 
