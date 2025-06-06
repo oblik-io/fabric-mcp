@@ -2,7 +2,6 @@
 
 import asyncio
 import os
-import socket
 import subprocess
 import sys
 from collections.abc import AsyncGenerator
@@ -17,13 +16,7 @@ from fabric_mcp.core import DEFAULT_MCP_HTTP_PATH, DEFAULT_MCP_SSE_PATH
 ServerConfig = dict[str, Any]
 
 
-def find_free_port() -> int:
-    """Find a free port to use for testing."""
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind(("", 0))
-        s.listen(1)
-        port = s.getsockname()[1]
-    return port
+# Port utilities moved to shared.port_utils
 
 
 def _build_server_command(config: ServerConfig, transport_type: str) -> list[str]:

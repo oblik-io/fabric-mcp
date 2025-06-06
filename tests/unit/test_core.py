@@ -6,7 +6,7 @@ import sys
 from asyncio.exceptions import CancelledError
 from collections.abc import Callable
 from typing import Any
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import pytest
 from anyio import WouldBlock
@@ -14,6 +14,11 @@ from fastmcp import FastMCP
 
 from fabric_mcp import __version__
 from fabric_mcp.core import FabricMCP
+from tests.shared.mocking_utils import (
+    COMMON_PATTERN_DETAILS,
+    COMMON_PATTERN_LIST,
+    create_fabric_api_mock,
+)
 
 
 def test_cli_version():
@@ -120,12 +125,9 @@ def test_tool_registration_coverage():
 
     # Mock the FabricApiClient for fabric_list_patterns test
     with patch("fabric_mcp.core.FabricApiClient") as mock_api_client_class:
-        mock_api_client = Mock()
-        mock_api_client_class.return_value = mock_api_client
-
-        mock_response = Mock()
-        mock_response.json.return_value = ["pattern1", "pattern2", "pattern3"]
-        mock_api_client.get.return_value = mock_response
+        create_fabric_api_mock(mock_api_client_class).with_successful_response(
+            COMMON_PATTERN_LIST
+        ).build()
 
         patterns_result: list[str] = fabric_list_patterns()
         assert isinstance(patterns_result, list)
@@ -134,16 +136,9 @@ def test_tool_registration_coverage():
     fabric_get_pattern_details = tools[1]
     # Mock the FabricApiClient for fabric_get_pattern_details test
     with patch("fabric_mcp.core.FabricApiClient") as mock_api_client_class:
-        mock_api_client = Mock()
-        mock_api_client_class.return_value = mock_api_client
-
-        mock_response = Mock()
-        mock_response.json.return_value = {
-            "Name": "test_pattern",
-            "Description": "Test pattern description",
-            "Pattern": "# Test pattern system prompt",
-        }
-        mock_api_client.get.return_value = mock_response
+        create_fabric_api_mock(mock_api_client_class).with_successful_response(
+            COMMON_PATTERN_DETAILS
+        ).build()
 
         pattern_details_result: dict[str, str] = fabric_get_pattern_details(
             "test_pattern"

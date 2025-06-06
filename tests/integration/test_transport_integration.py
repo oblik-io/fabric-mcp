@@ -17,9 +17,9 @@ from fastmcp.client.transports import SSETransport, StreamableHttpTransport
 from fastmcp.exceptions import ToolError
 
 from tests.shared.fabric_api.utils import MockFabricAPIServer, setup_mock_fabric_api_env
+from tests.shared.port_utils import find_free_port
 from tests.shared.transport_test_utils import (
     ServerConfig,
-    find_free_port,
     get_expected_tools,
     run_server,
 )

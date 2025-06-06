@@ -22,6 +22,11 @@ from tests.shared.fabric_api.utils import (
     override_env,
     setup_mock_fabric_api_env,
 )
+from tests.shared.mocking_utils import (
+    COMMON_PATTERN_DETAILS,
+    COMMON_PATTERN_LIST,
+    create_fabric_api_mock,
+)
 
 
 @pytest.mark.integration
@@ -77,12 +82,9 @@ class TestFabricMCPCore:
         # Test specific tool functionality with mocking
         list_patterns_tool = tools[0]
         with patch("fabric_mcp.core.FabricApiClient") as mock_api_client_class:
-            mock_api_client = Mock()
-            mock_api_client_class.return_value = mock_api_client
-
-            mock_response = Mock()
-            mock_response.json.return_value = ["pattern1", "pattern2", "pattern3"]
-            mock_api_client.get.return_value = mock_response
+            create_fabric_api_mock(mock_api_client_class).with_successful_response(
+                COMMON_PATTERN_LIST
+            ).build()
 
             result: list[str] = list_patterns_tool()
             assert isinstance(result, list)
@@ -91,16 +93,9 @@ class TestFabricMCPCore:
         pattern_details_tool = tools[1]
         # Mock the FabricApiClient for pattern details test
         with patch("fabric_mcp.core.FabricApiClient") as mock_api_client_class:
-            mock_api_client = Mock()
-            mock_api_client_class.return_value = mock_api_client
-
-            mock_response = Mock()
-            mock_response.json.return_value = {
-                "Name": "test_pattern",
-                "Description": "Test pattern description",
-                "Pattern": "# Test pattern system prompt",
-            }
-            mock_api_client.get.return_value = mock_response
+            create_fabric_api_mock(mock_api_client_class).with_successful_response(
+                COMMON_PATTERN_DETAILS
+            ).build()
 
             result = pattern_details_tool("test_pattern")
             assert isinstance(result, dict)
