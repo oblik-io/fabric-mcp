@@ -5,7 +5,6 @@ and protocol interactions without focusing on specific transport types.
 """
 
 import logging
-import os
 import subprocess
 import sys
 from asyncio.exceptions import CancelledError
@@ -18,7 +17,11 @@ from mcp import McpError
 
 from fabric_mcp import __version__
 from fabric_mcp.core import FabricMCP
-from tests.shared.fabric_api.utils import MockFabricAPIServer, setup_mock_fabric_api_env
+from tests.shared.fabric_api.utils import (
+    MockFabricAPIServer,
+    override_env,
+    setup_mock_fabric_api_env,
+)
 
 
 @pytest.mark.integration
@@ -241,19 +244,12 @@ class TestFabricMCPCore:
     ):
         """Test a complete workflow: list patterns -> get details -> run pattern."""
         # Set up environment to use mock server
-        old_env = os.environ.copy()
-        os.environ.update(mock_fabric_api_env)
-
-        try:
+        with override_env(mock_fabric_api_env):
             tools = getattr(server, "_FabricMCP__tools", [])
 
             # Step 1: List patterns
             list_patterns_tool = tools[0]
             patterns: list[str] = list_patterns_tool()
-        finally:
-            # Restore original environment
-            os.environ.clear()
-            os.environ.update(old_env)
         assert isinstance(patterns, list)
         assert len(patterns) > 0
 
