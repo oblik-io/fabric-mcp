@@ -10,8 +10,9 @@ import os
 import signal
 import time
 from collections.abc import AsyncGenerator, Generator
-from contextlib import asynccontextmanager, contextmanager
+from contextlib import asynccontextmanager
 
+import pytest
 import uvicorn
 
 from ..port_utils import find_free_port, is_port_in_use
@@ -183,7 +184,8 @@ def setup_mock_fabric_api_env(server: MockFabricAPIServer) -> dict[str, str]:
 
 
 # Pytest fixtures for easy use in tests
-def pytest_mock_fabric_api() -> Generator[MockFabricAPIServer, None, None]:
+@pytest.fixture(scope="session", name="mock_fabric_api_server")
+def fabric_api_server_fixture() -> Generator[MockFabricAPIServer, None, None]:
     """Pytest fixture for mock Fabric API server."""
     with MockFabricAPIServer() as server:
         # Set environment variables for this test
@@ -196,21 +198,3 @@ def pytest_mock_fabric_api() -> Generator[MockFabricAPIServer, None, None]:
             # Restore original environment
             os.environ.clear()
             os.environ.update(old_env)
-
-
-@contextmanager
-def override_env(env_vars: dict[str, str]):
-    """Context manager to temporarily override environment variables."""
-    old_env = {}
-    for key, value in env_vars.items():
-        old_env[key] = os.environ.get(key)
-        os.environ[key] = value
-
-    try:
-        yield
-    finally:
-        for key in env_vars:
-            if old_env[key] is None:
-                os.environ.pop(key, None)
-            else:
-                os.environ[key] = old_env[key]

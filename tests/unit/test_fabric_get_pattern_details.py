@@ -13,6 +13,8 @@ from mcp.shared.exceptions import McpError
 from fabric_mcp.core import FabricMCP
 from tests.shared.mocking_utils import (
     assert_api_client_calls,
+    assert_connection_error_test,
+    assert_unexpected_error_test,
     create_fabric_api_mock,
 )
 
@@ -186,20 +188,11 @@ class TestFabricGetPatternDetails:
         get_pattern_details_tool: Callable[[str], dict[str, str]],
     ):
         """Test connection errors."""
-        # Arrange
-        mock_api_client = (
-            create_fabric_api_mock(mock_api_client_class)
-            .with_connection_error("Connection failed")
-            .build()
+        assert_connection_error_test(
+            mock_api_client_class,
+            lambda: get_pattern_details_tool("test_pattern"),
+            "Failed to connect to Fabric API",
         )
-
-        # Act & Assert
-        with pytest.raises(McpError) as exc_info:
-            get_pattern_details_tool("test_pattern")
-
-        assert exc_info.value.error.code == -32603  # Internal error
-        assert "Failed to connect to Fabric API" in str(exc_info.value.error.message)
-        assert_api_client_calls(mock_api_client, "/patterns/test_pattern")
 
     @patch("fabric_mcp.core.FabricApiClient")
     def test_malformed_json_response(
@@ -304,23 +297,11 @@ class TestFabricGetPatternDetails:
         get_pattern_details_tool: Callable[[str], dict[str, str]],
     ):
         """Test handling of unexpected exceptions."""
-        # Arrange
-        mock_api_client = (
-            create_fabric_api_mock(mock_api_client_class)
-            .with_unexpected_error(ValueError("Unexpected error"))
-            .build()
+        assert_unexpected_error_test(
+            mock_api_client_class,
+            lambda: get_pattern_details_tool("test_pattern"),
+            "Unexpected error during retrieving pattern details",
         )
-
-        # Act & Assert
-        with pytest.raises(McpError) as exc_info:
-            get_pattern_details_tool("test_pattern")
-
-        assert exc_info.value.error.code == -32603  # Internal error
-        assert "Unexpected error during retrieving pattern details" in str(
-            exc_info.value.error.message
-        )
-        assert "Unexpected error" in str(exc_info.value.error.message)
-        assert_api_client_calls(mock_api_client, "/patterns/test_pattern")
 
     @patch("fabric_mcp.core.FabricApiClient")
     def test_response_transformation_format(

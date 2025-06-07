@@ -11,6 +11,8 @@ from fabric_mcp.core import FabricMCP
 from tests.shared.mocking_utils import (
     COMMON_PATTERN_LIST,
     assert_api_client_calls,
+    assert_connection_error_test,
+    assert_unexpected_error_test,
     create_fabric_api_mock,
 )
 
@@ -66,20 +68,11 @@ class TestFabricListPatterns:
     @patch("fabric_mcp.core.FabricApiClient")
     def test_connection_error_handling(self, mock_api_client_class: Any):
         """Test handling of connection errors (httpx.RequestError)."""
-        # Arrange
-        mock_api_client = (
-            create_fabric_api_mock(mock_api_client_class)
-            .with_connection_error("Connection failed")
-            .build()
+        assert_connection_error_test(
+            mock_api_client_class,
+            self.fabric_list_patterns,
+            "Failed to connect to Fabric API",
         )
-
-        # Act & Assert
-        with pytest.raises(McpError) as exc_info:
-            self.fabric_list_patterns()
-
-        assert "Failed to connect to Fabric API" in str(exc_info.value.error.message)
-        assert exc_info.value.error.code == -32603
-        assert_api_client_calls(mock_api_client, "/patterns/names")
 
     @patch("fabric_mcp.core.FabricApiClient")
     def test_http_status_error_handling(self, mock_api_client_class: Any):
@@ -166,22 +159,11 @@ class TestFabricListPatterns:
     @patch("fabric_mcp.core.FabricApiClient")
     def test_unexpected_exception_handling(self, mock_api_client_class: Any):
         """Test handling of unexpected exceptions."""
-        # Arrange
-        mock_api_client = (
-            create_fabric_api_mock(mock_api_client_class)
-            .with_unexpected_error(ValueError("Unexpected error"))
-            .build()
+        assert_unexpected_error_test(
+            mock_api_client_class,
+            self.fabric_list_patterns,
+            "Unexpected error during retrieving patterns",
         )
-
-        # Act & Assert
-        with pytest.raises(McpError) as exc_info:
-            self.fabric_list_patterns()
-
-        assert "Unexpected error during retrieving patterns" in str(
-            exc_info.value.error.message
-        )
-        assert exc_info.value.error.code == -32603
-        assert_api_client_calls(mock_api_client, "/patterns/names")
 
     def test_tool_signature_and_return_type(self):
         """Test that the tool has the correct signature and return type annotation."""
